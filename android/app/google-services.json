@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "141295379521",
+    "project_id": "wishtogether-b3f17",
+    "storage_bucket": "wishtogether-b3f17.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:141295379521:android:81bd22c6bf9aacd42452c0",
+        "android_client_info": {
+          "package_name": "com.jonathan.wishtogether"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "141295379521-b0jla0kdldlfoc3kp4o6dv0o6nibh6gq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1LR9bhrZkSEFP3kFkkcpI5hP11DSDm8s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "141295379521-b0jla0kdldlfoc3kp4o6dv0o6nibh6gq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

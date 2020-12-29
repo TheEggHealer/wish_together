@@ -1,0 +1,121 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/models/user_model.dart';
+
+class AuthService with ChangeNotifier {
+
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
+
+  final Map<String, dynamic> freshUserData = {
+    'first_time': true,
+  };
+
+  // auth change user stream
+  Stream<UserModel> get user {
+    return _auth.authStateChanges().map(_toUserModel);
+  }
+
+  // create User object based on firebase user
+  UserModel _toUserModel(User user) {
+    return user != null ? UserModel(uid: user.uid) : null;
+  }
+
+  // sign in anon
+  Future signInAnon() async {
+    try {
+      UserCredential result = await _auth.signInAnonymously();
+      User user = result.user;
+      return _toUserModel(user);
+    } catch(e) {
+
+      //Failed to login
+      print(e.toString());
+      return null;
+    }
+  }
+
+  // sign in google
+  Future signInGoogle() async {
+    final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+    final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+    final AuthCredential credential = GoogleAuthProvider.credential(
+      accessToken: googleSignInAuthentication.accessToken,
+      idToken: googleSignInAuthentication.idToken,
+    );
+
+    final UserCredential authResult = await _auth.signInWithCredential(credential);
+    final User user = authResult.user;
+
+    assert(!user.isAnonymous);
+    assert(await user.getIdToken() != null);
+
+    final User currentUser = _auth.currentUser;
+    assert(user.uid == currentUser.uid);
+
+    DatabaseService dbs = DatabaseService(uid: user.uid);
+    if(!(await dbs.checkExist(dbs.userData))) {
+      dbs.forceData(dbs.userData, freshUserData);
+    }
+
+    return _toUserModel(currentUser);
+  }
+
+  Future loginEmailPassword(String email, String password) async {
+    try {
+      UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      User user = result.user;
+
+      return _toUserModel(user);
+    } catch(e) {
+      print(e.toString());
+      switch(e.code) {
+        case 'ERROR_USER_NOT_FOUND' : return 'Invalid combination of email and password.';
+        case 'ERROR_WRONG_PASSWORD' : return 'Invalid combination of email and password.';
+        default: return 'Login failed.';
+      }
+    }
+  }
+
+  // register email & pass
+  Future registerEmailPassword(String email, String password) async {
+    try {
+      UserCredential result = await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      User user = result.user;
+
+      //Create new document in firestore database
+      DatabaseService dbs = DatabaseService(uid: user.uid);
+      dbs.forceData(dbs.userData, freshUserData);
+
+      return _toUserModel(user);
+    } catch(e) {
+      print(e.toString());
+      switch(e.code) {
+        case 'ERROR_EMAIL_ALREADY_IN_USE' : return 'Email is already taken.';
+        default: return 'Register failed. Error: ${e.code}';
+      }
+    }
+  }
+
+  // sign out
+  Future signOut() async {
+    try {
+      return await _auth.signOut();
+    } catch(e) {
+      print(e.toString());
+      return null;
+    }
+  }
+
+//  signOutGoogle() async {
+//    try {
+//      return await _googleSignIn.signOut();
+//    } catch(e) {
+//      print(e.toString());
+//      return null;
+//    }
+//  }
+}
