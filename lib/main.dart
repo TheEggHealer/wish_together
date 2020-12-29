@@ -19,7 +19,6 @@ void main() {
 class WishTogether extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-//test
     final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
     return FutureBuilder(

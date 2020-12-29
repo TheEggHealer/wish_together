@@ -21,11 +21,11 @@ const Color color_divider_light = color_text_light;
 const Color color_divider_dark = color_text_dark;
 
 const Color color_loading_spinner = Color(0x22000000);
-const Color color_splash = Color(0x22ffffff);
+const Color color_splash = Color(0x55ffffff);
 
 const Color color_card_date = Color(0xaaffffff);
 
-const startup_scaffold_gradient = LinearGradient(
+LinearGradient startup_scaffold_gradient = LinearGradient(
   begin: Alignment(0, 0),
   end: Alignment(0.2, 0.8),
   colors: [

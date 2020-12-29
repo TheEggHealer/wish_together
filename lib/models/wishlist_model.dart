@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/item_model.dart';
 import 'package:wishtogether/models/user_data.dart';
@@ -12,8 +13,8 @@ class WishlistModel {
   List<UserModel> invitedUsers = [];
   String parent = '';
   String type = '';
-  UserData wisher;
   String wisherUID = '';
+  String wisherName = '';
   int color = 0;
   String name = '';
   String dateCreated = '';
@@ -22,13 +23,12 @@ class WishlistModel {
     _deconstructData();
   }
 
-  void _deconstructData() async {
+  void _deconstructData() {
     items = (raw['items'].map<ItemModel>((e) => ItemModel(raw: e))).toList();
     parent = raw['parent'];
     type = raw['type'];
     wisherUID = raw['wisher_uid'];
-    wisher = await UserData.from(wisherUID);
-    debug(wisher);
+    wisherName = raw['wisher_name'];
     color = raw['color'];
     name = raw['name'];
     dateCreated = raw['date'];

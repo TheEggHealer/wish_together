@@ -31,6 +31,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
   }
 
+  void onLeave(DatabaseService dbs) async {
+    await dbs.uploadData(dbs.userData, {'wishlists' : wishlists.map((e) => e.id).toList()});
+  }
+
   Widget builder(BuildContext context, int index) {
     return WishlistCard(model: wishlists[index]);
   }
@@ -53,7 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
     UserData userData = Provider.of<UserData>(context);
     DatabaseService dbs = DatabaseService(uid: userData.uid);
 
-    wishlists = Provider.of<List<WishlistModel>>(context);
+    if(wishlists == null || wishlists.isEmpty) {
+      wishlists = Provider.of<List<WishlistModel>>(context);
+    }
     setupLists(wishlists, userData);
 
     return Scaffold(
@@ -65,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
             IconButton(
               icon: Icon(Icons.logout, color: Colors.white,),
               onPressed: () async {
+                onLeave(dbs);
                 auth.signOut();
               },
             ),
@@ -91,10 +98,14 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: wishlists != null ? wishlists.length : 0,
           onWillAccept: (oldI, newI) => true,
           onReorder: (oldI, newI) {
-            String tmp = userData.wishlistIds[oldI];
-            userData.wishlistIds[oldI] = userData.wishlistIds[newI];
-            userData.wishlistIds[newI] = tmp;
-            dbs.uploadData(dbs.userData, {'wishlists' : userData.wishlistIds});
+            //String tmp = userData.wishlistIds[oldI];
+            //userData.wishlistIds[oldI] = userData.wishlistIds[newI];
+            //userData.wishlistIds[newI] = tmp;
+            //dbs.uploadData(dbs.userData, {'wishlists' : userData.wishlistIds});
+
+            var tmp = wishlists[oldI];
+            wishlists[oldI] = wishlists[newI];
+            wishlists[newI] = tmp;
           },
         ),
       ),
