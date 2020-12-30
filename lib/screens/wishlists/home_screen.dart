@@ -6,6 +6,7 @@ import 'package:wishtogether/database/auth_service.dart';
 import 'package:wishtogether/database/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
+import 'package:wishtogether/screens/wishlists/solo_wishlist_screen.dart';
 import 'package:wishtogether/ui/widgets/wishlist_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -36,7 +37,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget builder(BuildContext context, int index) {
-    return WishlistCard(model: wishlists[index]);
+    return WishlistCard(
+      model: wishlists[index],
+      onClick: () {
+        DatabaseService dbs = DatabaseService();
+        Navigator.push(context, MaterialPageRoute(builder: (context) =>
+          StreamProvider<WishlistModel>.value(
+            value: dbs.wishlistStream(wishlists[index].id),
+            child: SoloWishlistScreen()
+          )
+        ));
+      }
+    );
   }
 
   void setupLists(List<WishlistModel> models, UserData userData) {
@@ -57,8 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
     UserData userData = Provider.of<UserData>(context);
     DatabaseService dbs = DatabaseService(uid: userData.uid);
 
-    if(wishlists == null || wishlists.isEmpty) {
-      wishlists = Provider.of<List<WishlistModel>>(context);
+    List<WishlistModel> freshList = Provider.of<List<WishlistModel>>(context);
+    if(wishlists == null || wishlists.isEmpty || wishlists != freshList) {
+      debug('Refreshing wishlists!');
+      wishlists = freshList;
     }
     setupLists(wishlists, userData);
 
@@ -111,9 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: color_primary,
-        splashColor: color_splash,
-        hoverColor: color_splash,
-        focusColor: color_splash,
+        splashColor: color_splash_light,
+        hoverColor: color_splash_light,
+        focusColor: color_splash_light,
         child: Icon(
           Icons.add,
           color: Colors.white,

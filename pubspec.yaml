@@ -41,6 +41,6 @@ flutter:
         - asset: fonts/Roboto-Light.ttf
     - family: CustomIcons
       fonts:
-        - asset: fonts/icons.ttf
+        - asset: fonts/CustomIcons.ttf
 
   uses-material-design: true

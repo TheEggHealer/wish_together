@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:wishtogether/database/database_service.dart';
 import 'package:wishtogether/constants.dart';
 
@@ -10,6 +11,7 @@ class UserData {
   String name;
   bool firstTime = false;
   List<String> wishlistIds = [];
+  Color userColor = Color(0xffa7f379);
 
   UserData({this.raw, this.uid}) {
     if(raw != null) {

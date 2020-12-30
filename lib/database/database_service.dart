@@ -50,7 +50,7 @@ class DatabaseService {
     return data;
   }
 
-  List<WishlistModel> _wishlistFromDocument(QuerySnapshot query) {
+  List<WishlistModel> _wishlistFromQuery(QuerySnapshot query) {
     return query.docs.map((e) => WishlistModel(raw: e.data(), id: e.id)).toList();
 
   }
@@ -68,11 +68,18 @@ class DatabaseService {
     if(ids.isNotEmpty) {
       Stream<List<WishlistModel>> stream = wishlist.where(
           FieldPath.documentId, whereIn: ids).snapshots().map(
-          _wishlistFromDocument);
+          _wishlistFromQuery);
       return stream;
     } else {
       return Stream<List<WishlistModel>>.empty();
     }
+  }
+
+  Stream<WishlistModel> wishlistStream(String id) {
+    Stream<WishlistModel> stream = wishlist.where(
+      FieldPath.documentId, isEqualTo: id
+    ).snapshots().map((e) => _wishlistFromQuery(e).first);
+    return stream;
   }
 
 }

@@ -1,7 +1,4 @@
-import 'package:flutter/cupertino.dart';
-import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/item_model.dart';
-import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 
 class WishlistModel {

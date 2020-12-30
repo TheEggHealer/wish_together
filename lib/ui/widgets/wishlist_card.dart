@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
-import 'package:wishtogether/ui/icons.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 
 class WishlistCard extends StatelessWidget {
 
-  WishlistModel model;
+  final WishlistModel model;
+  final Function onClick;
 
-  WishlistCard({this.model});
+  WishlistCard({this.model, this.onClick});
 
   @override
   Widget build(BuildContext context) {
@@ -21,24 +22,22 @@ class WishlistCard extends StatelessWidget {
         ),
         color: Color(model.color),
         child: InkWell(
-          splashColor: color_splash,
-          focusColor: color_splash,
-          highlightColor: color_splash,
-          hoverColor: color_splash,
+          splashColor: color_splash_light,
+          focusColor: color_splash_light,
+          highlightColor: color_splash_light,
+          hoverColor: color_splash_light,
           borderRadius: BorderRadius.all(Radius.circular(15.0)),
-          onTap: () {},
+          onTap: onClick,
           child: Container(
               width: size.width / 2.4,
-              height: size.width / 3.2,
+              height: size.width / 3.2, //3.2
               padding: EdgeInsets.all(10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Center(
-                    child: Text(
-                      model.name,
-                      style: textstyle_card_header_light,
-                    ),
+                  Text(
+                    model.name,
+                    style: textstyle_card_header_light,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -46,6 +45,7 @@ class WishlistCard extends StatelessWidget {
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
                             model.wisherName,

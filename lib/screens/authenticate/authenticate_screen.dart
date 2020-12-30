@@ -3,7 +3,7 @@ import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/database/auth_service.dart';
 import 'package:wishtogether/screens/authenticate/register_screen.dart';
 import 'package:wishtogether/screens/authenticate/sign_in_screen.dart';
-import 'package:wishtogether/ui/icons.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/startup_scaffold.dart';
 

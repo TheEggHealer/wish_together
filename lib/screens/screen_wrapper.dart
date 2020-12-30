@@ -10,7 +10,7 @@ import 'package:wishtogether/constants.dart';
 
 class ScreenWrapper extends StatelessWidget {
 
-  AuthService auth = AuthService();
+  final AuthService auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
