@@ -12,20 +12,20 @@ class DatabaseService {
 
   DatabaseService({this.uid});
 
-  Future forceData(CollectionReference collection, Map<String, dynamic> data) async {
+  Future forceData(CollectionReference collection, String documentId, Map<String, dynamic> data) async {
     _printUpload(collection, data);
-    return await collection.doc(uid).set(data);
+    return await collection.doc(documentId).set(data);
   }
 
-  Future uploadData(CollectionReference collection, Map<String, dynamic> data) async {
+  Future uploadData(CollectionReference collection, String documentId, Map<String, dynamic> data) async {
    _printUpload(collection, data);
-    return await collection.doc(uid).set(data, SetOptions(merge: true));
+    return await collection.doc(documentId).set(data, SetOptions(merge: true));
   }
 
   void _printUpload(CollectionReference collection, Map<String, dynamic> data) {
     debug("=========== UPLOADING DATA ===========");
     debug("==== To collection: ${collection.id}");
-    data.forEach((key, value) {print("==== $key -> $value");});
+    data.forEach((key, value) {debug("==== $key -> $value");});
     debug("======================================");
   }
 

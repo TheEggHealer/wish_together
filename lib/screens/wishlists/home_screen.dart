@@ -7,6 +7,7 @@ import 'package:wishtogether/database/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/wishlists/solo_wishlist_screen.dart';
+import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/wishlist_card.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -33,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void onLeave(DatabaseService dbs) async {
-    await dbs.uploadData(dbs.userData, {'wishlists' : wishlists.map((e) => e.id).toList()});
+    await dbs.uploadData(dbs.userData, dbs.uid, {'wishlists' : wishlists.map((e) => e.id).toList()});
   }
 
   Widget builder(BuildContext context, int index) {
@@ -44,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
         Navigator.push(context, MaterialPageRoute(builder: (context) =>
           StreamProvider<WishlistModel>.value(
             value: dbs.wishlistStream(wishlists[index].id),
-            child: SoloWishlistScreen()
+            child: SoloWishlistScreen(userData)
           )
         ));
       }
@@ -66,7 +67,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
 
     AuthService auth = AuthService();
-    UserData userData = Provider.of<UserData>(context);
+    userData = Provider.of<UserData>(context);
+
+    if(userData == null) return Loading();
+
     DatabaseService dbs = DatabaseService(uid: userData.uid);
 
     List<WishlistModel> freshList = Provider.of<List<WishlistModel>>(context);

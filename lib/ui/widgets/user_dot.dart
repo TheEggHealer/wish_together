@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wishtogether/models/user_data.dart';
 
 enum SIZE {
+  AUTHOR,
   SMALL,
   MEDIUM,
   LARGE
@@ -9,21 +11,38 @@ enum SIZE {
 
 class UserDot extends StatelessWidget {
 
-  final UserData userData;
+  Color color;
   final SIZE size;
 
-  UserDot({this.userData, this.size});
+  UserDot({this.color, this.size});
+
+  UserDot.fromUserData({UserData userData, this.size}) {
+    color = userData.userColor;
+  }
+
+  UserDot.placeHolder({this.size}) {
+    color = Color(0x00000000);
+  }
 
   @override
   Widget build(BuildContext context) {
+
+    double radius = 0;
+    switch (size) {
+      case SIZE.AUTHOR: radius = 12; break;
+      case SIZE.SMALL: radius = 20; break;
+      case SIZE.MEDIUM: radius = 40; break;
+      case SIZE.LARGE: radius = 60; break;
+    }
+
     return Container(
       decoration: BoxDecoration(
-        color: userData.userColor,
+        color: color,
         shape: BoxShape.circle,
       ),
       child: SizedBox(
-        width: size == SIZE.SMALL ? 20 : size == SIZE.MEDIUM ? 40 : 60,
-        height: size == SIZE.SMALL ? 20 : size == SIZE.MEDIUM ? 40 : 60,
+        width: radius,
+        height: radius,
       ),
     );
   }

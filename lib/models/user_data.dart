@@ -11,7 +11,7 @@ class UserData {
   String name;
   bool firstTime = false;
   List<String> wishlistIds = [];
-  Color userColor = Color(0xffa7f379);
+  Color userColor = Color(0xff000000);
 
   UserData({this.raw, this.uid}) {
     if(raw != null) {
@@ -30,6 +30,7 @@ class UserData {
     firstTime = raw['first_time'];
     wishlistIds = List<String>.from(raw['wishlists']);
     name = raw['name'];
+    userColor = Color(raw['user_color']);
     debug('Name = $name');
   }
 

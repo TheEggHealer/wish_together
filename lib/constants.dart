@@ -10,15 +10,17 @@ const C_startup_scaffold_diff = 0.25;
 const Color color_primary = Color(0xffE8C364);
 const Color color_primary_gradient_end = Color(0xffF7DE9E);
 const Color color_background = Color(0xffF1F1F1);
+const Color color_comment_background = Color(0x11000000);
 
 const Color color_text_light = Color(0xffffffff);
 const Color color_text_light_sub = Color(0xaaffffff);
 const Color color_text_dark = Color(0xff535353);
 const Color color_text_dark_sub = Color(0xff999999);
 const Color color_text_error = Color(0xffff5555);
+const Color color_text_comment = Color(0xff404040);
 
 const Color color_divider_light = color_text_light;
-const Color color_divider_dark = color_text_dark;
+const Color color_divider_dark = Color(0xa0535353);
 
 const Color color_loading_spinner = Color(0x22000000);
 const Color color_splash_light = Color(0x55ffffff);
@@ -35,6 +37,20 @@ LinearGradient startup_scaffold_gradient = LinearGradient(
   ]
 );
 
+const TextStyle textstyle_comment = TextStyle(
+  fontFamily: 'Quicksand',
+  fontSize: 16,
+  fontWeight: FontWeight.bold,
+  color: color_text_comment,
+);
+
+const TextStyle textstyle_comment_author = TextStyle(
+  fontFamily: 'Quicksand',
+  fontSize: 12,
+  fontWeight: FontWeight.bold,
+  color: color_text_dark_sub,
+);
+
 const TextStyle textstyle_card_header_light = TextStyle(
   fontFamily: 'Quicksand',
   fontSize: 20,
@@ -47,6 +63,13 @@ const TextStyle textstyle_card_header_dark = TextStyle(
   fontSize: 20,
   fontWeight: FontWeight.bold,
   color: color_text_dark,
+);
+
+const TextStyle textstyle_card_dark_sub = TextStyle(
+  fontFamily: 'Quicksand',
+  fontSize: 16,
+  fontWeight: FontWeight.bold,
+  color: color_text_dark_sub,
 );
 
 const TextStyle textstyle_card_date_light = TextStyle(

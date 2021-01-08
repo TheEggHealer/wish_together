@@ -1,4 +1,6 @@
+import 'package:wishtogether/database/database_service.dart';
 import 'package:wishtogether/models/item_model.dart';
+import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 
 class WishlistModel {
@@ -21,7 +23,6 @@ class WishlistModel {
   }
 
   void _deconstructData() {
-    items = (raw['items'].map<ItemModel>((e) => ItemModel(raw: e))).toList();
     parent = raw['parent'];
     type = raw['type'];
     wisherUID = raw['wisher_uid'];
@@ -30,6 +31,7 @@ class WishlistModel {
     name = raw['name'];
     dateCreated = raw['date'];
     invitedUsers = raw['invited_users'].map<UserModel>((e) => UserModel(uid: e)).toList();
+    items = (raw['items'].map<ItemModel>((e) => ItemModel(raw: e, wishlist: this, wisherUID: wisherUID))).toList();
   }
 
   get listCount {
@@ -38,6 +40,22 @@ class WishlistModel {
 
   get userCount {
     return invitedUsers.length;
+  }
+
+  void uploadList() async {
+    DatabaseService dbs = DatabaseService();
+
+    List<Map<String, dynamic>> data = items.map((item) => {
+      'claimed_users': item.claimedUsers,
+      'comments': item.commentsAsData,
+      'hidden_comments': item.hiddenCommentsAsData,
+      'cost': item.cost,
+      'item_name': item.itemName,
+    }).toList();
+
+    await dbs.uploadData(dbs.wishlist, id, {
+      'items': data
+    });
   }
 
 }

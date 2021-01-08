@@ -58,7 +58,7 @@ class AuthService with ChangeNotifier {
 
     DatabaseService dbs = DatabaseService(uid: user.uid);
     if(!(await dbs.checkExist(dbs.userData))) {
-      dbs.forceData(dbs.userData, freshUserData);
+      dbs.forceData(dbs.userData, dbs.uid, freshUserData);
     }
 
     return _toUserModel(currentUser);
@@ -88,7 +88,7 @@ class AuthService with ChangeNotifier {
 
       //Create new document in firestore database
       DatabaseService dbs = DatabaseService(uid: user.uid);
-      dbs.forceData(dbs.userData, freshUserData);
+      dbs.forceData(dbs.userData, dbs.uid, freshUserData);
 
       return _toUserModel(user);
     } catch(e) {

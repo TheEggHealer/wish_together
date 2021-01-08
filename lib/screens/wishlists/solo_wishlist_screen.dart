@@ -8,9 +8,14 @@ import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/item_card.dart';
+import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 
 class SoloWishlistScreen extends StatefulWidget {
+
+  final UserData currentUser;
+
+  SoloWishlistScreen(this.currentUser);
 
   @override
   _SoloWishlistScreenState createState() => _SoloWishlistScreenState();
@@ -55,17 +60,21 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       if(usersChanged()) loadUsers();
     }
 
+    if(model == null) {
+      return Loading();
+    }
+
     List<Widget> userDots = users.map<Widget>((e) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
-        child: UserDot(
+        child: UserDot.fromUserData(
           userData: e,
           size: SIZE.MEDIUM,
         ),
       );
     }).toList();
 
-    List<ItemCard> itemList = model.items.map((e) => ItemCard(model: e)).toList();
+    List<ItemCard> itemList = model.items.map((e) => ItemCard(model: e, wishlist: model, currentUser: widget.currentUser,)).toList();
     debug('Refreshing current wishlist!');
 
     userDots.add(
@@ -93,6 +102,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
     //List<Widget> userDots = [];
 
     return Scaffold(
+      backgroundColor: color_background,
       appBar: AppBar(
         backgroundColor: color_primary,
         elevation: 10,
@@ -105,31 +115,33 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
           ],
         ),
       ),
-      body: Container(
-        color: color_background,
-        width: double.infinity,
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Invited Users',
-              style: textstyle_header,
-            ),
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: userDots.isNotEmpty ? userDots : [SpinKitThreeBounce(
-                  color: color_loading_spinner,
-                  size: 20,
-                )],
+      body: SingleChildScrollView(
+        child: Container(
+          color: color_background,
+          width: double.infinity,
+          padding: EdgeInsets.all(10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Invited Users',
+                style: textstyle_header,
               ),
-            ),
-            Divider(
-              color: color_divider_dark,
-            )
-          ]..addAll(itemList),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: userDots.isNotEmpty ? userDots : [SpinKitThreeBounce(
+                    color: color_loading_spinner,
+                    size: 20,
+                  )],
+                ),
+              ),
+              Divider(
+                color: color_divider_dark,
+              )
+            ]..addAll(itemList),
+          ),
         ),
       ),
     );

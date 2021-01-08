@@ -32,3 +32,40 @@ TextFormField textField({String helperText, TextStyle textStyle, Color textColor
     style: textStyle,
   );
 }
+
+TextFormField textFieldComment({String helperText, TextStyle textStyle, Color textColor, Color borderColor, Color activeColor, Color errorColor, Function(String val) onChanged, TextEditingController controller, double borderRadius = 30, obscureText = false,}) {
+  return TextFormField(
+    controller: controller,
+    onChanged: onChanged,
+    cursorColor: textColor,
+    obscureText: obscureText,
+    decoration: InputDecoration(
+      contentPadding: EdgeInsets.only(top: 18, bottom: 18, left: 18),
+      enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(borderRadius)),borderSide: BorderSide(color: borderColor)),
+      focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(borderRadius)),borderSide: BorderSide(color: activeColor)),
+      errorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(borderRadius)),borderSide: BorderSide(color: errorColor)),
+      focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(borderRadius)),borderSide: BorderSide(color: errorColor)),
+      errorStyle: TextStyle(
+          fontFamily: 'RobotoLight',
+          color: errorColor
+      ),
+      border: OutlineInputBorder(borderSide: BorderSide(color: borderColor)),
+      hintText: helperText,
+      hintStyle: TextStyle(
+          fontFamily: 'RobotoLight',
+          fontSize: 14,
+          color: borderColor
+      ),
+      //suffixIcon: IconButton(
+      //  icon: Icon(Icons.send),
+      //  color: activeColor,
+      //  onPressed: onSend,
+      //  splashRadius: 20,
+      //),
+      focusColor: activeColor,
+      hoverColor: activeColor,
+    ),
+    style: textStyle,
+    maxLines: null,
+  );
+}
