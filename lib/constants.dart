@@ -19,6 +19,8 @@ const Color color_text_dark_sub = Color(0xff999999);
 const Color color_text_error = Color(0xffff5555);
 const Color color_text_comment = Color(0xff404040);
 
+const Color color_claim_green = Color(0xff8CD373);
+
 const Color color_divider_light = color_text_light;
 const Color color_divider_dark = Color(0xa0535353);
 

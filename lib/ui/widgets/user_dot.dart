@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:wishtogether/database/image_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 
 enum SIZE {
@@ -11,6 +12,8 @@ enum SIZE {
 
 class UserDot extends StatelessWidget {
 
+  ImageProvider image;
+  UserData userData;
   Color color;
   final SIZE size;
 
@@ -18,32 +21,52 @@ class UserDot extends StatelessWidget {
 
   UserDot.fromUserData({UserData userData, this.size}) {
     color = userData.userColor;
+
+    if(size == SIZE.MEDIUM || size == SIZE.LARGE) {
+      image = userData.profilePicture;
+    }
   }
 
   UserDot.placeHolder({this.size}) {
     color = Color(0x00000000);
   }
 
+
   @override
   Widget build(BuildContext context) {
 
     double radius = 0;
     switch (size) {
-      case SIZE.AUTHOR: radius = 12; break;
-      case SIZE.SMALL: radius = 20; break;
-      case SIZE.MEDIUM: radius = 40; break;
-      case SIZE.LARGE: radius = 60; break;
+      case SIZE.AUTHOR: radius = 6; break;
+      case SIZE.SMALL: radius = 10; break;
+      case SIZE.MEDIUM: radius = 20; break;
+      case SIZE.LARGE: radius = 30; break;
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
-      child: SizedBox(
-        width: radius,
-        height: radius,
-      ),
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+          child: SizedBox(
+            width: radius*2,
+            height: radius*2,
+          ),
+        ),
+        if(image != null) Container(
+          width: radius*2,
+          height: radius*2,
+          child: Center(
+            child: CircleAvatar(
+              backgroundImage: image,
+              backgroundColor: Colors.transparent,
+              radius: radius * 0.9,
+            ),
+          ),
+        )
+      ]
     );
   }
 }

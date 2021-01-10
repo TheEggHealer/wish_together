@@ -50,8 +50,8 @@ class ItemModel {
     wishlist.uploadList();
   }
 
-  addComment(String content, UserData user, bool hidden) {
-    CommentModel comment = CommentModel.from(content, user);
+  addComment(String content, UserData user, bool hidden) async {
+    CommentModel comment = await CommentModel.from(content, user);
     if(hidden) hiddenComments.add(comment);
     else comments.add(comment);
     wishlist.uploadList();

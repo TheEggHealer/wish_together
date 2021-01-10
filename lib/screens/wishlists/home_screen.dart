@@ -37,7 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     await dbs.uploadData(dbs.userData, dbs.uid, {'wishlists' : wishlists.map((e) => e.id).toList()});
   }
 
-  Widget builder(BuildContext context, int index) {
+  Widget cardBuilder(BuildContext context, int index) {
     return WishlistCard(
       model: wishlists[index],
       onClick: () {
@@ -63,6 +63,29 @@ class _HomeScreenState extends State<HomeScreen> {
     else models = [];
   }
 
+  Widget drawer(BuildContext context, AuthService auth) {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+          DrawerHeader(
+            child: Text('header'),
+            decoration: BoxDecoration(
+              color: color_primary
+            ),
+          ),
+          ListTile(
+            title: Text('Logout'),
+            onTap: () {
+              onLeave(DatabaseService(uid: userData.uid));
+              auth.signOut();
+            },
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -84,20 +107,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: color_primary,
         elevation: 10,
-        title: Row(
-          children: [
-            IconButton(
-              icon: Icon(Icons.logout, color: Colors.white,),
-              onPressed: () async {
-                onLeave(dbs);
-                auth.signOut();
-              },
-            ),
-            Text(
-              'Wish Together',
-              style: textstyle_appbar,
-            ),
-          ],
+        title: Text(
+          'Wish Together',
+          style: textstyle_appbar,
         ),
       ),
       body: Container(
@@ -112,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
             childAspectRatio: 3.2/2.3,
           ),
           padding: EdgeInsets.all(20),
-          itemBuilder: builder,
+          itemBuilder: cardBuilder,
           itemCount: wishlists != null ? wishlists.length : 0,
           onWillAccept: (oldI, newI) => true,
           onReorder: (oldI, newI) {
@@ -141,6 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
           //TODO Create wishlist
         },
       ),
+      drawer: drawer(context, auth),
     );
   }
 }

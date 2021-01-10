@@ -1,6 +1,9 @@
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/database/global_memory.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/models/wishlist_model.dart';
 
 class CommentModel {
 
@@ -13,21 +16,31 @@ class CommentModel {
     _deconstructData();
   }
 
-  CommentModel.from(String content, UserData user) {
-    String date = DateFormat('HH:mm, MMMM d, yyyy').format(DateTime.now());
-    this.raw = '${user.uid}*\\$date*\\$content';
+  static Future<CommentModel> from(String content, UserData user) async {
+    String date = DateFormat('HH:mm, MMMM d, yyyy').format(await NTP.now());
+    String raw = '${user.uid}*\\$date*\\$content';
+    CommentModel model = CommentModel(raw: raw);
+    return model;
   }
 
   void _deconstructData() {
-    debug('Deconstructing comment from: $raw');
+    //debug('Deconstructing comment from: $raw');
     List<String> data = raw.split('*\\');
     authorUID = data[0];
     date = data[1];
     content = data[2];
   }
 
-  get author async {
-    return await UserData.from(authorUID);
+  Future<UserData> author(WishlistModel wishlist) async {
+    if(GlobalMemory.currentlyLoadedUsers.containsKey(authorUID)) {
+      debug('Got author from currentlyLoadedUsers');
+      return GlobalMemory.currentlyLoadedUsers[authorUID];
+    } else {
+      debug('Author was not in currentlyLoadedUsers, had to add it, MAP=${GlobalMemory.currentlyLoadedUsers}');
+      UserData user = await UserData.from(authorUID);
+      GlobalMemory.currentlyLoadedUsers.putIfAbsent(authorUID, () => user);
+      return user;
+    }
   }
 
 

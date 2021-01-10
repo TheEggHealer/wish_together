@@ -4,6 +4,7 @@ import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/database/global_memory.dart';
 import 'package:wishtogether/models/item_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
@@ -47,8 +48,15 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
   void loadClaimedUsers() async {
     List<UserData> updatedList = [];
     for(String uid in widget.model.claimedUsers) {
-      UserData user = await UserData.from(uid);
-      updatedList.add(user);
+      if(GlobalMemory.currentlyLoadedUsers.containsKey(uid)) {
+        updatedList.add(GlobalMemory.currentlyLoadedUsers[uid]);
+        debug('Got user from currentlyLoadedUsers map');
+      } else {
+        UserData user = await UserData.from(uid);
+        updatedList.add(user);
+        GlobalMemory.currentlyLoadedUsers.putIfAbsent(uid, () => user);
+        debug('User was not in currentlyLoadedUsers map, had to add it');
+      }
     }
     claimedUsers = updatedList;
 

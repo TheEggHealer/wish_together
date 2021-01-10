@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/database/global_memory.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
@@ -24,27 +25,32 @@ class SoloWishlistScreen extends StatefulWidget {
 class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
 
   WishlistModel model;
-  List<UserData> users = [];
+  List<UserData> loadedUsers = [];
 
   _SoloWishlistScreenState();
 
-  void loadUsers() async {
-    users = [];
+
+  Future<void> loadUsers() async {
+    loadedUsers = [];
     for(UserModel user in model.invitedUsers) {
-      DatabaseService dbs = DatabaseService(uid: user.uid);
-      UserData userData = UserData(raw: await dbs.getRaw(dbs.userData), uid: user.uid);
-      users.add(userData);
-      debug('ADDED USER: ${userData.name}');
+      String uid = user.uid;
+      if(GlobalMemory.currentlyLoadedUsers.containsKey(uid)) {
+        loadedUsers.add(GlobalMemory.currentlyLoadedUsers[uid]);
+        debug('Got user from currentlyLoadedUsers');
+      } else {
+        UserData userData = await UserData.from(user.uid);
+        GlobalMemory.currentlyLoadedUsers.putIfAbsent(user.uid, () => userData);
+        debug('ADDED USER: ${userData.name}');
+      }
     }
-
     setState(() {});
-
-    debug('Users are loaded');
   }
 
-  bool usersChanged() {
-    List<String> uids = users.map((e) => e.uid).toList();
+  bool invitedUsersChanged() {
+    List<String> uids = loadedUsers.map((e) => e.uid).toList();
+
     if(uids.length != model.invitedUsers.length) return true;
+
     model.invitedUsers.forEach((element) {
       if(!uids.contains(element)) return true;
     });
@@ -57,14 +63,14 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
     WishlistModel m = Provider.of<WishlistModel>(context);
     if(m != null) {
       model = m;
-      if(usersChanged()) loadUsers();
+      if(invitedUsersChanged()) loadUsers();
     }
 
     if(model == null) {
       return Loading();
     }
 
-    List<Widget> userDots = users.map<Widget>((e) {
+    List<Widget> userDots = loadedUsers.map<Widget>((e) {
       return Padding(
         padding: const EdgeInsets.all(8.0),
         child: UserDot.fromUserData(

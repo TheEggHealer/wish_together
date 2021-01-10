@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/comment_model.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 
 class Comment extends StatefulWidget {
 
   CommentModel model;
+  WishlistModel wishlist;
   int index;
 
-  Comment({this.model, this.index});
+  Comment({this.model, this.wishlist, this.index});
 
   @override
   _CommentState createState() => _CommentState();
@@ -27,7 +29,7 @@ class _CommentState extends State<Comment> {
   }
 
   void loadAuthor() async {
-    author = await widget.model.author;
+    author = await widget.model.author(widget.wishlist);
     authorDot = UserDot.fromUserData(userData: author, size: SIZE.AUTHOR);
     setState(() {});
   }
