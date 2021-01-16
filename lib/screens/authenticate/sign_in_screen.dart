@@ -150,7 +150,7 @@ class _SignInScreenState extends State<SignInScreen> with SingleTickerProviderSt
                       child: SizedBox(
                         width: double.infinity,
                         child: textField(
-                            validator: (val) =>  val.length < 6 ? 'Password must be atleast 6 characters long.' : null,
+                            validator: (val) =>  val.length < 6 ? 'Incorrect password.' : null,
                             onChanged: (val) {
                               setState(() {
                                 password = val;

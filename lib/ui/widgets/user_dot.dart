@@ -7,7 +7,8 @@ enum SIZE {
   AUTHOR,
   SMALL,
   MEDIUM,
-  LARGE
+  LARGE,
+  PROFILE,
 }
 
 class UserDot extends StatelessWidget {
@@ -22,7 +23,7 @@ class UserDot extends StatelessWidget {
   UserDot.fromUserData({UserData userData, this.size}) {
     color = userData.userColor;
 
-    if(size == SIZE.MEDIUM || size == SIZE.LARGE) {
+    if(size == SIZE.MEDIUM || size == SIZE.LARGE || size == SIZE.PROFILE) {
       image = userData.profilePicture;
     }
   }
@@ -41,6 +42,18 @@ class UserDot extends StatelessWidget {
       case SIZE.SMALL: radius = 10; break;
       case SIZE.MEDIUM: radius = 20; break;
       case SIZE.LARGE: radius = 30; break;
+      case SIZE.PROFILE: radius = 60; break;
+      default: radius = 20; break;
+    }
+
+    double picFraction = 1;
+    switch (size) {
+      case SIZE.AUTHOR: picFraction = 0; break;
+      case SIZE.SMALL: picFraction = 0; break;
+      case SIZE.MEDIUM: picFraction = 0.9; break;
+      case SIZE.LARGE: picFraction = 0.93; break;
+      case SIZE.PROFILE: picFraction = 0.95; break;
+      default: picFraction = 0; break;
     }
 
     return Stack(
@@ -62,7 +75,7 @@ class UserDot extends StatelessWidget {
             child: CircleAvatar(
               backgroundImage: image,
               backgroundColor: Colors.transparent,
-              radius: radius * 0.9,
+              radius: radius * picFraction,
             ),
           ),
         )

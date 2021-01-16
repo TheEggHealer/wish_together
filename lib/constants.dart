@@ -11,6 +11,8 @@ const Color color_primary = Color(0xffE8C364);
 const Color color_primary_gradient_end = Color(0xffF7DE9E);
 const Color color_background = Color(0xffF1F1F1);
 const Color color_comment_background = Color(0x11000000);
+const Color color_card_background = Color(0xffffffff);
+const Color color_card_disabled = Color(0xfff4f4f4);
 
 const Color color_text_light = Color(0xffffffff);
 const Color color_text_light_sub = Color(0xaaffffff);
@@ -95,6 +97,13 @@ const TextStyle textstyle_title = TextStyle(
   color: color_text_light,
 );
 
+const TextStyle textstyle_drawer_header = TextStyle(
+  fontFamily: 'RobotoLight',
+  fontSize: 20,
+  fontWeight: FontWeight.bold,
+  color: color_text_light,
+);
+
 const TextStyle textstyle_header = TextStyle(
   fontFamily: 'Quicksand',
   fontSize: 23,
@@ -106,6 +115,33 @@ const TextStyle textstyle_subheader = TextStyle(
   fontFamily: 'Quicksand',
   fontSize: 18,
   color: color_text_dark_sub,
+);
+
+const TextStyle textstyle_profile_name = TextStyle(
+  fontFamily: 'Quicksand',
+  fontSize: 30,
+  fontWeight: FontWeight.bold,
+  color: color_text_dark_sub,
+);
+
+const TextStyle textstyle_dev = TextStyle(
+  fontFamily: 'RobotoLight',
+  fontSize: 12,
+  color: color_text_dark_sub,
+);
+
+const TextStyle textstyle_list_title = TextStyle(
+  fontFamily: 'RobotoLight',
+  fontSize: 14,
+  fontWeight: FontWeight.bold,
+  color: color_text_dark,
+);
+
+const TextStyle textstyle_list_title_warning = TextStyle(
+  fontFamily: 'RobotoLight',
+  fontSize: 14,
+  fontWeight: FontWeight.bold,
+  color: color_text_error,
 );
 
 

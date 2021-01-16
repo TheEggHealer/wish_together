@@ -91,3 +91,31 @@ RaisedButton claimButton({String text, Color fillColor, Color textColor, Color s
     ),
   );
 }
+
+FlatButton borderlessButton({String text, Color textColor, Color splashColor, Function onTap}) {
+  Widget child;
+
+  child = Text(
+    text,
+    style: TextStyle(
+      fontFamily: 'Quicksand',
+      fontWeight: FontWeight.bold,
+      color: textColor,
+      fontSize: 14,
+    ),
+  );
+
+  return FlatButton(
+    padding: EdgeInsets.symmetric(horizontal: 4),
+    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+    onPressed: onTap,
+    child: child,
+    color: Colors.transparent,
+    highlightColor: splashColor,
+    focusColor: splashColor,
+    hoverColor: splashColor,
+    textColor: textColor,
+    splashColor: splashColor,
+  );
+}
+

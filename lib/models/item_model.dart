@@ -36,7 +36,6 @@ class ItemModel {
   }
 
   void _deconstructData() {
-    debug('Deconstructing item from $raw');
     itemName = raw['item_name'];
     comments = (raw['comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();
     hiddenComments = (raw['hidden_comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();

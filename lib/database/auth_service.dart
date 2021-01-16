@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/database/database_service.dart';
 import 'package:wishtogether/models/user_model.dart';
 
@@ -108,6 +109,58 @@ class AuthService with ChangeNotifier {
       print(e.toString());
       return null;
     }
+  }
+
+  Future changeEmail(String newEmail) async {
+
+  }
+
+  String getEmail() {
+    return _auth.currentUser != null ? _auth.currentUser.email : '';
+  }
+
+  getProfilePic() {
+    return _auth.currentUser != null ? _auth.currentUser.photoURL : '';
+  }
+
+  Future updateEmail(String email, String password) async {
+    try {
+      EmailAuthCredential credential = EmailAuthProvider.credential(
+          email: _auth.currentUser.email, password: password);
+      await _auth.currentUser.reauthenticateWithCredential(credential);
+      await _auth.currentUser.updateEmail(email).then((value) =>
+          debug('Email updated!')
+      );
+    } catch (e) {
+      switch(e.code) {
+        case 'email-already-in-use' : return 'Email is already taken.';
+        default: return 'Email-change failed. Error: ${e.code}';
+      }
+    }
+  }
+
+  Future updatePassword(String oldPassword, String newPassword) async {
+    try {
+      EmailAuthCredential credential = EmailAuthProvider.credential(
+          email: _auth.currentUser.email, password: oldPassword);
+      await _auth.currentUser.reauthenticateWithCredential(credential);
+      await _auth.currentUser.updatePassword(newPassword).then((value) =>
+          debug('Password updated!')
+      );
+    } catch (e) {
+      switch(e.code) {
+        case 'wrong-password' : return 'Current password is incorrect.';
+        default: return 'Email-change failed. Error: ${e.code}';
+      }
+    }
+  }
+
+  bool get isSignedInWithGoogle {
+    User user = _auth.currentUser;
+    if(user != null) {
+      if (user.providerData[0].providerId == 'google.com') return true;
+    }
+    return false;
   }
 
 //  signOutGoogle() async {

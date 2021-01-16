@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:wishtogether/database/auth_service.dart';
 import 'package:wishtogether/database/database_service.dart';
 import 'package:wishtogether/constants.dart';
 
@@ -7,9 +8,11 @@ class UserData {
 
   DatabaseService dbs;
 
-  Map<String, dynamic> raw;
-  String uid;
-  String name;
+  Map<String, dynamic> raw = {};
+  Map<String, bool> settings = {};
+  String uid = 'no_user';
+  String email = '';
+  String name = '...';
   bool firstTime = false;
   List<String> wishlistIds = [];
   Color userColor = Color(0xff000000);
@@ -31,13 +34,8 @@ class UserData {
     return UserData(uid: uid, raw: await dbs.getRaw(dbs.userData));
   }
 
-  void clone(UserData userData) {
-    debug('Cloning user: ${userData.uid}');
-    firstTime = userData.firstTime;
-    wishlistIds = userData.wishlistIds;
-    name = userData.name;
-    userColor = userData.userColor;
-    profilePicture = userData.profilePicture;
+  static empty() {
+    return UserData(uid: 'no_user');
   }
 
   void _deconstructData() {
@@ -47,6 +45,7 @@ class UserData {
     name = raw['name'];
     userColor = Color(raw['user_color']);
     profilePicture = NetworkImage(raw['profile_picture']);
+    settings = Map<String, bool>.from(raw['settings']);
     debug('Name = $name');
 
     timeFetched = DateTime.now();
