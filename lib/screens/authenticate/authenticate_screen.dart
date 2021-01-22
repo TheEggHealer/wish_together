@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/auth_service.dart';
+import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/screens/authenticate/register_screen.dart';
 import 'package:wishtogether/screens/authenticate/sign_in_screen.dart';
 import 'package:wishtogether/ui/custom_icons.dart';

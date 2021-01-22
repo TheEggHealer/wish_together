@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/auth_service.dart';
-import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/services/auth_service.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/screens/authenticate/change_email_screen.dart';
 import 'package:wishtogether/screens/authenticate/change_password_screen.dart';

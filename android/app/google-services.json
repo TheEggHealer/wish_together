@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "141295379521",
+    "firebase_url": "https://wishtogether-b3f17-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "wishtogether-b3f17",
     "storage_bucket": "wishtogether-b3f17.appspot.com"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "141295379521-euecc0bd0j4jbsohfeig7djfo03g3je6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jonathan.wishtogether",
+            "certificate_hash": "7ae4d4151ae278e074a30e9b609e5b4715935a38"
+          }
+        },
+        {
+          "client_id": "141295379521-i2qbfj81mvp3c1g7p5hlbogd1m1m8qi8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jonathan.wishtogether",
+            "certificate_hash": "f68c5766c4b7d0c7ed1637579b8c9a1ff140437c"
+          }
+        },
         {
           "client_id": "141295379521-b0jla0kdldlfoc3kp4o6dv0o6nibh6gq.apps.googleusercontent.com",
           "client_type": 3
@@ -32,7 +49,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-7768123198632313~8206192262"
     }
   ],
   "configuration_version": "1"

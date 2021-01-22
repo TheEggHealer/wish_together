@@ -9,6 +9,12 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="wishtogether"
         android:icon="@mipmap/ic_launcher">
+
+
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-7768123198632313~8206192262"/>
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

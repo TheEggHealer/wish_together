@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:wishtogether/database/image_service.dart';
+import 'package:wishtogether/services/image_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 
 enum SIZE {

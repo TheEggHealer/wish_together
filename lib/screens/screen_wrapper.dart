@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:wishtogether/database/auth_service.dart';
+import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';

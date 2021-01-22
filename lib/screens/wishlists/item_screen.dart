@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/database_service.dart';
-import 'package:wishtogether/database/global_memory.dart';
+import 'package:wishtogether/dialog/send_warning_dialog.dart';
+import 'package:wishtogether/services/database_service.dart';
+import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/models/item_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
@@ -105,8 +106,28 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                         icon: Icon(Icons.send),
                         color: color_primary,
                         onPressed: () async {
-                          await model.addComment(commentField.text, widget.currentUser, false);
-                          commentField.clear();
+                          if(commentField.text.isNotEmpty) {
+                            if(widget.currentUser.settings['warn_before_chatting_with_wisher']) {
+                              await showDialog(
+                                context: context, builder: (context) =>
+                                SendWarning((answer, dontShow) async {
+                                  if(dontShow) {
+                                    UserData currentUser = widget.currentUser;
+                                    currentUser.settings.update('warn_before_chatting_with_wisher', (value) => false);
+                                    DatabaseService dbs = DatabaseService();
+                                    await dbs.uploadData(dbs.userData, currentUser.uid, {'settings': currentUser.settings});
+                                  }
+                                  if (answer) {
+                                    await model.addComment(commentField.text, widget.currentUser, false);
+                                    commentField.clear();
+                                  }
+                                })
+                              );
+                            } else {
+                              await model.addComment(commentField.text, widget.currentUser, false);
+                              commentField.clear();
+                            }
+                          }
                         },
                         splashRadius: 20,
                       ),
@@ -208,8 +229,10 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                       icon: Icon(Icons.send),
                       color: color_primary,
                       onPressed: () async {
-                        await model.addComment(hiddenCommentField.text, widget.currentUser, true);
-                        hiddenCommentField.clear();
+                        if(hiddenCommentField.text.isNotEmpty) {
+                          await model.addComment(hiddenCommentField.text, widget.currentUser, true);
+                          hiddenCommentField.clear();
+                        }
                       },
                       splashRadius: 20,
                     ),

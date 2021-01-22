@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:wishtogether/database/auth_service.dart';
-import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/services/auth_service.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/constants.dart';
 
 class UserData {

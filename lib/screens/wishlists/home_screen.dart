@@ -1,10 +1,12 @@
 import 'package:drag_and_drop_gridview/devdrag.dart';
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/auth_service.dart';
-import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/services/ad_service.dart';
+import 'package:wishtogether/services/auth_service.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/drawer/profile_screen.dart';
@@ -32,14 +34,20 @@ class _HomeScreenState extends State<HomeScreen> {
   double width;
   double height;
 
+  BannerAd banner;
+
   @override
   void initState() {
     //tmpList
     super.initState();
+
+    banner = AdService.buildTestAd()
+      ..load().then((value) => banner.show());
   }
 
   void onLeave(DatabaseService dbs) async {
     await dbs.uploadData(dbs.userData, dbs.uid, {'wishlists' : wishlists.map((e) => e.id).toList()});
+    banner.dispose();
   }
 
   Widget cardBuilder(BuildContext context, int index) {

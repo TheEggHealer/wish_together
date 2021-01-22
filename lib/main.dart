@@ -1,9 +1,11 @@
+import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/auth_service.dart';
-import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/services/ad_service.dart';
+import 'package:wishtogether/services/auth_service.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
@@ -15,26 +17,36 @@ void main() {
 }
 
 class WishTogether extends StatelessWidget {
+
+  Future<FirebaseApp> initialize() async {
+    await FirebaseAdMob.instance.initialize(appId: AdService.appId);
+    return await Firebase.initializeApp();
+  }
+
   @override
   Widget build(BuildContext context) {
     final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
     return FutureBuilder(
-      future: _initialization,
+      future: initialize(),
       builder: (context, snapshot) {
         if(snapshot.hasError) {
           //Something went wrong
           return Container(color: Colors.red);
         } else if(snapshot.connectionState == ConnectionState.done) {
           //Connection is done, display either login screen or home screen
-          return StreamProvider<UserModel>.value(
-            value: AuthService().user,
-            builder: (context, widget) {
+          return Container(
+            color: color_background,
+            padding: EdgeInsets.only(bottom: 60),
+            child: StreamProvider<UserModel>.value(
+              value: AuthService().user,
+              builder: (context, widget) {
 
-              UserModel user = Provider.of<UserModel>(context);
+                UserModel user = Provider.of<UserModel>(context);
 
-              return userDataWrapper(user);
-            },
+                return userDataWrapper(user);
+              },
+            ),
           );
         }
         return SplashScreen();

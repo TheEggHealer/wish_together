@@ -1,5 +1,5 @@
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/item_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';

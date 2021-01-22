@@ -1,7 +1,7 @@
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/global_memory.dart';
+import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 

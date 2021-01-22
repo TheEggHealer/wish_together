@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/database_service.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_model.dart';
 
 class AuthService with ChangeNotifier {

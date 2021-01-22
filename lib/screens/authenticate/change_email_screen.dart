@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/database/auth_service.dart';
+import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
 
