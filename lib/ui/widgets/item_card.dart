@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
@@ -161,7 +162,10 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
             ));
           },
           onLongPress: () {
-            widget.model.toggleUserClaim(widget.currentUser);
+            if(!hideInfo) {
+              HapticFeedback.lightImpact();
+              widget.model.toggleUserClaim(widget.currentUser);
+            }
           },
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
           child: AnimatedSize(

@@ -32,6 +32,7 @@ class WishTogether extends StatelessWidget {
       builder: (context, snapshot) {
         if(snapshot.hasError) {
           //Something went wrong
+          debug(snapshot.error);
           return Container(color: Colors.red);
         } else if(snapshot.connectionState == ConnectionState.done) {
           //Connection is done, display either login screen or home screen
@@ -44,9 +45,8 @@ class WishTogether extends StatelessWidget {
 
                 UserModel user = Provider.of<UserModel>(context);
 
-                return userDataWrapper(user);
-              },
-            ),
+              return userDataWrapper(user, context);
+            },
           );
         }
         return SplashScreen();
@@ -54,7 +54,7 @@ class WishTogether extends StatelessWidget {
     );
   }
 
-  Widget userDataWrapper(UserModel user) {
+  Widget userDataWrapper(UserModel user, BuildContext context) {
     DatabaseService dbs = DatabaseService(uid: user == null ? 'null' : user.uid);
 
     return StreamProvider<UserData>.value(
@@ -63,20 +63,30 @@ class WishTogether extends StatelessWidget {
 
         UserData userData = Provider.of<UserData>(context);
 
-        return wishlistsWrapper(userData, dbs);
+        return wishlistsWrapper(userData, dbs, context);
 
       }
     );
   }
 
-  Widget wishlistsWrapper(UserData userData, DatabaseService dbs) {
+  Widget wishlistsWrapper(UserData userData, DatabaseService dbs, BuildContext context) {
 
     return StreamProvider<List<WishlistModel>>.value(
       value: dbs.wishlistDocs(userData == null ? [] : userData.wishlistIds),
-      child: MaterialApp(
-        home: ScreenWrapper(),
-        theme: ThemeData(
-          accentColor: color_text_light,
+      child: GestureDetector(
+        onTap: () {
+          debug('Tapping outside!');
+          FocusScopeNode currentFocus = FocusScope.of(context);
+
+          if(!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
+            currentFocus.focusedChild.unfocus();
+          }
+        },
+        child: MaterialApp(
+          home: ScreenWrapper(),
+          theme: ThemeData(
+            accentColor: color_text_light,
+          ),
         ),
       ),
     );

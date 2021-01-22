@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-TextFormField textField({String helperText, TextStyle textStyle, Color textColor, Color borderColor, Color activeColor, Color errorColor, Icon icon, dynamic Function(String val) validator, Function(String val) onChanged, double borderRadius = 30, obscureText = false,}) {
+TextFormField textField({String helperText, TextStyle textStyle, Color textColor, Color borderColor, Color activeColor, Color errorColor, Icon icon, dynamic Function(String val) validator, Function(String val) onChanged, double borderRadius = 30, obscureText = false, bool email = false}) {
   return TextFormField(
     validator: validator,
     onChanged: onChanged,
@@ -29,6 +29,7 @@ TextFormField textField({String helperText, TextStyle textStyle, Color textColor
       focusColor: activeColor,
       hoverColor: activeColor,
     ),
+    keyboardType: email ? TextInputType.emailAddress : TextInputType.text,
     style: textStyle,
   );
 }
