@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/comment_model.dart';
 import 'package:wishtogether/models/user_data.dart';
@@ -39,6 +40,7 @@ class _CommentState extends State<Comment> {
 
     return InkWell(
       onLongPress: () {
+        HapticFeedback.lightImpact();
         debug('User should be able to delete its own comment');
       },
       child: Container(

@@ -79,6 +79,7 @@ class _ChangeEmailScreenState extends State<ChangeEmailScreen> {
                           email = val;
                         });
                       },
+                      email: true,
                       textColor: color_text_dark,
                       activeColor: color_primary,
                       borderColor: color_text_dark_sub,

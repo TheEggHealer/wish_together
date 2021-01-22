@@ -133,6 +133,7 @@ class _SignInScreenState extends State<SignInScreen> with SingleTickerProviderSt
                                 email = val;
                               });
                             },
+                            email: true,
                             textColor: color_text_dark,
                             activeColor: color_primary,
                             borderColor: color_text_dark_sub,

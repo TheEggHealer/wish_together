@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/database/auth_service.dart';
@@ -65,7 +66,10 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
   Widget toggle({bool value, Function onChanged}) {
     return Switch(
       value: value,
-      onChanged: onChanged,
+      onChanged: (val) {
+        HapticFeedback.lightImpact();
+        onChanged(val);
+      },
       focusColor: color_splash_light,
       hoverColor: color_splash_light,
       activeColor: color_primary,
