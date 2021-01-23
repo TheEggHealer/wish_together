@@ -34,7 +34,7 @@ TextFormField textField({String helperText, TextStyle textStyle, Color textColor
   );
 }
 
-TextFormField textFieldComment({String helperText, TextStyle textStyle, Color textColor, Color borderColor, Color activeColor, Color errorColor, Function(String val) onChanged, TextEditingController controller, double borderRadius = 30, obscureText = false,}) {
+TextFormField textFieldComment({String helperText, TextStyle textStyle, Color textColor, Color borderColor, Color activeColor, Color errorColor, Function(String val) onChanged, TextEditingController controller, double borderRadius = 30, obscureText = false, bool multiline = true}) {
   return TextFormField(
     controller: controller,
     onChanged: onChanged,
@@ -67,6 +67,6 @@ TextFormField textFieldComment({String helperText, TextStyle textStyle, Color te
       hoverColor: activeColor,
     ),
     style: textStyle,
-    maxLines: null,
+    maxLines: multiline ? null : 1,
   );
 }

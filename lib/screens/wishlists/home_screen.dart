@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/services/database_service.dart';
@@ -320,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
           size: 30,
         ),
         onPressed: () {
-          //TODO Create wishlist
+          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateWishlistScreen()));
         },
       ),
       drawer: drawer(context, auth),

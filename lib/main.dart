@@ -42,11 +42,11 @@ class WishTogether extends StatelessWidget {
             child: StreamProvider<UserModel>.value(
               value: AuthService().user,
               builder: (context, widget) {
-
                 UserModel user = Provider.of<UserModel>(context);
 
-              return userDataWrapper(user, context);
-            },
+                return userDataWrapper(user, context);
+              },
+            )
           );
         }
         return SplashScreen();
@@ -75,7 +75,6 @@ class WishTogether extends StatelessWidget {
       value: dbs.wishlistDocs(userData == null ? [] : userData.wishlistIds),
       child: GestureDetector(
         onTap: () {
-          debug('Tapping outside!');
           FocusScopeNode currentFocus = FocusScope.of(context);
 
           if(!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
