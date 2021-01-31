@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/screens/authenticate/register_screen.dart';
@@ -95,6 +98,20 @@ class _StartupScreenState extends State<StartupScreen> with SingleTickerProvider
                       ],
                     ),
                   ),
+                ),
+                if(Platform.isIOS) Spacer(flex: 1),
+                if(Platform.isIOS) Flexible(
+                    flex: 10,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                      child: SignInWithAppleButton(
+                      borderRadius: BorderRadius.circular(30),
+                      style: SignInWithAppleButtonStyle.black,
+                      onPressed: () async {
+                        dynamic result = await _auth.signInApple();
+                      }
+                    )
+                  )
                 ),
                 Spacer(flex: 1),
                 Flexible(

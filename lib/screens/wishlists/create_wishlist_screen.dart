@@ -139,6 +139,20 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: color_primary,
+        splashColor: color_splash_light,
+        hoverColor: color_splash_light,
+        focusColor: color_splash_light,
+        child: Icon(
+          Icons.check,
+          color: Colors.white,
+          size: 30,
+        ),
+        onPressed: () {
+          //Navigator.push(context, MaterialPageRoute(builder: (context) => CreateWishlistScreen()));
+        },
+      ),
     );
   }
 }

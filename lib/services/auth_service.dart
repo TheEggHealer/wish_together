@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_model.dart';
@@ -63,6 +64,17 @@ class AuthService with ChangeNotifier {
     }
 
     return _toUserModel(currentUser);
+  }
+
+  Future signInApple() async {
+    //final credential = await SignInWithApple.getAppleIDCredential(
+    //  scopes: [
+    //    AppleIDAuthorizationScopes.email,
+    //    AppleIDAuthorizationScopes.fullName
+    //  ],
+    //);
+
+    debug('======== Finish Apple sign in. Requires a paid Apple developer subscription! ========');
   }
 
   Future loginEmailPassword(String email, String password) async {
