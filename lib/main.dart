@@ -38,7 +38,7 @@ class WishTogether extends StatelessWidget {
           //Connection is done, display either login screen or home screen
           return Container(
             color: color_background,
-            padding: EdgeInsets.only(bottom: 60),
+            margin: EdgeInsets.only(bottom: 60),
             child: StreamProvider<UserModel>.value(
               value: AuthService().user,
               builder: (context, widget) {

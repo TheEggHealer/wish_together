@@ -2,8 +2,14 @@
 import 'dart:io';
 
 import 'package:firebase_admob/firebase_admob.dart';
+import 'package:wishtogether/constants.dart';
 
 class AdService {
+
+  static MobileAdTargetingInfo targetInfo = MobileAdTargetingInfo(
+    testDevices: ['AB8BD444BDAEA0427676D9074F5C6B8B'],
+    childDirected: true,
+  );
 
   static String get appId {
     if(Platform.isAndroid) {
@@ -27,9 +33,13 @@ class AdService {
 
   static BannerAd buildTestAd() {
     return BannerAd(
-        adUnitId: testBannerId,
-        size: AdSize.fullBanner,
-
+      listener: (event) {
+        debug(event);
+        debug(event.index);
+      },
+      adUnitId: testBannerId,
+      size: AdSize.fullBanner,
+      targetingInfo: targetInfo,
     );
   }
 
