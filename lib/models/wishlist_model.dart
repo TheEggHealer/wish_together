@@ -1,3 +1,6 @@
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
+import 'package:uuid/uuid_util.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/item_model.dart';
@@ -23,6 +26,10 @@ class WishlistModel {
     _deconstructData();
   }
 
+  WishlistModel.create({this.color, this.name, this.invitedUsers, this.type, this.dateCreated, this.wisherUID, this.parent}) {
+    this.id = Uuid().v1();
+  }
+
   void _deconstructData() {
     parent = raw['parent'];
     type = raw['type'];
@@ -43,7 +50,7 @@ class WishlistModel {
     return invitedUsers.length;
   }
 
-  void uploadList() async {
+  Future<void> uploadList() async {
     DatabaseService dbs = DatabaseService();
 
     List<Map<String, dynamic>> data = items.map((item) => {
@@ -52,10 +59,21 @@ class WishlistModel {
       'hidden_comments': item.hiddenCommentsAsData,
       'cost': item.cost,
       'item_name': item.itemName,
+      'added_by_uid': item.addedByUID,
+      'has_description': item.hasDescription,
     }).toList();
 
     await dbs.uploadData(dbs.wishlist, id, {
-      'items': data
+      'color': color,
+      'creator': wisherUID,
+      'date': dateCreated,
+      'invited_users': invitedUsers.map((e) => e.uid).toList(),
+      'items': data,
+      'name': name,
+      'parent': parent,
+      'type': type,
+      'wisher_name': wisherName,
+      'wisher_uid': wisherUID,
     });
   }
 

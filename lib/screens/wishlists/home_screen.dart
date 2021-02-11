@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     banner = AdService.buildTestAd()
-      ..load().then((value) => banner.show());
+      ..load()..show();
   }
 
   void onLeave(DatabaseService dbs) async {
@@ -70,6 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
     if(models != null) {
       List<WishlistModel> sorted = [];
       userData.wishlistIds.forEach((element) {
+        //TODO: Error here when new list is created, (Bad state: No element)
         sorted.add(models.firstWhere((model) => model.id == element));
       });
       wishlists = sorted;
@@ -310,19 +311,22 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: color_primary,
-        splashColor: color_splash_light,
-        hoverColor: color_splash_light,
-        focusColor: color_splash_light,
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-          size: 30,
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: AdService.adHeight),
+        child: FloatingActionButton(
+          backgroundColor: color_primary,
+          splashColor: color_splash_light,
+          hoverColor: color_splash_light,
+          focusColor: color_splash_light,
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CreateWishlistScreen()));
+          },
         ),
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateWishlistScreen()));
-        },
       ),
       drawer: drawer(context, auth),
     );

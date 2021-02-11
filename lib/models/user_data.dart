@@ -17,6 +17,7 @@ class UserData {
   List<String> wishlistIds = [];
   Color userColor = Color(0xff000000);
   ImageProvider profilePicture;
+  String profilePictureURL = '';
 
   //Time the user was last downloaded from Firebase, if this is more than fetchInterval time ago, download again next time it's requested.
   DateTime timeFetched;
@@ -44,7 +45,8 @@ class UserData {
     wishlistIds = List<String>.from(raw['wishlists']);
     name = raw['name'];
     userColor = Color(raw['user_color']);
-    profilePicture = NetworkImage(raw['profile_picture']);
+    profilePictureURL = raw['profile_picture'];
+    profilePicture = NetworkImage(profilePictureURL);
     settings = Map<String, bool>.from(raw['settings']);
     debug('Name = $name');
 
@@ -62,6 +64,21 @@ class UserData {
     this.raw = await dbs.getRaw(dbs.userData);
     _deconstructData();
     debug('UserData fetched for $uid');
+  }
+
+  Future<void> uploadData() async {
+    DatabaseService dbs = DatabaseService(uid: uid);
+
+    Map<String, dynamic> data = {
+      'first_time': firstTime,
+      'name': name,
+      'profile_picture': profilePictureURL,
+      'settings': settings,
+      'user_color': userColor.value,
+      'wishlists': wishlistIds,
+    };
+
+    await dbs.uploadData(dbs.userData, uid, data);
   }
 
 }

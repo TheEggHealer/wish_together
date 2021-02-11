@@ -19,13 +19,13 @@ void main() {
 class WishTogether extends StatelessWidget {
 
   Future<FirebaseApp> initialize() async {
-    await FirebaseAdMob.instance.initialize(appId: AdService.appId);
+    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-7768123198632313~1473488290');
     return await Firebase.initializeApp();
   }
 
   @override
   Widget build(BuildContext context) {
-    final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+    //final Future<FirebaseApp> _initialization = Firebase.initializeApp();
 
     return FutureBuilder(
       future: initialize(),
@@ -38,7 +38,6 @@ class WishTogether extends StatelessWidget {
           //Connection is done, display either login screen or home screen
           return Container(
             color: color_background,
-            margin: EdgeInsets.only(bottom: 60),
             child: StreamProvider<UserModel>.value(
               value: AuthService().user,
               builder: (context, widget) {

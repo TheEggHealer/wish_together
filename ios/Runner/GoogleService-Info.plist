@@ -21,18 +21,20 @@
 	<key>STORAGE_BUCKET</key>
 	<string>wishtogether-b3f17.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<true/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
 	<string>1:141295379521:ios:1a52f6c9aef4c0ce2452c0</string>
 	<key>DATABASE_URL</key>
 	<string>https://wishtogether-b3f17-default-rtdb.europe-west1.firebasedatabase.app</string>
+	<key>ADMOB_APP_ID</key>
+	<string>ca-app-pub-7768123198632313~1473488290</string>
 </dict>
 </plist>

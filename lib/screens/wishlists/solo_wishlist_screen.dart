@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/screens/wishlists/create_item_screen.dart';
+import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/models/user_data.dart';
@@ -146,8 +149,29 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
               Divider(
                 color: color_divider_dark,
               )
-            ]..addAll(itemList),
+            ]..addAll(itemList)..add(
+              SizedBox(
+                height: 10 + AdService.adHeight,
+              )
+            ),
           ),
+        ),
+      ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: AdService.adHeight),
+        child: FloatingActionButton(
+          backgroundColor: color_primary,
+          splashColor: color_splash_light,
+          hoverColor: color_splash_light,
+          focusColor: color_splash_light,
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CreateItemScreen(model)));
+          },
         ),
       ),
     );

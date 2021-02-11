@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/send_warning_dialog.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/models/item_model.dart';
@@ -331,6 +332,9 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
               style: textstyle_subheader,
             ),
             if(!hideInfo) hiddenCard(model, wishlist),
+            SizedBox(
+              height: 10 + AdService.adHeight,
+            ),
           ],
         ),
       ),
