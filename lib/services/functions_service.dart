@@ -5,7 +5,8 @@ class FunctionService {
 
   Future call() async {
     dynamic result = await FirebaseFunctions.instance.httpsCallable('test').call();
-    debug('Called function, returned: $result');
+
+    debug('Called function, returned: ${result.data}');
   }
 
 }
