@@ -9,6 +9,7 @@ class DatabaseService {
 
   final CollectionReference userData = FirebaseFirestore.instance.collection('userData');
   final CollectionReference wishlist = FirebaseFirestore.instance.collection('wishlists');
+  final CollectionReference uuidMaps = FirebaseFirestore.instance.collection('uuidMaps');
 
   DatabaseService({this.uid});
 
@@ -80,6 +81,19 @@ class DatabaseService {
       FieldPath.documentId, isEqualTo: id
     ).snapshots().map((e) => _wishlistFromQuery(e).first);
     return stream;
+  }
+
+  Future<String> uidFromEmail(String email) async {
+    DocumentSnapshot doc = await uuidMaps.doc('byMail').get();
+    Map<String, dynamic> data = doc.data();
+    String uid = data.containsKey(email) ? data[email] : '';
+    return uid;
+  }
+
+  Future changeMailToUIDAssociation(String oldMail, String newMail) async {
+    String uid = await uidFromEmail(oldMail);
+
+    uploadData(uuidMaps, 'byMail', {oldMail: FieldValue.delete(), newMail: uid});
   }
 
 }

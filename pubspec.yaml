@@ -11,11 +11,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: 0.7.0
+  firebase_core:
   firebase_auth: ^0.20.0+1
-  firebase_admob: ^0.11.0+1
+  firebase_admob:
   cloud_firestore: ^0.16.0
   firebase_storage: ^7.0.0
+  cloud_functions: ^0.9.0
+  firebase_messaging: 
   google_sign_in: ^4.5.6
   sign_in_with_apple: ^2.5.4
   provider: ^4.3.2+3

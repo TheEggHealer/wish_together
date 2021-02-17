@@ -44,6 +44,10 @@ class ItemModel {
     return wisherUID == userData.uid;
   }
 
+  UserData get wisherUserData {
+
+  }
+
   void _deconstructData() {
     itemName = raw['item_name'];
     comments = (raw['comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();

@@ -175,6 +175,8 @@ class AuthService with ChangeNotifier {
     return false;
   }
 
+
+
 //  signOutGoogle() async {
 //    try {
 //      return await _googleSignIn.signOut();
