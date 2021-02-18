@@ -11,9 +11,11 @@ class ItemModel {
   String itemName;
   List<CommentModel> comments;
   List<CommentModel> hiddenComments;
-  int cost;
+  double cost;
   List<String> claimedUsers;
   String wisherUID;
+  String addedByUID;
+  bool hasDescription;
 
   ItemModel({this.raw, this.wishlist, this.wisherUID}) {
     _deconstructData();
@@ -28,6 +30,13 @@ class ItemModel {
     wisherUID = 'no_user';
   }
 
+  ItemModel.create({this.wishlist, this.itemName, this.cost, this.addedByUID}) {
+    wisherUID = wishlist.wisherUID;
+    comments = [];
+    hiddenComments = [];
+    claimedUsers = [];
+  }
+
   get commentsAsData => comments.map((comment) => comment.raw).toList();
   get hiddenCommentsAsData => hiddenComments.map((comment) => comment.raw).toList();
 
@@ -35,12 +44,18 @@ class ItemModel {
     return wisherUID == userData.uid;
   }
 
+  UserData get wisherUserData {
+
+  }
+
   void _deconstructData() {
     itemName = raw['item_name'];
     comments = (raw['comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();
     hiddenComments = (raw['hidden_comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();
-    cost = raw['cost'];
+    cost = double.parse(raw['cost'].toString());
     claimedUsers = List<String>.from(raw['claimed_users']);
+    hasDescription = raw['has_description'];
+    addedByUID = raw['added_by_uid'];
   }
 
   toggleUserClaim(UserData user) {

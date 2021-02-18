@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/screens/wishlists/create_item_screen.dart';
+import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/database_service.dart';
+import 'package:wishtogether/services/functions_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
+import 'package:wishtogether/services/invitation_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/item_card.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
@@ -25,6 +30,7 @@ class SoloWishlistScreen extends StatefulWidget {
 class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
 
   WishlistModel model;
+  UserData wisher;
   List<UserData> loadedUsers = [];
 
   _SoloWishlistScreenState();
@@ -34,15 +40,12 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
     loadedUsers = [];
     for(UserModel user in model.invitedUsers) {
       String uid = user.uid;
-      if(GlobalMemory.currentlyLoadedUsers.containsKey(uid)) {
-        loadedUsers.add(GlobalMemory.currentlyLoadedUsers[uid]);
-        debug('Got user from currentlyLoadedUsers');
-      } else {
-        UserData userData = await UserData.from(user.uid);
-        GlobalMemory.currentlyLoadedUsers.putIfAbsent(user.uid, () => userData);
-        debug('ADDED USER: ${userData.name}');
-      }
+      loadedUsers.add(await GlobalMemory.getUserData(uid));
     }
+    wisher = await GlobalMemory.getUserData(model.wisherUID);
+
+    //TODO: Load wisher userdata here!
+
     setState(() {});
   }
 
@@ -105,7 +108,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       ),
     );
 
-    //List<Widget> userDots = [];
+    String wishlistTitle = wisher == null ? '' : (wisher.uid == widget.currentUser.uid ? 'Your wishlist' : '${wisher.name}\'s wishlist');
 
     return Scaffold(
       backgroundColor: color_background,
@@ -129,6 +132,24 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  wisher == null ? UserDot.placeHolder(size: SIZE.LARGE) : UserDot.fromUserData(
+                    userData: wisher,
+                    size: SIZE.LARGE,
+                  ),
+                  SizedBox(width: 20),
+                  Center(
+                    child: Text(
+                      wishlistTitle,
+                      style: textstyle_header
+                    )
+                  )
+                ],
+              ),
+              Divider(
+                color: color_divider_dark,
+              ),
               Text(
                 'Invited Users',
                 style: textstyle_header,
@@ -146,14 +167,38 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
               Divider(
                 color: color_divider_dark,
               )
-            ]..addAll(itemList),
+            ]..addAll(itemList)..add(
+              SizedBox(
+                height: 10 + AdService.adHeight,
+              )
+            ),
           ),
+        ),
+      ),
+      floatingActionButton: Padding(
+        padding: EdgeInsets.only(bottom: AdService.adHeight),
+        child: FloatingActionButton(
+          backgroundColor: color_primary,
+          splashColor: color_splash_light,
+          hoverColor: color_splash_light,
+          focusColor: color_splash_light,
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+            size: 30,
+          ),
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CreateItemScreen(model)));
+          },
         ),
       ),
     );
   }
 
-  void inviteUser() {
-     debug('Invite user');
+  void inviteUser() async {
+    //DatabaseService dbs = DatabaseService();
+    //await dbs.changeMailToUIDAssociation('t@t.com', 'new@mail.com');
+    FunctionService fs = FunctionService();
+    await fs.call();
   }
 }

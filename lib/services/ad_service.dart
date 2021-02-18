@@ -6,16 +6,30 @@ import 'package:wishtogether/constants.dart';
 
 class AdService {
 
+  static bool get hasAds {
+    return true;
+  }
+
+  static double get adHeight {
+    if(hasAds) {
+      if (Platform.isAndroid) {
+        return 60;
+      } else if (Platform.isIOS) {
+        return 70;
+      }
+    }
+    return 0;
+  }
+
   static MobileAdTargetingInfo targetInfo = MobileAdTargetingInfo(
-    testDevices: ['AB8BD444BDAEA0427676D9074F5C6B8B'],
-    childDirected: true,
+    testDevices: ['a044f0e1976dc9cc23c660a6c7c60df8'],
   );
 
   static String get appId {
     if(Platform.isAndroid) {
       return 'ca-app-pub-7768123198632313~8206192262';
     } else if(Platform.isIOS) {
-      return 'no_id';
+      return 'ca-app-pub-7768123198632313~1473488290';
     } else {
       throw new UnsupportedError('Unsupported platform');
     }
@@ -25,7 +39,7 @@ class AdService {
     if(Platform.isAndroid) {
       return 'ca-app-pub-7768123198632313/9750282186';
     } else if(Platform.isIOS) {
-      return 'no_id';
+      return 'ca-app-pub-7768123198632313/4527677410';
     } else {
       throw new UnsupportedError('Unsupported platform');
     }
@@ -34,11 +48,13 @@ class AdService {
   static BannerAd buildTestAd() {
     return BannerAd(
       listener: (event) {
+        debug('AppID: ${appId}');
+        debug('BannerID: ${testBannerId}');
         debug(event);
         debug(event.index);
       },
       adUnitId: testBannerId,
-      size: AdSize.fullBanner,
+      size: AdSize.banner,
       targetingInfo: targetInfo,
     );
   }
