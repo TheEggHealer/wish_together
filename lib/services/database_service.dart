@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/services/notification_service.dart';
 
 class DatabaseService {
 
@@ -94,6 +95,38 @@ class DatabaseService {
     String uid = await uidFromEmail(oldMail);
 
     uploadData(uuidMaps, 'byMail', {oldMail: FieldValue.delete(), newMail: uid});
+  }
+  
+  Future mapUID(String mail, String uid) async {
+    uploadData(uuidMaps, 'mailToUUID', {mail: uid});
+    addToken(uid);
+  }
+
+  Future addToken(String uid) async {
+    DocumentSnapshot doc = await uuidMaps.doc('uuidToNotificationTokens').get();
+
+    List<String> tokens = List<String>.from(doc.data()[uid]) ?? [];
+    String token = await NotificationService().getToken();
+    if(!tokens.contains(token)) tokens.add(token);
+
+    uploadData(uuidMaps, 'uuidToNotificationTokens', {uid: tokens});
+  }
+
+  Future removeToken(String uid) async {
+    DocumentSnapshot doc = await uuidMaps.doc('uuidToNotificationTokens').get();
+
+    List<String> tokens = List<String>.from(doc.data()[uid]) ?? [];
+    String token = await NotificationService().getToken();
+    if(tokens.contains(token)) tokens.remove(token);
+
+    uploadData(uuidMaps, 'uuidToNotificationTokens', {uid: tokens});
+  }
+
+  Future<List<String>> getTokensFor(String uid) async {
+    DocumentSnapshot doc = await uuidMaps.doc('uuidToNotificationTokens').get();
+
+    List<String> tokens = List<String>.from(doc.data()[uid]) ?? [];
+    return tokens;
   }
 
 }

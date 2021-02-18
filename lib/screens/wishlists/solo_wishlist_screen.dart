@@ -12,6 +12,7 @@ import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/invitation_service.dart';
+import 'package:wishtogether/services/notification_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/item_card.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
@@ -196,9 +197,9 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
   }
 
   void inviteUser() async {
-    //DatabaseService dbs = DatabaseService();
-    //await dbs.changeMailToUIDAssociation('t@t.com', 'new@mail.com');
-    FunctionService fs = FunctionService();
-    await fs.call();
+    DatabaseService dbs = DatabaseService();
+
+    NotificationService ns = NotificationService();
+    await ns.sendNotificationTo(widget.currentUser.uid);
   }
 }

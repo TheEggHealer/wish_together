@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:wishtogether/models/notification_model.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/constants.dart';
@@ -10,6 +11,7 @@ class UserData {
 
   Map<String, dynamic> raw = {};
   Map<String, bool> settings = {};
+  List<NotificationModel> notifications;
   String uid = 'no_user';
   String email = '';
   String name = '...';
@@ -48,6 +50,7 @@ class UserData {
     profilePictureURL = raw['profile_picture'];
     profilePicture = NetworkImage(profilePictureURL);
     settings = Map<String, bool>.from(raw['settings']);
+    notifications = raw['notifications'].map<NotificationModel>((raw) => NotificationModel(raw: raw)).toList();
     debug('Name = $name');
 
     timeFetched = DateTime.now();
@@ -79,6 +82,10 @@ class UserData {
     };
 
     await dbs.uploadData(dbs.userData, uid, data);
+  }
+
+  int get nbrOfUnseenNotifications {
+    return notifications.where((notification) => !notification.seen).length;
   }
 
 }

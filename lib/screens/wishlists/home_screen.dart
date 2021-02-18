@@ -13,6 +13,7 @@ import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/drawer/profile_screen.dart';
 import 'package:wishtogether/screens/drawer/settings_screen.dart';
 import 'package:wishtogether/screens/wishlists/solo_wishlist_screen.dart';
+import 'package:wishtogether/services/notification_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
@@ -97,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
               highlightColor: color_splash_light,
               focusColor: color_splash_light,
             ),
-            Positioned(
+            if(userData.nbrOfUnseenNotifications > 0) Positioned(
               right: 5,
               top: 5,
               child: Container(
@@ -112,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Center(
                   child: Text(
-                      '1',
+                      '${userData.nbrOfUnseenNotifications}',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.white,

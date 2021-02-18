@@ -9,4 +9,8 @@ class FunctionService {
     debug('Called function, returned: ${result.data}');
   }
 
+  Future sendNotificatio(String token) {
+
+  }
+
 }

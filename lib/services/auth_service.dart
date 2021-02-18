@@ -63,6 +63,9 @@ class AuthService with ChangeNotifier {
       dbs.forceData(dbs.userData, dbs.uid, freshUserData);
     }
 
+    //Update notification token, so notifications gets sent to this device
+    await dbs.mapUID(currentUser.email, user.uid);
+
     return _toUserModel(currentUser);
   }
 
@@ -74,6 +77,8 @@ class AuthService with ChangeNotifier {
     //  ],
     //);
 
+    //TODO Don't forget setting the notification token on sign in.
+
     debug('======== Finish Apple sign in. Requires a paid Apple developer subscription! ========');
   }
 
@@ -81,6 +86,10 @@ class AuthService with ChangeNotifier {
     try {
       UserCredential result = await _auth.signInWithEmailAndPassword(email: email, password: password);
       User user = result.user;
+
+      //Update notification token, so notifications gets sent to this device
+      DatabaseService dbs = DatabaseService();
+      await dbs.addToken(user.uid);
 
       return _toUserModel(user);
     } catch(e) {
@@ -103,6 +112,8 @@ class AuthService with ChangeNotifier {
       DatabaseService dbs = DatabaseService(uid: user.uid);
       dbs.forceData(dbs.userData, dbs.uid, freshUserData);
 
+      dbs.mapUID(email, user.uid);
+
       return _toUserModel(user);
     } catch(e) {
       print(e.toString());
@@ -116,6 +127,8 @@ class AuthService with ChangeNotifier {
   // sign out
   Future signOut() async {
     try {
+      DatabaseService dbs = DatabaseService();
+      await dbs.removeToken(_auth.currentUser.uid);
       return await _auth.signOut();
     } catch(e) {
       print(e.toString());
