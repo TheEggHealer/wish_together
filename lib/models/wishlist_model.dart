@@ -13,7 +13,7 @@ class WishlistModel {
 
   String id = '';
   List<ItemModel> items = [];
-  List<UserModel> invitedUsers = [];
+  List<String> invitedUsers = [];
   String parent = '';
   String type = '';
   String wisherUID = '';
@@ -31,6 +31,7 @@ class WishlistModel {
   }
 
   void _deconstructData() {
+    debug('wishlist');
     parent = raw['parent'];
     type = raw['type'];
     wisherUID = raw['wisher_uid'];
@@ -38,7 +39,7 @@ class WishlistModel {
     color = raw['color'];
     name = raw['name'];
     dateCreated = raw['date'];
-    invitedUsers = raw['invited_users'].map<UserModel>((e) => UserModel(uid: e)).toList();
+    invitedUsers = List<String>.from(raw['invited_users']);
     items = (raw['items'].map<ItemModel>((e) => ItemModel(raw: e, wishlist: this, wisherUID: wisherUID))).toList();
   }
 
@@ -67,7 +68,7 @@ class WishlistModel {
       'color': color,
       'creator': wisherUID,
       'date': dateCreated,
-      'invited_users': invitedUsers.map((e) => e.uid).toList(),
+      'invited_users': invitedUsers,
       'items': data,
       'name': name,
       'parent': parent,

@@ -138,6 +138,12 @@ const TextStyle textstyle_list_title = TextStyle(
   color: color_text_dark,
 );
 
+const TextStyle textstyle_notification_body = TextStyle(
+  fontFamily: 'RobotoLight',
+  fontSize: 14,
+  color: color_text_dark,
+);
+
 const TextStyle textstyle_list_title_warning = TextStyle(
   fontFamily: 'RobotoLight',
   fontSize: 14,
