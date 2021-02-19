@@ -34,4 +34,17 @@ class NotificationService {
     }
   }
 
+  Future<void> sendFriendRequestNotificationTo(String uid) async {
+    DatabaseService dbs = DatabaseService();
+    List<String> tokens = await dbs.getTokensFor(uid);
+
+    if(tokens.isNotEmpty) {
+      FirebaseFunctions.instance.httpsCallable('sendNotification').call({
+        'tokens': tokens,
+        'title': 'New friend request!',
+        'body': 'Someone wants to add you as a friend.'
+      });
+    }
+  }
+
 }

@@ -84,6 +84,12 @@ class DatabaseService {
     return stream;
   }
 
+  Future<WishlistModel> getWishlist(String id) async {
+    DocumentSnapshot doc = await wishlist.doc(id).get();
+    WishlistModel model = WishlistModel(raw: doc.data(), id: id);
+    return model;
+  }
+
   Future<String> uidFromEmail(String email) async {
     DocumentSnapshot doc = await uuidMaps.doc('byMail').get();
     Map<String, dynamic> data = doc.data();

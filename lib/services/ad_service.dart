@@ -7,7 +7,7 @@ import 'package:wishtogether/constants.dart';
 class AdService {
 
   static bool get hasAds {
-    return true;
+    return false;
   }
 
   static double get adHeight {

@@ -191,7 +191,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
       wisherUID: currentUser.uid,
       dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
       invitedUsers: [
-        UserModel(uid: currentUser.uid),
+        currentUser.uid,
       ],
     );
     return model;

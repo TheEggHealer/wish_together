@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 
@@ -12,11 +13,77 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
 
+  UserData currentUser;
+  List<UserData> loadedFriends = [];
+
+  void loadFriends() async {
+    loadedFriends = [];
+    for(String uid in currentUser.friends) {
+      loadedFriends.add(await GlobalMemory.getUserData(uid));
+    }
+    setState(() {});
+  }
+
+  bool friendsChanged() {
+    List<String> uids = loadedFriends.map((e) => e.uid).toList();
+
+    if(uids.length != currentUser.friends.length) return true;
+
+    currentUser.friends.forEach((element) {
+      if(!uids.contains(element)) return true;
+    });
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
 
-    UserData currentUser = Provider.of<UserData>(context);
+    currentUser = Provider.of<UserData>(context);
     if(currentUser == null) currentUser = UserData.empty();
+    else if(friendsChanged()) loadFriends();
+
+    List<Widget> friends = [];
+
+    if(loadedFriends.isNotEmpty) {
+      for(UserData user in loadedFriends) {
+        friends.add(Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            UserDot.fromUserData(userData: user, size: SIZE.MEDIUM,),
+            SizedBox(width: 10,),
+            Text(
+              user.name,
+              style: textstyle_header,
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    //TODO Add warning window when removing friend!
+                    if(user.friends.contains(currentUser.uid)) {
+                      user.friends.remove(currentUser.uid);
+                      await user.uploadData();
+                    }
+                    if(currentUser.friends.contains(user.uid)) {
+                      currentUser.friends.remove(user.uid);
+                      await currentUser.uploadData();
+                    }
+                  },
+                  child: Icon(Icons.close),
+                  mini: true,
+                  backgroundColor: color_text_error,
+                  splashColor: color_splash_light,
+                  focusColor: color_splash_light,
+                  hoverColor: color_splash_light,
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            )
+          ],
+        ));
+      }
+    }
 
     return Scaffold(
       backgroundColor: color_background,
@@ -112,6 +179,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fillColor: color_claim_green,
                   )
                 ],
+              ),
+              SizedBox(height: 20),
+              if(friends.isNotEmpty) Column(
+                children: friends,
               )
             ],
           ),

@@ -12,6 +12,7 @@ class UserData {
   Map<String, dynamic> raw = {};
   Map<String, bool> settings = {};
   List<NotificationModel> notifications;
+  List<String> friends = [];
   String uid = 'no_user';
   String email = '';
   String name = '...';
@@ -51,6 +52,7 @@ class UserData {
     profilePicture = NetworkImage(profilePictureURL);
     settings = Map<String, bool>.from(raw['settings']);
     notifications = raw['notifications'].map<NotificationModel>((raw) => NotificationModel(raw: raw)).toList();
+    friends = List<String>.from(raw['friends'] ?? []);
     debug('Name = $name');
 
     timeFetched = DateTime.now();
@@ -79,6 +81,8 @@ class UserData {
       'settings': settings,
       'user_color': userColor.value,
       'wishlists': wishlistIds,
+      'notifications': notifications.map((e) => e.makeRaw()).toList(),
+      'friends': friends,
     };
 
     await dbs.uploadData(dbs.userData, uid, data);
@@ -87,5 +91,6 @@ class UserData {
   int get nbrOfUnseenNotifications {
     return notifications.where((notification) => !notification.seen).length;
   }
+
 
 }

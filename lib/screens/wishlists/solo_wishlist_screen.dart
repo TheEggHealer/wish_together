@@ -39,13 +39,10 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
 
   Future<void> loadUsers() async {
     loadedUsers = [];
-    for(UserModel user in model.invitedUsers) {
-      String uid = user.uid;
+    for(String uid in model.invitedUsers) {
       loadedUsers.add(await GlobalMemory.getUserData(uid));
     }
     wisher = await GlobalMemory.getUserData(model.wisherUID);
-
-    //TODO: Load wisher userdata here!
 
     setState(() {});
   }

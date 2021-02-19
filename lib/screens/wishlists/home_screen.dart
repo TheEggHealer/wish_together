@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/screens/drawer/notifications_screen.dart';
 import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
@@ -43,8 +44,11 @@ class _HomeScreenState extends State<HomeScreen> {
     //tmpList
     super.initState();
 
-    banner = AdService.buildTestAd()
-      ..load()..show();
+    if(AdService.hasAds) {
+      banner = AdService.buildTestAd()
+        ..load()
+        ..show();
+    }
   }
 
   void onLeave(DatabaseService dbs) async {
@@ -90,7 +94,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.white,
               ),
               onPressed: () {
-                debug('Bell');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<UserData>.value(
+                  value: DatabaseService(uid: userData.uid).userDocument,
+                  child: NotificationScreen(),
+                )));
               },
               splashRadius: 20,
               splashColor: color_splash_light,

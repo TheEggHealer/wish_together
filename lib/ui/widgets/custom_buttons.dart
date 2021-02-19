@@ -78,6 +78,7 @@ RaisedButton claimButton({String text, Color fillColor, Color textColor, Color s
 
 
   return RaisedButton(
+    elevation: 10,
     onPressed: onTap,
     child: child,
     color: fillColor,
