@@ -87,7 +87,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
     String date = DateFormat('HH.mm-dd/MM/yy').format(await NTP.now());
     String recieverUID = isEmail(_input) ? await dbs.uidFromEmail(_input) : ''; //TODO Fix for friend code
     UserData reciever = await GlobalMemory.getUserData(recieverUID);
-    NotificationModel notification = NotificationModel(raw: 'fr:$date:${widget.currentUser.uid}');
+    NotificationModel notification = NotificationModel(raw: 'fr:$date:${widget.currentUser.uid}:0');
     reciever.notifications.add(notification);
     await reciever.uploadData();
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/dialog/add_friend_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
@@ -172,7 +173,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: textstyle_header,
                   ),
                   claimButton(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(context: context, builder: (context) => AddFriendDialog(currentUser));
+                    },
                     text: 'Add friend',
                     textColor: color_text_light,
                     splashColor: color_splash_light,

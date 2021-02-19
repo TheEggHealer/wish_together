@@ -91,7 +91,7 @@ class DatabaseService {
   }
 
   Future<String> uidFromEmail(String email) async {
-    DocumentSnapshot doc = await uuidMaps.doc('byMail').get();
+    DocumentSnapshot doc = await uuidMaps.doc('mailToUUID').get();
     Map<String, dynamic> data = doc.data();
     String uid = data.containsKey(email) ? data[email] : '';
     return uid;
