@@ -107,25 +107,31 @@ class DatabaseService {
 
     List<String> tokens = List<String>.from(doc.data()[uid]) ?? [];
     String token = await NotificationService().getToken();
-    if(!tokens.contains(token)) tokens.add(token);
+    if(!tokens.contains(token)) {
+      tokens.add(token);
 
-    uploadData(uuidMaps, 'uuidToNotificationTokens', {uid: tokens});
+      uploadData(uuidMaps, 'uuidToNotificationTokens', {uid: tokens});
+    }
   }
 
   Future removeToken(String uid) async {
     DocumentSnapshot doc = await uuidMaps.doc('uuidToNotificationTokens').get();
+    //debug('${tokens.length}, Token: $token');
+    debug('Removing token');
 
-    List<String> tokens = List<String>.from(doc.data()[uid]) ?? [];
+    List<String> tokens = List<String>.from(doc.data()[uid] ?? []);
     String token = await NotificationService().getToken();
-    if(tokens.contains(token)) tokens.remove(token);
+    if(tokens.contains(token)) {
+      tokens.remove(token);
 
-    uploadData(uuidMaps, 'uuidToNotificationTokens', {uid: tokens});
+      uploadData(uuidMaps, 'uuidToNotificationTokens', {uid: tokens});
+    }
   }
 
   Future<List<String>> getTokensFor(String uid) async {
     DocumentSnapshot doc = await uuidMaps.doc('uuidToNotificationTokens').get();
 
-    List<String> tokens = List<String>.from(doc.data()[uid]) ?? [];
+    List<String> tokens = List<String>.from(doc.data()[uid] ?? []);
     return tokens;
   }
 
