@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/add_friend_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
@@ -173,7 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: textstyle_header,
                   ),
                   claimButton(
-                    onTap: () {
+                    onTap: () async {
                       showDialog(context: context, builder: (context) => AddFriendDialog(currentUser));
                     },
                     text: 'Add friend',

@@ -104,41 +104,30 @@ class DatabaseService {
   }
   
   Future mapUID(String mail, String uid) async {
-    uploadData(uuidMaps, 'mailToUUID', {mail: uid});
+    //uploadData(uuidMaps, 'mailToUUID', {mail: uid});
     addToken(uid);
   }
 
   Future addToken(String uid) async {
-    DocumentSnapshot doc = await uuidMaps.doc('uuidToNotificationTokens').get();
+    DocumentSnapshot doc = await uuidMaps.doc('notificationTokenToUUID').get(GetOptions(source: Source.server));
 
-    List<String> tokens = List<String>.from(doc.data()[uid]) ?? [];
     String token = await NotificationService().getToken();
-    if(!tokens.contains(token)) {
-      tokens.add(token);
-
-      uploadData(uuidMaps, 'uuidToNotificationTokens', {uid: tokens});
-    }
+    uploadData(uuidMaps, 'notificationTokenToUUID', {token: uid});
   }
 
   Future removeToken(String uid) async {
-    DocumentSnapshot doc = await uuidMaps.doc('uuidToNotificationTokens').get();
-    //debug('${tokens.length}, Token: $token');
-    debug('Removing token');
+    DocumentSnapshot doc = await uuidMaps.doc('notificationTokenToUUID').get(GetOptions(source: Source.server));
 
-    List<String> tokens = List<String>.from(doc.data()[uid] ?? []);
     String token = await NotificationService().getToken();
-    if(tokens.contains(token)) {
-      tokens.remove(token);
-
-      uploadData(uuidMaps, 'uuidToNotificationTokens', {uid: tokens});
-    }
+    uploadData(uuidMaps, 'notificationTokenToUUID', {token: FieldValue.delete()});
   }
 
   Future<List<String>> getTokensFor(String uid) async {
-    DocumentSnapshot doc = await uuidMaps.doc('uuidToNotificationTokens').get();
-
-    List<String> tokens = List<String>.from(doc.data()[uid] ?? []);
-    return tokens;
+    DocumentSnapshot doc = await uuidMaps.doc('notificationTokenToUUID').get();
+    Map<String, dynamic> data = doc.data();
+    return List<String>.from(
+      data.entries.map((entry) => entry.value == uid ? entry.key : null).where((element) => element != null)
+    );
   }
 
 }
