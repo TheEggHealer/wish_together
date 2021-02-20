@@ -20,7 +20,7 @@ class GlobalMemory {
       return loaded[uid];
     } else {
       UserData userData = await UserData.from(uid);
-      _currentlyLoadedUsers.update(uid, (u) => userData);
+      _currentlyLoadedUsers.putIfAbsent(uid, () => userData);
       return userData;
     }
   }

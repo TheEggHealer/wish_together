@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:wishtogether/constants.dart';
@@ -25,6 +26,8 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
 
   String _input = '';
   final _formKey = GlobalKey<FormState>();
+  bool loading = false;
+  String errorMessage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -33,24 +36,32 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
       content: Form(
         key: _formKey,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
               'Enter email or friend code',
               style: textstyle_header,
             ),
-            textField(
+            SizedBox(height: 10),
+            textFieldComment(
               onChanged: (val) {
                 this._input = val;
               },
-              validator: (val) =>  val.length < 6 ? 'Wrong input' : null, //TODO Fix message
               textColor: color_text_dark,
               activeColor: color_primary,
               borderColor: color_text_dark_sub,
               errorColor: color_text_error,
               helperText: 'Email or friend code',
-              icon: Icon(CustomIcons.profile, color: color_text_dark_sub),
               textStyle: textstyle_subheader,
               borderRadius: 30
+            ),
+            if(loading) SpinKitChasingDots(
+              size: 20,
+              color: color_loading_spinner,
+            ) else SizedBox(height: 20),
+            Text(
+              errorMessage,
+              style: textstyle_list_title_warning,
             )
           ],
         ),
@@ -70,8 +81,21 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
           fillColor: color_claim_green,
           onTap: () async {
             if(_formKey.currentState.validate()) {
-              await sendFriendRequest();
-              Navigator.pop(context);
+              setState(() {
+                loading = true;
+              });
+              bool result = await sendFriendRequest();
+
+              if(!result) {
+                setState(() {
+                  loading = false;
+                  errorMessage = 'Could not find user.';
+                });
+              }
+              else {
+                errorMessage = '';
+                Navigator.pop(context);
+              }
             }
           },
           splashColor: color_splash_light,
@@ -81,12 +105,14 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
     );
   }
 
-  Future<void> sendFriendRequest() async {
+  Future<bool> sendFriendRequest() async {
     /* Upload invite to reciever's database */
     DatabaseService dbs = DatabaseService();
     String date = DateFormat('HH.mm-dd/MM/yy').format(await NTP.now());
     String recieverUID = isEmail(_input) ? await dbs.uidFromEmail(_input) : ''; //TODO Fix for friend code
+    if(recieverUID == '') return false;
     UserData reciever = await GlobalMemory.getUserData(recieverUID, forceFetch: true);
+    if(reciever == null) return false;
     NotificationModel notification = NotificationModel(raw: 'fr:$date:${widget.currentUser.uid}:0');
     reciever.notifications.add(notification);
     await reciever.uploadData();
@@ -94,6 +120,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
     /* Send notification to reveiver's devices */
     NotificationService ns = NotificationService();
     await ns.sendFriendRequestNotificationTo(recieverUID);
+    return true;
   }
 
   bool isEmail(String input) {
