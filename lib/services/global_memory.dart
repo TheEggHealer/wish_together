@@ -14,13 +14,13 @@ class GlobalMemory {
     return _currentlyLoadedUsers;
   }
 
-  static Future<UserData> getUserData(String uid) async {
+  static Future<UserData> getUserData(String uid, {bool forceFetch = false}) async {
     Map<String, UserData> loaded = currentlyLoadedUsers;
-    if(loaded.containsKey(uid)) {
+    if(!forceFetch && loaded.containsKey(uid)) {
       return loaded[uid];
     } else {
       UserData userData = await UserData.from(uid);
-      _currentlyLoadedUsers.putIfAbsent(uid, () => userData);
+      _currentlyLoadedUsers.update(uid, (u) => userData);
       return userData;
     }
   }

@@ -45,7 +45,7 @@ class NotificationModel {
   void onAccept(UserData currentUser) async {
     switch(prefix) {
       case PRE_FRIEND_REQUEST:
-        UserData user = await GlobalMemory.getUserData(content);
+        UserData user = await GlobalMemory.getUserData(content, forceFetch: true);
         if(!currentUser.friends.contains(content)) {
           currentUser.friends.add(content);
         }
