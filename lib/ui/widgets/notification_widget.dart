@@ -79,7 +79,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                   ),
                   FloatingActionButton(
                     onPressed: () async {
-                      widget.model.onDeny();
+                      widget.model.onDeny(widget.currentUser);
                     },
                     child: Icon(Icons.close),
                     mini: true,

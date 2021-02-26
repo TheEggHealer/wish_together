@@ -75,8 +75,9 @@ class NotificationModel {
     }
   }
 
-  void onDeny() async {
-
+  void onDeny(UserData currentUser) async {
+    currentUser.notifications.remove(this);
+    await currentUser.uploadData();
   }
 
   IconData get icon {
