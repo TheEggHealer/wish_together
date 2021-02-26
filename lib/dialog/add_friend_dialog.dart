@@ -3,6 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/dialog/custom_dialog.dart';
 import 'package:wishtogether/models/notification_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/services/database_service.dart';
@@ -31,18 +32,14 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Send friend request'),
+    return CustomDialog(
+      title: 'Send friend request',
+      icon: CustomIcons.wish_together,
       content: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
-              'Enter email or friend code',
-              style: textstyle_header,
-            ),
-            SizedBox(height: 10),
             textFieldComment(
               onChanged: (val) {
                 this._input = val;
@@ -55,6 +52,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
               textStyle: textstyle_subheader,
               borderRadius: 30
             ),
+            SizedBox(height: 10),
             if(loading) SpinKitChasingDots(
               size: 20,
               color: color_loading_spinner,
@@ -66,47 +64,36 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
           ],
         ),
       ),
-      actions: [
-        claimButton(
-          text: 'Cancel',
-          fillColor: color_text_error,
-          onTap: () {
-            Navigator.pop(context);
-          },
-          splashColor: color_splash_light,
-          textColor: color_text_light,
-        ),
-        claimButton(
-          text: 'Send',
-          fillColor: color_claim_green,
-          onTap: () async {
-            if(_formKey.currentState.validate()) {
-              setState(() {
-                loading = true;
-              });
-              bool result = await sendFriendRequest();
+      acceptButton: 'Send',
+      denyButton: 'Cancel',
+      onAccept: () async {
+        if(_formKey.currentState.validate()) {
+          setState(() {
+            loading = true;
+          });
+          bool result = await sendFriendRequest();
 
-              if(!result) {
-                setState(() {
-                  loading = false;
-                  errorMessage = 'Could not find user.';
-                });
-              }
-              else {
-                errorMessage = '';
-                Navigator.pop(context);
-              }
-            }
-          },
-          splashColor: color_splash_light,
-          textColor: color_text_light,
-        ),
-      ],
+          if(!result) {
+            setState(() {
+              loading = false;
+              errorMessage = 'Could not find user.';
+            });
+          }
+          else {
+            errorMessage = '';
+            Navigator.pop(context);
+          }
+        }
+      },
+      onDeny: () {
+        Navigator.pop(context);
+      },
     );
   }
 
   Future<bool> sendFriendRequest() async {
     /* Upload invite to reciever's database */
+
     DatabaseService dbs = DatabaseService();
     String date = DateFormat('HH.mm-dd/MM/yy').format(await NTP.now());
     String recieverUID = isEmail(_input) ? await dbs.uidFromEmail(_input) : ''; //TODO Fix for friend code

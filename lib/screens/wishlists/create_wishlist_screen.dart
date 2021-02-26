@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/color_picker_dialog.dart';
+import 'package:wishtogether/dialog/invite_to_wishlist_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
@@ -138,7 +139,9 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
                     style: textstyle_header,
                   ),
                   claimButton(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(context: context, builder: (context) => InviteToWishlistDialog(currentUser));
+                    },
                     text: 'Invite',
                     textColor: color_text_light,
                     splashColor: color_splash_light,
