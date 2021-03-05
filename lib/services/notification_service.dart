@@ -47,4 +47,17 @@ class NotificationService {
     }
   }
 
+  Future<void> sendWishlistInviteNotificationTo(String uid) async {
+    DatabaseService dbs = DatabaseService();
+    List<String> tokens = await dbs.getTokensFor(uid);
+
+    if(tokens.isNotEmpty) {
+      FirebaseFunctions.instance.httpsCallable('sendNotification').call({
+        'tokens': tokens,
+        'title': 'New wishlist invitation!',
+        'body': 'You have been invited to join a wishlist.'
+      });
+    }
+  }
+
 }

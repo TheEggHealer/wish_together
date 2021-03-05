@@ -77,6 +77,8 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
         child: UserDot.fromUserData(
           userData: e,
           size: SIZE.MEDIUM,
+          owner: e.uid == model.wisherUID,
+          doShowName: true,
         ),
       );
     }).toList();
@@ -155,7 +157,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: userDots.isNotEmpty ? userDots : [SpinKitThreeBounce(
                     color: color_loading_spinner,
                     size: 20,

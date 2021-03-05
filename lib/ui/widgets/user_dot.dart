@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/services/image_service.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 
 enum SIZE {
   AUTHOR,
@@ -16,19 +18,23 @@ class UserDot extends StatelessWidget {
   ImageProvider image;
   UserData userData;
   Color color;
+  String name;
+  bool owner;
+  bool doShowName;
   final SIZE size;
 
-  UserDot({this.color, this.size});
+  UserDot({this.color, this.size, this.owner = false, this.doShowName = false});
 
-  UserDot.fromUserData({UserData userData, this.size}) {
+  UserDot.fromUserData({UserData userData, this.size, this.owner = false, this.doShowName = false}) {
     color = userData.userColor;
+    name = userData.name;
 
     if(size == SIZE.MEDIUM || size == SIZE.LARGE || size == SIZE.PROFILE) {
       image = userData.profilePicture;
     }
   }
 
-  UserDot.placeHolder({this.size}) {
+  UserDot.placeHolder({this.size, this.owner = false, this.doShowName = false}) {
     color = Color(0x00000000);
   }
 
@@ -56,30 +62,47 @@ class UserDot extends StatelessWidget {
       default: picFraction = 0; break;
     }
 
-    return Stack(
+    return Column(
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
-          child: SizedBox(
-            width: radius*2,
-            height: radius*2,
-          ),
-        ),
-        if(image != null) Container(
-          width: radius*2,
-          height: radius*2,
-          child: Center(
-            child: CircleAvatar(
-              backgroundImage: image,
-              backgroundColor: Colors.transparent,
-              radius: radius * picFraction,
+        Stack(
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+              ),
+              child: SizedBox(
+                width: radius*2,
+                height: radius*2,
+              ),
             ),
-          ),
-        )
-      ]
+            if(image != null) Container(
+              width: radius*2,
+              height: radius*2,
+              child: Center(
+                child: CircleAvatar(
+                  backgroundImage: image,
+                  backgroundColor: Colors.transparent,
+                  radius: radius * picFraction,
+                ),
+              ),
+            ),
+          ]
+        ),
+        if(doShowName) Row(
+          children: [
+            if(owner) Icon(
+              Icons.flag,
+              size: 15,
+              color: color_text_dark,
+            ),
+            if(name != null) Text(
+              name,
+              style: textstyle_dev,
+            )
+          ],
+        ),
+      ],
     );
   }
 }

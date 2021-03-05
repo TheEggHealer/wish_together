@@ -10,10 +10,13 @@ import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/ad_service.dart';
+import 'package:wishtogether/services/global_memory.dart';
+import 'package:wishtogether/services/invitation_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/color_chooser_square.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
+import 'package:wishtogether/ui/widgets/user_dot.dart';
 
 class CreateWishlistScreen extends StatefulWidget {
   @override
@@ -26,6 +29,42 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
   TextEditingController titleController = TextEditingController();
   Color color = Colors.green[300];
   int toggleIndex = 0;
+  List<String> invitedUsers = [];
+  List<UserData> loadedFriends = [];
+
+
+  void loadFriends() async {
+    List<UserData> result = [];
+    for(String uid in invitedUsers) {
+      result.add(await GlobalMemory.getUserData(uid));
+    }
+    loadedFriends = result;
+    debug('Loaded friends!');
+    setState(() {});
+  }
+
+  Widget friends() {
+
+    List<Widget> friendRows = loadedFriends.map((e) {
+
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          UserDot.fromUserData(userData: e, size: SIZE.MEDIUM,),
+          SizedBox(width: 10,),
+          Text(
+            e.name,
+            style: textstyle_header,
+          ),
+          //TODO add a FAB to un-invite user
+        ],
+      );
+    }).toList();
+
+    return Column(
+      children: friendRows,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -140,7 +179,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
                   ),
                   claimButton(
                     onTap: () {
-                      showDialog(context: context, builder: (context) => InviteToWishlistDialog(currentUser));
+                      showDialog(context: context, builder: (context) => InviteToWishlistDialog(currentUser, setInvited, invitedUsers));
                     },
                     text: 'Invite',
                     textColor: color_text_light,
@@ -148,7 +187,9 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
                     fillColor: color_claim_green,
                   )
                 ],
-              )
+              ),
+              SizedBox(height: 10),
+              if(loadedFriends.isNotEmpty) friends(),
             ],
           ),
         ),
@@ -177,11 +218,25 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
     );
   }
 
+  void setInvited(List<String> invited) {
+    invited.forEach((element) {
+      if(!invitedUsers.contains(element)) invitedUsers.add(element);
+    });
+    loadFriends();
+  }
+
   Future<void> onDone() async {
     debug('Uploading new list');
     WishlistModel wishlist = await createModel();
-    await wishlist.uploadList();
     currentUser.wishlistIds.add(wishlist.id);
+    InvitationService invitation = InvitationService();
+
+    for(String uid in invitedUsers) {
+      debug('Sending invitation to: $uid');
+      await invitation.sendWishlistInvitation(currentUser.uid, wishlist.id, uid);
+    }
+
+    await wishlist.uploadList();
     await currentUser.uploadData();
   }
 

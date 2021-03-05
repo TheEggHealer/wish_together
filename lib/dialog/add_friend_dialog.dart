@@ -8,6 +8,7 @@ import 'package:wishtogether/models/notification_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
+import 'package:wishtogether/services/invitation_service.dart';
 import 'package:wishtogether/services/notification_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
@@ -92,22 +93,8 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
   }
 
   Future<bool> sendFriendRequest() async {
-    /* Upload invite to reciever's database */
-
-    DatabaseService dbs = DatabaseService();
-    String date = DateFormat('HH.mm-dd/MM/yy').format(await NTP.now());
-    String recieverUID = isEmail(_input) ? await dbs.uidFromEmail(_input) : ''; //TODO Fix for friend code
-    if(recieverUID == '') return false;
-    UserData reciever = await GlobalMemory.getUserData(recieverUID, forceFetch: true);
-    if(reciever == null) return false;
-    NotificationModel notification = NotificationModel(raw: 'fr:$date:${widget.currentUser.uid}:0');
-    reciever.notifications.add(notification);
-    await reciever.uploadData();
-
-    /* Send notification to reveiver's devices */
-    NotificationService ns = NotificationService();
-    await ns.sendFriendRequestNotificationTo(recieverUID);
-    return true;
+    InvitationService invitation = InvitationService();
+    return await invitation.sendFriendRequestToEmail(widget.currentUser.uid, _input);
   }
 
   bool isEmail(String input) {

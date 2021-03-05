@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/custom_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/models/wishlist_model.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
+import 'package:wishtogether/services/invitation_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
@@ -11,8 +14,11 @@ import 'package:wishtogether/ui/widgets/user_dot.dart';
 class InviteToWishlistDialog extends StatefulWidget {
 
   UserData currentUser;
+  WishlistModel wishlist;
+  Function callback;
+  List<String> alreadyInvited = [];
 
-  InviteToWishlistDialog(this.currentUser);
+  InviteToWishlistDialog(this.currentUser, this.callback, this.alreadyInvited);
 
   @override
   _InviteToWishlistDialogState createState() => _InviteToWishlistDialogState();
@@ -31,7 +37,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
       result.add(await GlobalMemory.getUserData(uid));
     }
     loadedFriends = result;
-    checkboxes = result.map((e) => false).toList();
+    checkboxes = result.map((e) => widget.alreadyInvited.contains(e.uid)).toList();
     debug('Loaded friends!');
     setState(() {});
   }
@@ -100,7 +106,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
             ),
           ],
         ),
-      ]..addAll(friendRows)..addAll(friendRows),
+      ]..addAll(friendRows),
     );
   }
 
@@ -134,7 +140,9 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
               claimButton(
                 text: 'Invite',
                 fillColor: color_claim_green,
-                onTap: () {
+                onTap: () async {
+                  String uid = await DatabaseService().uidFromEmail(_input);
+                  widget.callback([uid]);
                   debug('Invite');
                 },
                 splashColor: color_splash_light,

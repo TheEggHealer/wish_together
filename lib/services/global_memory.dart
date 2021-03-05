@@ -1,3 +1,4 @@
+import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_data.dart';
 
 class GlobalMemory {
@@ -6,6 +7,7 @@ class GlobalMemory {
 
   static get currentlyLoadedUsers {
     _currentlyLoadedUsers.forEach((uid, user) {
+      debug('Fetching for: $uid');
       if(user.fetchAgain()) {
         user.timeFetched = DateTime.now();
         user.fetch();

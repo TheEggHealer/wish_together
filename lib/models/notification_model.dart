@@ -111,7 +111,6 @@ class NotificationModel {
         return '${user.name} wants to be your friend!';
       case PRE_WISHLIST_INVITE:
         List<String> parts = content.split('*');
-        //WishlistModel wishlist = await DatabaseService().getWishlist(parts[0]);
         UserData inviter = await GlobalMemory.getUserData(parts[1]);
         return '${inviter.name} has invited you to a wishlist!';
       default: content = '';

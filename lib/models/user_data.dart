@@ -27,6 +27,7 @@ class UserData {
   Duration fetchInterval = Duration(minutes: 1);
 
   UserData({this.raw, this.uid}) {
+    timeFetched = DateTime.now();
     if(raw != null) {
       dbs = DatabaseService(uid: uid);
       _deconstructData();
@@ -54,8 +55,6 @@ class UserData {
     notifications = raw['notifications'].map<NotificationModel>((raw) => NotificationModel(raw: raw)).toList();
     friends = List<String>.from(raw['friends'] ?? []);
     debug('Name = $name');
-
-    timeFetched = DateTime.now();
   }
 
   bool fetchAgain() {
