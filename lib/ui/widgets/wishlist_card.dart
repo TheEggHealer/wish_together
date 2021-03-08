@@ -63,7 +63,7 @@ class WishlistCard extends StatelessWidget {
                           Row(
                             children: [
                               Icon(
-                                CustomIcons.list,
+                                CustomIcons.list_items,
                                 color: color_text_light,
                               ),
                               Text(

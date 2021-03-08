@@ -11,7 +11,7 @@ class UserData {
 
   Map<String, dynamic> raw = {};
   Map<String, bool> settings = {};
-  List<NotificationModel> notifications;
+  List<NotificationModel> notifications = [];
   List<String> friends = [];
   String uid = 'no_user';
   String email = '';

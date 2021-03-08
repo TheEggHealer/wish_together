@@ -93,6 +93,39 @@ RaisedButton claimButton({String text, Color fillColor, Color textColor, Color s
   );
 }
 
+ButtonTheme customButton({String text, Color fillColor, Color textColor, Color splashColor, double width, Function onTap, double borderRadius = 18.0}) {
+  if(splashColor == null) splashColor = color_splash_light;
+
+  Widget child;
+
+  child = Text(
+    text,
+    style: TextStyle(
+      fontFamily: 'OpenSans',
+      color: textColor,
+      fontSize: 16,
+    ),
+  );
+
+  return ButtonTheme(
+    height: 28,
+    child: RaisedButton(
+      elevation: 10,
+      onPressed: onTap,
+      child: child,
+      color: fillColor,
+      highlightColor: splashColor,
+      focusColor: splashColor,
+      hoverColor: splashColor,
+      textColor: color_text_light,
+      splashColor: splashColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+      ),
+    ),
+  );
+}
+
 FlatButton borderlessButton({String text, Color textColor, Color splashColor, Function onTap}) {
   Widget child;
 

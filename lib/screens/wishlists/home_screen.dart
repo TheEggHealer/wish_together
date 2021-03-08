@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/screens/drawer/notifications_screen.dart';
 import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
@@ -15,6 +16,7 @@ import 'package:wishtogether/screens/drawer/profile_screen.dart';
 import 'package:wishtogether/screens/drawer/settings_screen.dart';
 import 'package:wishtogether/screens/wishlists/solo_wishlist_screen.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
+import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 import 'package:wishtogether/ui/widgets/wishlist_card.dart';
@@ -25,6 +27,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   UserData userData;
   List<WishlistModel> wishlists = [];
@@ -297,7 +301,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     AuthService auth = AuthService();
     userData = Provider.of<UserData>(context);
-
+    UserPreferences prefs = UserPreferences.from(userData);
     if(userData == null) return Loading();
 
     DatabaseService dbs = DatabaseService(uid: userData.uid);
@@ -308,20 +312,10 @@ class _HomeScreenState extends State<HomeScreen> {
       wishlists = freshList;
     }
     setupLists(wishlists, userData);
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: color_primary,
-        elevation: 10,
-        title: Text(
-          'Wish Together',
-          style: textstyle_appbar,
-        ),
-      ),
+    return CustomScaffold(
+      prefs: prefs,
+      title: 'Wish Together',
       body: Container(
-        color: color_background,
-        width: double.infinity,
-        height: double.infinity,
         child: DragAndDropGridView(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -329,7 +323,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisSpacing: 10,
             childAspectRatio: 3.2/2.3,
           ),
-          padding: EdgeInsets.all(20),
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
           itemBuilder: cardBuilder,
           itemCount: wishlists != null ? wishlists.length : 0,
           onWillAccept: (oldI, newI) => true,
@@ -345,17 +339,17 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      floatingActionButton: Padding(
+      fab: Padding(
         padding: EdgeInsets.only(bottom: AdService.adHeight),
         child: FloatingActionButton(
-          backgroundColor: color_primary,
-          splashColor: color_splash_light,
-          hoverColor: color_splash_light,
-          focusColor: color_splash_light,
+          backgroundColor: prefs.color_primary,
+          splashColor: prefs.color_splash,
+          hoverColor: prefs.color_splash,
+          focusColor: prefs.color_splash,
           child: Icon(
             Icons.add,
-            color: Colors.white,
-            size: 30,
+            color: prefs.color_background,
+            size: 40,
           ),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => CreateWishlistScreen()));

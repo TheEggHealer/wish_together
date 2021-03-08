@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/services/image_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
@@ -17,6 +18,7 @@ class UserDot extends StatelessWidget {
 
   ImageProvider image;
   UserData userData;
+  UserPreferences prefs;
   Color color;
   String name;
   bool owner;
@@ -28,6 +30,7 @@ class UserDot extends StatelessWidget {
   UserDot.fromUserData({UserData userData, this.size, this.owner = false, this.doShowName = false}) {
     color = userData.userColor;
     name = userData.name;
+    prefs = UserPreferences.from(userData);
 
     if(size == SIZE.MEDIUM || size == SIZE.LARGE || size == SIZE.PROFILE) {
       image = userData.profilePicture;
@@ -41,6 +44,7 @@ class UserDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
 
     double radius = 0;
     switch (size) {
@@ -90,19 +94,9 @@ class UserDot extends StatelessWidget {
           ]
         ),
         if(doShowName) SizedBox(height: 3),
-        if(doShowName) Row(
-          children: [
-            if(owner) Icon(
-              Icons.flag,
-              size: 15,
-              color: color_text_dark,
-            ),
-            SizedBox(width: 2),
-            if(name != null) Text(
-              name,
-              style: textstyle_dev,
-            )
-          ],
+        if(doShowName && name != null) Text(
+          name,
+          style: prefs.text_style_tiny,
         ),
       ],
     );
