@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/constants.dart';
@@ -19,6 +20,14 @@ class DatabaseService {
     return await collection.doc(documentId).set(data);
   }
 
+  Future deleteDocument(CollectionReference collection, String documentId) async {
+    debug("=========== DELETING DOCUMENT ===========");
+    debug("==== Collection: ${collection.id}");
+    debug("==== Document Id: $documentId");
+    await collection.doc(documentId).delete();
+    debug("=========================================");
+  }
+
   Future uploadData(CollectionReference collection, String documentId, Map<String, dynamic> data) async {
    _printUpload(collection, data);
     return await collection.doc(documentId).set(data, SetOptions(merge: true));
@@ -35,6 +44,17 @@ class DatabaseService {
     try {
       bool exists = false;
       await collection.doc(uid).get().then((doc) => exists = doc.exists);
+      return exists;
+    } catch(e) {
+      debug(e.toString());
+      return false;
+    }
+  }
+
+  Future<bool> checkDocumentExists(CollectionReference collection, String id) async {
+    try {
+      bool exists = false;
+      await collection.doc(id).get().then((doc) => exists = doc.exists);
       return exists;
     } catch(e) {
       debug(e.toString());

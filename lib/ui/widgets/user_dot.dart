@@ -89,6 +89,7 @@ class UserDot extends StatelessWidget {
             ),
           ]
         ),
+        if(doShowName) SizedBox(height: 3),
         if(doShowName) Row(
           children: [
             if(owner) Icon(
@@ -96,6 +97,7 @@ class UserDot extends StatelessWidget {
               size: 15,
               color: color_text_dark,
             ),
+            SizedBox(width: 2),
             if(name != null) Text(
               name,
               style: textstyle_dev,

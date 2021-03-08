@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/dialog/confirmation_dialog.dart';
 import 'package:wishtogether/screens/wishlists/create_item_screen.dart';
 import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
@@ -56,6 +57,65 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       if(!uids.contains(element)) return true;
     });
     return false;
+  }
+
+  Widget leaveButton() {
+    bool owner = widget.currentUser.uid == model.wisherUID;
+    if(owner) {
+      return IconButton(
+        icon: Icon(
+          CustomIcons.wish_together, //TODO ICON: Change to trashcan
+          color: Colors.white,
+        ),
+        onPressed: () async {
+          await showDialog(context: context, builder: (context) => ConfirmationDialog(
+            title: 'Delete wishlist',
+            confirmationText: 'This wishlist will be deleted and cannot be recovered. Are you sure?',
+            icon: CustomIcons.wish_together, //TODO ICON: Change to trashcan
+            callback: (confirm) async {
+              if(confirm) {
+                Navigator.pop(context);
+                await model.deleteWishlist();
+              }
+            },
+          ));
+        },
+        splashRadius: 20,
+        splashColor: color_splash_light,
+        hoverColor: color_splash_light,
+        highlightColor: color_splash_light,
+        focusColor: color_splash_light,
+      );
+    } else {
+      return IconButton(
+        icon: Icon(
+          CustomIcons.bell, //TODO ICON: Change to leave icon
+          color: Colors.white,
+        ),
+        onPressed: () async {
+          showDialog(context: context, builder: (context) => ConfirmationDialog(
+            title: 'Leave wishlist',
+            confirmationText: 'After leaving this wishlist, you have to be invited again if you change your mind. Are you sure?',
+            icon: CustomIcons.bell, //TODO ICON: Change to leave icon
+            callback: (confirm) async {
+              if(confirm) {
+                Navigator.pop(context);
+                widget.currentUser.wishlistIds.remove(model.id);
+                model.invitedUsers.remove(widget.currentUser.uid);
+                debug('Model invited users: ${model.invitedUsers}');
+                await widget.currentUser.uploadData();
+                await model.uploadList();
+              }
+            },
+          ));
+        },
+        splashRadius: 20,
+        splashColor: color_splash_light,
+        hoverColor: color_splash_light,
+        highlightColor: color_splash_light,
+        focusColor: color_splash_light,
+      );
+    }
   }
 
   @override
@@ -116,11 +176,13 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
         backgroundColor: color_primary,
         elevation: 10,
         title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               model.name,
               style: textstyle_appbar,
             ),
+            leaveButton(),
           ],
         ),
       ),

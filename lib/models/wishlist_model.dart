@@ -78,4 +78,9 @@ class WishlistModel {
     });
   }
 
+  Future<void> deleteWishlist() async {
+    DatabaseService dbs = DatabaseService();
+    await dbs.deleteDocument(dbs.wishlist, id);
+  }
+
 }

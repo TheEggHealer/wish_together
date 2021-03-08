@@ -14,7 +14,6 @@ import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/drawer/profile_screen.dart';
 import 'package:wishtogether/screens/drawer/settings_screen.dart';
 import 'package:wishtogether/screens/wishlists/solo_wishlist_screen.dart';
-import 'package:wishtogether/services/notification_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
@@ -74,13 +73,40 @@ class _HomeScreenState extends State<HomeScreen> {
   void setupLists(List<WishlistModel> models, UserData userData) {
     if(models != null) {
       List<WishlistModel> sorted = [];
-      userData.wishlistIds.forEach((element) {
-        //TODO: Error here when new list is created, (Bad state: No element)
-        sorted.add(models.firstWhere((model) => model.id == element));
+      List<String> wishlistsToRemove = [];
+      userData.wishlistIds.forEach((id) {
+        sorted.add(
+          models.firstWhere((model) => model.id == id, orElse: () {
+            debug('Wishlist doesn\'t exist, should be removed: $id');
+            wishlistsToRemove.add(id);
+            return null;
+          })
+        );
       });
-      wishlists = sorted;
+
+      if(wishlistsToRemove.isNotEmpty) deleteNonExistingLists(wishlistsToRemove, userData);
+
+      wishlists = sorted.where((model) => model != null).toList();
     }
     else models = [];
+  }
+
+  Future<void> deleteNonExistingLists(List<String> ids, UserData user) async {
+    List<String> toRemove = [];
+    DatabaseService dbs = DatabaseService();
+    for(int i = 0; i < ids.length; i++) {
+      if(!(await dbs.checkDocumentExists(dbs.wishlist, ids[i]))) {
+        toRemove.add(ids[i]);
+      }
+    }
+
+    if(toRemove.isNotEmpty) {
+      toRemove.forEach((id) {
+        user.wishlistIds.remove(id);
+      });
+
+      user.uploadData();
+    }
   }
 
   Widget notificationBell() {

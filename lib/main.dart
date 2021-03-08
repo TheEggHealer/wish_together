@@ -62,6 +62,7 @@ class WishTogether extends StatelessWidget {
       builder: (context, widget) {
 
         UserData userData = Provider.of<UserData>(context);
+        debug('################ Wrapping with new userData! ${userData.wishlistIds}');
 
         return wishlistsWrapper(userData, dbs, context);
 
@@ -70,7 +71,7 @@ class WishTogether extends StatelessWidget {
   }
 
   Widget wishlistsWrapper(UserData userData, DatabaseService dbs, BuildContext context) {
-
+    debug('################ Wrapping with new wishlists! ${userData.wishlistIds.length}');
     return StreamProvider<List<WishlistModel>>.value(
       value: dbs.wishlistDocs(userData == null ? [] : userData.wishlistIds),
       child: GestureDetector(
