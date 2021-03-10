@@ -51,15 +51,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
   void loadClaimedUsers() async {
     List<UserData> updatedList = [];
     for(String uid in widget.model.claimedUsers) {
-      if(GlobalMemory.currentlyLoadedUsers.containsKey(uid)) {
-        updatedList.add(GlobalMemory.currentlyLoadedUsers[uid]);
-        debug('Got user from currentlyLoadedUsers map');
-      } else {
-        UserData user = await UserData.from(uid);
-        updatedList.add(user);
-        GlobalMemory.currentlyLoadedUsers.putIfAbsent(uid, () => user);
-        debug('User was not in currentlyLoadedUsers map, had to add it');
-      }
+      updatedList.add(await GlobalMemory.getUserData(uid));
     }
     claimedUsers = updatedList;
 
@@ -81,6 +73,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
       child: UserDot.fromUserData(
         userData: e,
         size: SIZE.SMALL,
+        showPicture: false,
       ),
     )).toList();
 

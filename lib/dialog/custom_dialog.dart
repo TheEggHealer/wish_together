@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 
 class CustomDialog extends StatefulWidget {
+
+  UserPreferences prefs;
 
   IconData icon;
   String title;
@@ -13,7 +16,7 @@ class CustomDialog extends StatefulWidget {
   Function onAccept;
   Function onDeny;
 
-  CustomDialog({this.title, this.icon, this.content, this.acceptButton, this.denyButton, this.onAccept, this.onDeny});
+  CustomDialog({this.prefs, this.title, this.icon, this.content, this.acceptButton, this.denyButton, this.onAccept, this.onDeny});
 
   @override
   _CustomDialogState createState() => _CustomDialogState();
@@ -24,6 +27,7 @@ class _CustomDialogState extends State<CustomDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+      backgroundColor: widget.prefs.color_background,
       child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(16),
@@ -34,13 +38,13 @@ class _CustomDialogState extends State<CustomDialog> {
                 children: [
                   Icon(
                     widget.icon,
-                    color: color_text_dark,
+                    color: widget.prefs.color_icon,
                     size: 30,
                   ),
                   SizedBox(width: 10,),
                   Text(
                     widget.title,
-                    style: textstyle_header,
+                    style: widget.prefs.text_style_sub_sub_header,
                   )
                 ],
               ),
@@ -49,24 +53,22 @@ class _CustomDialogState extends State<CustomDialog> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  if(widget.denyButton != null) claimButton(
+                  if(widget.denyButton != null) customButton(
                     text: widget.denyButton,
-                    fillColor: color_text_error,
+                    fillColor: widget.prefs.color_deny,
                     onTap: () {
                       widget.onDeny();
                     },
-                    splashColor: color_splash_light,
-                    textColor: color_text_light,
+                    textColor: widget.prefs.color_background,
                   ),
                   SizedBox(width: 10),
-                  if(widget.acceptButton != null) claimButton(
+                  if(widget.acceptButton != null) customButton(
                     text: widget.acceptButton,
-                    fillColor: color_claim_green,
+                    fillColor: widget.prefs.color_accept,
                     onTap: () {
                       widget.onAccept();
                     },
-                    splashColor: color_splash_light,
-                    textColor: color_text_light,
+                    textColor: widget.prefs.color_background,
                   ),
                 ],
               )

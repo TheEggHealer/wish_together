@@ -8,13 +8,16 @@ import 'package:wishtogether/dialog/color_picker_dialog.dart';
 import 'package:wishtogether/dialog/invite_to_wishlist_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/services/invitation_service.dart';
+import 'package:wishtogether/ui/constant_text_styles.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/color_chooser_square.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
+import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 
@@ -28,7 +31,8 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
   UserData currentUser;
   TextEditingController titleController = TextEditingController();
   Color color = Colors.green[300];
-  int toggleIndex = 0;
+  bool soloWishlist = true;
+  List<bool> isSelected = [true, false];
   List<String> invitedUsers = [];
   List<UserData> loadedFriends = [];
 
@@ -43,7 +47,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
     setState(() {});
   }
 
-  Widget friends() {
+  Widget friends(UserPreferences prefs) {
 
     List<Widget> friendRows = loadedFriends.map((e) {
 
@@ -54,7 +58,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
           SizedBox(width: 10,),
           Text(
             e.name,
-            style: textstyle_header,
+            style: prefs.text_style_sub_sub_header,
           ),
           //TODO add a FAB to un-invite user
         ],
@@ -66,145 +70,150 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
     );
   }
 
+  void setSelected(int index) {
+    debug(index);
+    soloWishlist = index == 0;
+    isSelected = [soloWishlist, !soloWishlist];
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
 
     currentUser = Provider.of<UserData>(context);
+    UserPreferences prefs = UserPreferences.from(currentUser);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: color_primary,
-        elevation: 10,
-        title: Text(
-          'Create new',
-          style: textstyle_appbar,
+    return CustomScaffold(
+      prefs: prefs,
+      backButton: true,
+      title: 'Create',
+      body: Container(
+        padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '• Title',
+              style: prefs.text_style_sub_header,
+            ),
+            SizedBox(height: 5),
+            customTextField(
+              prefs: prefs,
+              multiline: false,
+              controller: titleController,
+              helperText: 'Title for wishlist',
+            ),
+            SizedBox(height: 20),
+            Text(
+              '• Color',
+              style: prefs.text_style_sub_header,
+            ),
+            SizedBox(height: 5),
+            ColorChooserSquare(
+              color: color,
+              size: 90,
+              radius: 16,
+              onTap: () {
+                showDialog(context: context, builder: (context) => ColorPickerDialog(
+                  prefs: prefs,
+                  currentColor: color,
+                  onDone: (color) {
+                    setState(() {
+                      this.color = color;
+                    });
+                  },
+                ));
+              },
+            ),
+            SizedBox(height: 20),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Text(
+                  '• Type',
+                  style: prefs.text_style_sub_header,
+                ),
+                SizedBox(width: 10,),
+                IconButton(
+                  icon: Icon(CustomIcons.help),
+                  color: prefs.color_icon,
+                  //splashColor: prefs.color_splash,
+                  //focusColor: prefs.color_splash,
+                  //hoverColor: prefs.color_splash,
+                  //highlightColor: prefs.color_splash,
+                  onPressed: () {debug('Help'); }, //TODO Show a help dialog
+                  splashRadius: 20,
+                ),
+              ],
+            ),
+            SizedBox(height: 5),
+            SizedBox(
+              height: 28,
+              child: ToggleButtons(
+                borderColor: prefs.color_comment,
+                fillColor: prefs.color_background,
+                selectedBorderColor: prefs.color_accept,
+                selectedColor: prefs.color_accept,
+                color: prefs.color_accept,
+                highlightColor: prefs.color_splash,
+                hoverColor: prefs.color_splash,
+                focusColor: prefs.color_splash,
+                splashColor: prefs.color_splash,
+                borderRadius: BorderRadius.all(Radius.circular(4)),
+                isSelected: isSelected,
+                borderWidth: 2,
+                onPressed: setSelected,
+                children: [
+                  SizedBox(
+                    width: 80,
+                    child: Center(
+                      child: Text(
+                        'Solo',
+                        style: prefs.text_style_bread,
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 80,
+                    child: Center(
+                      child: Text(
+                        'Group',
+                        style: prefs.text_style_bread,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              '• Invite friends',
+              style: prefs.text_style_sub_header,
+            ),
+            SizedBox(height: 5),
+            customButton(
+              text: 'Invite',
+              fillColor: prefs.color_accept,
+              textColor: prefs.color_background,
+              splashColor: prefs.color_splash,
+              onTap: () => showDialog(context: context, builder: (context) => InviteToWishlistDialog(prefs, currentUser, setInvited, invitedUsers)),
+            ),
+            SizedBox(height: 10),
+            if(loadedFriends.isNotEmpty) friends(prefs),
+          ],
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Title',
-                style: textstyle_header,
-              ),
-              SizedBox(height: 10),
-              textFieldComment(
-                onChanged: (text) {
-
-                },
-                multiline: false,
-                controller: titleController,
-                textColor: color_text_comment,
-                activeColor: color_primary,
-                borderColor: color_text_dark_sub,
-                errorColor: color_text_error,
-                helperText: 'Title for wishlist',
-                textStyle: textstyle_comment,
-                borderRadius: 30
-              ),
-              SizedBox(height: 20),
-              Text(
-                'Color',
-                style: textstyle_header,
-              ),
-              SizedBox(height: 10),
-              ColorChooserSquare(
-                color: color,
-                size: 80,
-                radius: 16,
-                onTap: () {
-                  showDialog(context: context, builder: (context) => ColorPickerDialog(
-                    currentColor: color,
-                    onDone: (color) {
-                      setState(() {
-                        this.color = color;
-                      });
-                    },
-                  ));
-                },
-              ),
-              SizedBox(height: 20),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    'Type',
-                    style: textstyle_header,
-                  ),
-                  SizedBox(width: 10,),
-                  IconButton(
-                    icon: Icon(CustomIcons.help),
-                    onPressed: () {},
-                    splashRadius: 20,
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              ToggleSwitch(
-                labels: [
-                  'Solo',
-                  'Group'
-                ],
-                icons: [
-                  CustomIcons.profile,
-                  CustomIcons.settings
-                ],
-                minWidth: 90,
-                activeBgColor: color_primary,
-                activeFgColor: color_text_light,
-                inactiveBgColor: color_text_dark_sub,
-                inactiveFgColor: color_text_light,
-                onToggle: (index) {
-                  setState(() {
-                    toggleIndex = index;
-                  });
-                },
-                initialLabelIndex: toggleIndex,
-              ),
-              SizedBox(height: 20),
-              Divider(
-                color: color_divider_dark,
-                height: 0,
-              ),
-              SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Invited users',
-                    style: textstyle_header,
-                  ),
-                  claimButton(
-                    onTap: () {
-                      showDialog(context: context, builder: (context) => InviteToWishlistDialog(currentUser, setInvited, invitedUsers));
-                    },
-                    text: 'Invite',
-                    textColor: color_text_light,
-                    splashColor: color_splash_light,
-                    fillColor: color_claim_green,
-                  )
-                ],
-              ),
-              SizedBox(height: 10),
-              if(loadedFriends.isNotEmpty) friends(),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: Padding(
+      fab: Padding(
         padding: EdgeInsets.only(bottom: AdService.adHeight),
         child: FloatingActionButton(
-          backgroundColor: color_primary,
-          splashColor: color_splash_light,
-          hoverColor: color_splash_light,
-          focusColor: color_splash_light,
+          backgroundColor: prefs.color_primary,
+          splashColor: prefs.color_splash,
+          hoverColor: prefs.color_splash,
+          focusColor: prefs.color_splash,
           child: Icon(
             Icons.check,
-            color: Colors.white,
-            size: 30,
+            color: prefs.color_background,
+            size: 40,
           ),
           onPressed: () async {
             if(currentUser != null && validate()) {
@@ -244,7 +253,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
     WishlistModel model = WishlistModel.create(
       color: color.value,
       name: titleController.text,
-      type: toggleIndex == 0 ? 'solo' : 'group',
+      type: soloWishlist ? 'solo' : 'group',
       parent: 'null',
       wisherUID: currentUser.uid,
       dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),

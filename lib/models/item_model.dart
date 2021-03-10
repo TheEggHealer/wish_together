@@ -9,13 +9,13 @@ class ItemModel {
   WishlistModel wishlist;
   Map<String, dynamic> raw;
   String itemName;
+  String description = '';
   List<CommentModel> comments;
   List<CommentModel> hiddenComments;
-  double cost;
+  double cost; //-1 if no cost is set
   List<String> claimedUsers;
   String wisherUID;
   String addedByUID;
-  bool hasDescription;
 
   ItemModel({this.raw, this.wishlist, this.wisherUID}) {
     _deconstructData();
@@ -23,14 +23,15 @@ class ItemModel {
 
   ItemModel.empty() {
     itemName = '--';
+    description = '';
     comments = [];
     hiddenComments = [];
-    int cost = 0;
+    cost = -1;
     claimedUsers = [];
     wisherUID = 'no_user';
   }
 
-  ItemModel.create({this.wishlist, this.itemName, this.cost, this.addedByUID}) {
+  ItemModel.create({this.wishlist, this.itemName, this.cost, this.addedByUID, this.description}) {
     wisherUID = wishlist.wisherUID;
     comments = [];
     hiddenComments = [];
@@ -54,8 +55,8 @@ class ItemModel {
     hiddenComments = (raw['hidden_comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();
     cost = double.parse(raw['cost'].toString());
     claimedUsers = List<String>.from(raw['claimed_users']);
-    hasDescription = raw['has_description'];
-    addedByUID = raw['added_by_uid'];
+    addedByUID = raw['added_by_uid'] ?? '';
+    description = raw['description'] ?? '';
   }
 
   toggleUserClaim(UserData user) {

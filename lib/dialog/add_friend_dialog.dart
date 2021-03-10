@@ -6,6 +6,7 @@ import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/custom_dialog.dart';
 import 'package:wishtogether/models/notification_model.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/services/invitation_service.dart';
@@ -16,9 +17,10 @@ import 'package:wishtogether/ui/widgets/custom_textfields.dart';
 
 class AddFriendDialog extends StatefulWidget {
 
+  UserPreferences prefs;
   UserData currentUser;
 
-  AddFriendDialog(this.currentUser);
+  AddFriendDialog(this.currentUser, this.prefs);
 
   @override
   _AddFriendDialogState createState() => _AddFriendDialogState();
@@ -34,33 +36,31 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
   @override
   Widget build(BuildContext context) {
     return CustomDialog(
+      prefs: widget.prefs,
       title: 'Send friend request',
-      icon: CustomIcons.wish_together,
+      icon: CustomIcons.invite,
       content: Form(
         key: _formKey,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            textFieldComment(
+            customTextField(
+              prefs: widget.prefs,
+              multiline: false,
+              validator: (val) => isEmail(val) ? null : 'Not a valid email or friend code',
               onChanged: (val) {
                 this._input = val;
               },
-              textColor: color_text_dark,
-              activeColor: color_primary,
-              borderColor: color_text_dark_sub,
-              errorColor: color_text_error,
               helperText: 'Email or friend code',
-              textStyle: textstyle_subheader,
-              borderRadius: 30
             ),
             SizedBox(height: 10),
             if(loading) SpinKitChasingDots(
               size: 20,
-              color: color_loading_spinner,
+              color: widget.prefs.color_spinner,
             ) else SizedBox(height: 20),
             Text(
               errorMessage,
-              style: textstyle_list_title_warning,
+              style: widget.prefs.text_style_error,
             )
           ],
         ),

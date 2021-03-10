@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/screens/drawer/drawer.dart';
 import 'package:wishtogether/screens/drawer/notifications_screen.dart';
 import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
@@ -113,189 +114,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Widget notificationBell() {
-    return Material(
-      color: Colors.transparent,
-      child: Stack(
-          children: [
-            IconButton(
-              icon: Icon(
-                CustomIcons.bell,
-                color: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<UserData>.value(
-                  value: DatabaseService(uid: userData.uid).userDocument,
-                  child: NotificationScreen(),
-                )));
-              },
-              splashRadius: 20,
-              splashColor: color_splash_light,
-              hoverColor: color_splash_light,
-              highlightColor: color_splash_light,
-              focusColor: color_splash_light,
-            ),
-            if(userData.nbrOfUnseenNotifications > 0) Positioned(
-              right: 5,
-              top: 5,
-              child: Container(
-                padding: EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: color_text_error,
-                ),
-                constraints: BoxConstraints(
-                  minWidth: 16,
-                  minHeight: 16,
-                ),
-                child: Center(
-                  child: Text(
-                      '${userData.nbrOfUnseenNotifications}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      )
-                  ),
-                ),
-              ),
-            )
-          ]
-      ),
-    );
-  }
-
-  Widget drawer(BuildContext context, AuthService auth) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            child: Container(
-              padding: EdgeInsets.only(bottom: 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  UserDot.fromUserData(userData: userData, size: SIZE.LARGE),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        userData.name,
-                        style: textstyle_drawer_header
-                      ),
-                      notificationBell(),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            decoration: BoxDecoration(
-              color: color_primary
-            ),
-          ),
-          ListTile(
-              title: Row(
-                children: [
-                  Icon(
-                    CustomIcons.profile,
-                    color: Colors.black,
-                  ),
-                  SizedBox(width: 10),
-                  Text('Profile', style: textstyle_list_title),
-                ],
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<UserData>.value(
-                  value: DatabaseService(uid: userData.uid).userDocument,
-                  child: ProfileScreen(),
-                )));
-              }
-          ),
-          ListTile(
-              title: Row(
-                children: [
-                  Icon(
-                    CustomIcons.settings,
-                    color: Colors.black,
-                  ),
-                  SizedBox(width: 10),
-                  Text('Settings', style: textstyle_list_title),
-                ],
-              ),
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<UserData>.value(
-                  value: DatabaseService(uid: userData.uid).userDocument,
-                  child: SettingsScreen(),
-                )));              }
-          ),
-          ListTile(
-              title: Row(
-                children: [
-                  Icon(
-                    CustomIcons.help,
-                    color: Colors.black,
-                  ),
-                  SizedBox(width: 10),
-                  Text('Help', style: textstyle_list_title),
-                ],
-              ),
-              onTap: () {
-                debug('Go to profile');
-              }
-          ),
-          ListTile(
-            title: Row(
-              children: [
-                Icon(
-                  CustomIcons.logout,
-                  color: Colors.black,
-                ),
-                SizedBox(width: 10),
-                Text('Logout', style: textstyle_list_title),
-              ],
-            ),
-            onTap: () {
-              onLeave(DatabaseService(uid: userData.uid));
-              auth.signOut();
-            },
-          ),
-          SizedBox(height: 60),
-          Center(
-            child: Column(
-              children: [
-                Icon(
-                  CustomIcons.wish_together,
-                  color: color_splash_dark,
-                  size: 100,
-                ),
-                Text(
-                    'Wish Together',
-                    style: textstyle_subheader
-                ),
-                SizedBox(height: 10),
-                Text(
-                    'Build number: 1.0.3+1',
-                    style: textstyle_dev
-                ),
-                Text(
-                    'Build date: 11-01-2021',
-                    style: textstyle_dev
-                ),
-                SizedBox(height: 5),
-                Text(
-                    '© Copyright Jonathan Runeke 2021',
-                    style: textstyle_dev
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
 
@@ -315,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return CustomScaffold(
       prefs: prefs,
       title: 'Wish Together',
-      body: Container(
+      body: Container( //TODO Maybe add padding, at least to bottom to compromise for fab and ads
         child: DragAndDropGridView(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
@@ -356,7 +174,10 @@ class _HomeScreenState extends State<HomeScreen> {
           },
         ),
       ),
-      drawer: drawer(context, auth),
+      drawer: HomeDrawer.drawer(context, auth, userData, () {
+        onLeave(DatabaseService(uid: userData.uid));
+        auth.signOut();
+      }),
     );
   }
 }

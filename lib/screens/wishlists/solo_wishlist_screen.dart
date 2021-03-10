@@ -186,6 +186,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
               color: prefs.color_divider,
               height: 0,
             ),
+            SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -202,6 +203,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
                 )
               ],
             ),
+            SizedBox(height: 10),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(

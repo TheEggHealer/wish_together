@@ -4,8 +4,11 @@ import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/comment_model.dart';
 import 'package:wishtogether/models/item_model.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/ad_service.dart';
+import 'package:wishtogether/ui/widgets/custom_buttons.dart';
+import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
 
 class CreateItemScreen extends StatefulWidget {
@@ -27,6 +30,7 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   bool hasCost = false;
   bool hasDescription = false;
 
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   bool validate() {
     return true;
@@ -54,8 +58,8 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       addedByUID: currentUser.uid,
     );
 
-    if(hasDescription) {
-      item.hasDescription = true;
+    if(hasDescription) { //TODO What happens here? (hasDescription should be deprecated)
+      //item.hasDescription = true;
       CommentModel description = await CommentModel.from(descriptionController.text, currentUser);
       if(currentUser.uid == item.wisherUID) item.comments.add(description);
       else item.hiddenComments.add(description);
@@ -67,94 +71,112 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   Widget build(BuildContext context) {
 
     currentUser = Provider.of<UserData>(context);
+    UserPreferences prefs = UserPreferences.from(currentUser);
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: color_primary,
-        elevation: 10,
-        title: Text(
-          'Create new item',
-          style: textstyle_appbar,
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: EdgeInsets.all(16),
+    return CustomScaffold(
+      prefs: prefs,
+      backButton: true,
+      title: 'New Item',
+      body: Container(
+        padding: EdgeInsets.all(16), //TODO Check this padding (Ad compatible?)
+        child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Item',
-                style: textstyle_header,
+                '• Title',
+                style: prefs.text_style_sub_header,
               ),
-              SizedBox(height: 10),
-              textFieldComment(
-                onChanged: (text) {
-
-                },
+              SizedBox(height: 5),
+              customTextField(
+                validator: (val) => val.isNotEmpty ? null : 'Item must have a title',
+                prefs: prefs,
                 multiline: false,
                 controller: itemController,
-                textColor: color_text_comment,
-                activeColor: color_primary,
-                borderColor: color_text_dark_sub,
-                errorColor: color_text_error,
-                textStyle: textstyle_comment,
-                borderRadius: 30
               ),
               SizedBox(height: 20),
-              Text(
-                'Estimated cost',
-                style: textstyle_header,
+              Row(
+                children: [
+                  Text(
+                    '• Description',
+                    style: prefs.text_style_sub_header,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    '(Optional)',
+                    style: prefs.text_style_bread,
+                  ),
+                ],
               ),
-              SizedBox(height: 10),
-              textFieldComment(
-                onChanged: (val) => hasCost = isNumeric(val),
+              SizedBox(height: 5),
+              customTextField(
+                prefs: prefs,
                 multiline: false,
-                controller: costController,
-                textColor: color_text_comment,
-                activeColor: color_primary,
-                borderColor: color_text_dark_sub,
-                errorColor: color_text_error,
-                helperText: 'Estimated cost of item (optional)',
-                textStyle: textstyle_comment,
-                borderRadius: 30
+                controller: descriptionController,
               ),
               SizedBox(height: 20),
-              Text(
-                'Description',
-                style: textstyle_header,
+              Row(
+                children: [
+                  Text(
+                    '• Estimated Cost',
+                    style: prefs.text_style_sub_header,
+                  ),
+                  SizedBox(width: 10),
+                  Text(
+                    '(Optional)',
+                    style: prefs.text_style_bread,
+                  ),
+                ],
               ),
-              SizedBox(height: 10),
-              textFieldComment(
-                onChanged: (val) => hasDescription = val.isNotEmpty,
+              SizedBox(height: 5),
+              customTextField(
+                prefs: prefs,
                 multiline: true,
-                controller: descriptionController,
-                textColor: color_text_comment,
-                activeColor: color_primary,
-                borderColor: color_text_dark_sub,
-                errorColor: color_text_error,
-                helperText: 'Describe the item (optional)',
-                textStyle: textstyle_comment,
-                borderRadius: 30
+                controller: costController,
               ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    '• Photo',
+                    style: prefs.text_style_sub_header,
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      '(Optional)',
+                      style: prefs.text_style_bread,
+                    ),
+                  ),
+                  customButton(
+                    text: 'Choose',
+                    onTap: () {},
+                    fillColor: prefs.color_accept,
+                    splashColor: prefs.color_splash,
+                    textColor: prefs.color_background,
+                  ),
+                ],
+              ),
+              SizedBox(height: 5),
             ],
           ),
         ),
       ),
-      floatingActionButton: Padding(
+      fab: Padding(
         padding: EdgeInsets.only(bottom: AdService.adHeight),
         child: FloatingActionButton(
-          backgroundColor: color_primary,
-          splashColor: color_splash_light,
-          hoverColor: color_splash_light,
-          focusColor: color_splash_light,
+          backgroundColor: prefs.color_primary,
+          splashColor: prefs.color_splash,
+          hoverColor: prefs.color_splash,
+          focusColor: prefs.color_splash,
           child: Icon(
             Icons.check,
-            color: Colors.white,
-            size: 30,
+            color: prefs.color_background,
+            size: 40,
           ),
           onPressed: () async {
-            if(currentUser != null && validate()) {
+            if(currentUser != null && _formKey.currentState.validate()) {
               await onDone();
               Navigator.pop(context);
             } else debug('Current user is null');

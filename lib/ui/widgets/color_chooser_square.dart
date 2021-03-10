@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/ui/color_correction.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 
 class ColorChooserSquare extends StatefulWidget {
 
@@ -41,7 +42,8 @@ class _ColorChooserSquareState extends State<ColorChooserSquare> {
             height: widget.size,
             child: Center(
               child: Icon(
-                Icons.colorize,
+                CustomIcons.color_picker,
+                size: 30,
                 color: ColorCorrection.useDarkColor(widget.color) ? color_text_dark : color_text_light,
               ),
             ),

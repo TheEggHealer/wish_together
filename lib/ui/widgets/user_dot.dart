@@ -23,16 +23,17 @@ class UserDot extends StatelessWidget {
   String name;
   bool owner;
   bool doShowName;
+  bool showPicture;
   final SIZE size;
 
   UserDot({this.color, this.size, this.owner = false, this.doShowName = false});
 
-  UserDot.fromUserData({UserData userData, this.size, this.owner = false, this.doShowName = false}) {
+  UserDot.fromUserData({UserData userData, this.size, this.owner = false, this.showPicture = true, this.doShowName = false}) {
     color = userData.userColor;
     name = userData.name;
     prefs = UserPreferences.from(userData);
 
-    if(size == SIZE.MEDIUM || size == SIZE.LARGE || size == SIZE.PROFILE) {
+    if(showPicture) {
       image = userData.profilePicture;
     }
   }
@@ -52,14 +53,14 @@ class UserDot extends StatelessWidget {
       case SIZE.SMALL: radius = 10; break;
       case SIZE.MEDIUM: radius = 20; break;
       case SIZE.LARGE: radius = 30; break;
-      case SIZE.PROFILE: radius = 60; break;
+      case SIZE.PROFILE: radius = 70; break;
       default: radius = 20; break;
     }
 
     double picFraction = 1;
     switch (size) {
       case SIZE.AUTHOR: picFraction = 0; break;
-      case SIZE.SMALL: picFraction = 0; break;
+      case SIZE.SMALL: picFraction = 0.9; break;
       case SIZE.MEDIUM: picFraction = 0.9; break;
       case SIZE.LARGE: picFraction = 0.93; break;
       case SIZE.PROFILE: picFraction = 0.95; break;

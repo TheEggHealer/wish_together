@@ -14,7 +14,7 @@ class UserPreferences {
       darkMode = false;
       debug('UserData was null, setting to light mode...');
     } else {
-      this.darkMode = userData.firstTime;
+      this.darkMode = userData.settings['dark_mode'] ?? false;
     }
   }
 
@@ -29,6 +29,11 @@ class UserPreferences {
       fontFamily: 'OpenSans',
       fontSize: 22,
       fontWeight: FontWeight.w600,
+      color: color_sub_header
+  );
+  get text_style_sub_sub_header => TextStyle(
+      fontFamily: 'OpenSans',
+      fontSize: 16,
       color: color_sub_header
   );
   get text_style_bread => TextStyle(
@@ -61,20 +66,50 @@ class UserPreferences {
     fontSize: 10,
     color: color_bread,
   );
+  get text_style_drawer_header => TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 20,
+    color: color_drawer_header,
+  );
+  get text_style_drawer_list => TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    color: color_sub_header,
+  );
+  get text_style_error => TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    color: color_deny,
+  );
+  get text_style_settings => TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    color: color_bread,
+  );
+  get text_style_settings_warning => TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 16,
+    color: color_deny,
+  );
 
 
   ///Colors
-  get color_primary    => darkMode ? color_dark_primary : color_light_primary;
-  get color_background => darkMode ? color_dark_background : color_light_background;
-  get color_sub_header => darkMode ? color_dark_sub_header : color_light_sub_header;
-  get color_bread      => darkMode ? color_dark_bread : color_light_bread;
-  get color_card       => darkMode ? color_dark_card : color_light_card;
-  get color_comment    => darkMode ? color_dark_comment : color_light_comment;
-  get color_accept     => darkMode ? color_dark_accept : color_light_accept;
-  get color_deny       => darkMode ? color_dark_deny : color_light_deny;
-  get color_border     => darkMode ? color_dark_border : color_light_border;
-  get color_icon       => darkMode ? color_dark_icon : color_light_icon;
-  get color_divider    => darkMode ? color_dark_divider : color_light_divider;
-  get color_splash     => darkMode ? color_dark_splash : color_light_splash;
+  get color_primary       => darkMode ? color_dark_primary       : color_light_primary;
+  get color_background    => darkMode ? color_dark_background    : color_light_background;
+  get color_sub_header    => darkMode ? color_dark_sub_header    : color_light_sub_header;
+  get color_bread         => darkMode ? color_dark_bread         : color_light_bread;
+  get color_card          => darkMode ? color_dark_card          : color_light_card;
+  get color_comment       => darkMode ? color_dark_comment       : color_light_comment;
+  get color_accept        => darkMode ? color_dark_accept        : color_light_accept;
+  get color_deny          => darkMode ? color_dark_deny          : color_light_deny;
+  get color_border        => darkMode ? color_dark_border        : color_light_border;
+  get color_icon          => darkMode ? color_dark_icon          : color_light_icon;
+  get color_divider       => darkMode ? color_dark_divider       : color_light_divider;
+  get color_splash        => darkMode ? color_dark_splash        : color_light_splash;
+  get color_drawer_top    => darkMode ? color_dark_drawer_top    : color_light_drawer_top;
+  get color_drawer_header => darkMode ? color_dark_drawer_header : color_light_drawer_header;
+  get color_drawer_logo   => darkMode ? color_dark_drawer_logo   : color_light_drawer_logo;
+  get color_spinner       => darkMode ? color_dark_spinner       : color_light_spinner;
+  get color_switch_track  => darkMode ? color_dark_switch_track  : color_light_switch_track;
 
 }

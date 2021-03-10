@@ -93,7 +93,7 @@ RaisedButton claimButton({String text, Color fillColor, Color textColor, Color s
   );
 }
 
-ButtonTheme customButton({String text, Color fillColor, Color textColor, Color splashColor, double width, Function onTap, double borderRadius = 18.0}) {
+Widget customButton({String text, Color fillColor, Color textColor, Color splashColor, double width = 30, Function onTap, double borderRadius = 18.0}) {
   if(splashColor == null) splashColor = color_splash_light;
 
   Widget child;
@@ -107,21 +107,43 @@ ButtonTheme customButton({String text, Color fillColor, Color textColor, Color s
     ),
   );
 
-  return ButtonTheme(
+  return SizedBox(
     height: 28,
-    child: RaisedButton(
-      elevation: 10,
+    child: ButtonTheme(
+      height: 28,
+      minWidth: width,
+      child: RaisedButton(
+        elevation: 5,
+        onPressed: onTap,
+        child: child,
+        color: fillColor,
+        highlightColor: splashColor,
+        focusColor: splashColor,
+        hoverColor: splashColor,
+        textColor: color_text_light,
+        splashColor: splashColor,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
+        ),
+      ),
+    ),
+  );
+}
+
+Widget circleButton({Icon icon, Color fillColor, Color splashColor, Function onTap}) {
+  return SizedBox(
+    width: 28,
+    height: 28,
+    child: RawMaterialButton(
       onPressed: onTap,
-      child: child,
-      color: fillColor,
-      highlightColor: splashColor,
+      elevation: 5,
+      fillColor: fillColor,
+      child: icon,
+      shape: CircleBorder(),
       focusColor: splashColor,
       hoverColor: splashColor,
-      textColor: color_text_light,
+      highlightColor: splashColor,
       splashColor: splashColor,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(borderRadius)),
-      ),
     ),
   );
 }
