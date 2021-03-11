@@ -10,7 +10,7 @@ class CommentModel {
   String raw;
   String content;
   String authorUID;
-  String date;
+  DateTime date;
 
   CommentModel({this.raw}) {
     _deconstructData();
@@ -27,20 +27,20 @@ class CommentModel {
     //debug('Deconstructing comment from: $raw');
     List<String> data = raw.split('*\\');
     authorUID = data[0];
-    date = data[1];
+    date = DateFormat('HH:mm, MMMM d, yyyy').parse(data[1]);
     content = data[2];
   }
 
+  String get timeString {
+    return DateFormat('HH:mm').format(date);
+  }
+
+  String get dateString {
+    return DateFormat('MMM d').format(date);
+  }
+
   Future<UserData> author(WishlistModel wishlist) async {
-    if(GlobalMemory.currentlyLoadedUsers.containsKey(authorUID)) {
-      debug('Got author from currentlyLoadedUsers');
-      return GlobalMemory.currentlyLoadedUsers[authorUID];
-    } else {
-      debug('Author was not in currentlyLoadedUsers, had to add it, MAP=${GlobalMemory.currentlyLoadedUsers}');
-      UserData user = await UserData.from(authorUID);
-      GlobalMemory.currentlyLoadedUsers.putIfAbsent(authorUID, () => user);
-      return user;
-    }
+    return await GlobalMemory.getUserData(authorUID);
   }
 
 

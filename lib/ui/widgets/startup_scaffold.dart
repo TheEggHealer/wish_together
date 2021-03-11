@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/ui/clippers/startup_clipper.dart';
 
 class StartupScaffold extends StatefulWidget {
@@ -20,32 +21,34 @@ class _StartupScaffoldState extends State<StartupScaffold> {
     StartupClipper clipper = StartupClipper();
     double width = MediaQuery.of(context).size.width;
     double height = MediaQuery.of(context).size.height;
+    double clipHeight = height * C_startup_scaffold_height;
+    double padding = clipHeight - clipHeight * C_startup_scaffold_diff;
 
-    return Container(
-      width: width,
-      height: height,
-      child: LayoutBuilder(
-        builder: (context, box) {
+    UserPreferences prefs = UserPreferences(darkMode: false);
 
-          double clip_height = box.maxHeight * C_startup_scaffold_height;
-          double padding = clip_height - clip_height * C_startup_scaffold_diff;
-
-          return Stack(
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          width: width,
+          constraints: BoxConstraints(
+            minHeight: height,
+          ),
+          child: Stack(
             children: [
               Container(
-                width: double.infinity,
-                height: double.infinity,
-                color: color_background,
-                child: Container(
-                  padding: EdgeInsets.only(top: padding),
-                  child: widget.body,
+                constraints: BoxConstraints(
+                  minWidth: width,
+                  minHeight: height,
                 ),
+                color: prefs.color_background,
+                padding: EdgeInsets.only(top: padding),
+                child: widget.body,
               ),
               ClipPath(
                 clipper: clipper,
                 child: Container(
                   width: double.infinity,
-                  height: box.maxHeight * C_startup_scaffold_height,
+                  height: height * C_startup_scaffold_height,
                   decoration: BoxDecoration(
                     gradient: startup_scaffold_gradient,
                   ),
@@ -53,8 +56,8 @@ class _StartupScaffoldState extends State<StartupScaffold> {
                 ),
               )
             ],
-          );
-        }
+          ),
+        ),
       ),
     );
   }

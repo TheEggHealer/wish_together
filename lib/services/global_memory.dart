@@ -7,8 +7,8 @@ class GlobalMemory {
 
   static get currentlyLoadedUsers {
     _currentlyLoadedUsers.forEach((uid, user) {
-      debug('Fetching for: $uid');
       if(user.fetchAgain()) {
+        debug('Fetching for: $uid');
         user.timeFetched = DateTime.now();
         user.fetch();
       }

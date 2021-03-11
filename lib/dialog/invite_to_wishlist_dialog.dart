@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/custom_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
@@ -13,12 +14,13 @@ import 'package:wishtogether/ui/widgets/user_dot.dart';
 
 class InviteToWishlistDialog extends StatefulWidget {
 
+  UserPreferences prefs;
   UserData currentUser;
   WishlistModel wishlist;
   Function callback;
   List<String> alreadyInvited = [];
 
-  InviteToWishlistDialog(this.currentUser, this.callback, this.alreadyInvited);
+  InviteToWishlistDialog(this.prefs, this.currentUser, this.callback, this.alreadyInvited);
 
   @override
   _InviteToWishlistDialogState createState() => _InviteToWishlistDialogState();
@@ -51,8 +53,6 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
   Widget friends() {
 
     List<Widget> friendRows = loadedFriends.map((e) {
-      bool val = false;
-
       return Row(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -60,7 +60,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
           SizedBox(width: 10,),
           Text(
             e.name,
-            style: textstyle_header,
+            style: widget.prefs.text_style_sub_sub_header,
           ),
           Expanded(
             child: Align(
@@ -68,11 +68,10 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
               child: Checkbox(
                 onChanged: (v) {
                   setState(() {
-                    checkboxes[loadedFriends.indexOf(e)] = v; //TODO index another way
+                    checkboxes[loadedFriends.indexOf(e)] = v; //TODO index another way (?) and fix checkbox design
                   });
                 },
                 value: checkboxes[loadedFriends.indexOf(e)],
-                
               )
             ),
           )
@@ -86,7 +85,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
           children: [
             Expanded(
               child: Divider(
-                color: color_divider_dark,
+                color: widget.prefs.color_divider,
                 endIndent: 10,
                 indent: 20,
               ),
@@ -94,12 +93,12 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
             Center(
               child: Text(
                 'Choose friends',
-                style: textstyle_subheader,
+                style: widget.prefs.text_style_sub_sub_header,
               ),
             ),
             Expanded(
               child: Divider(
-                color: color_divider_dark,
+                color: widget.prefs.color_divider,
                 indent: 10,
                 endIndent: 20,
               ),
@@ -116,37 +115,33 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
     bool hasFriends = widget.currentUser.friends.isNotEmpty;
 
     return CustomDialog(
+      prefs: widget.prefs,
       title: 'Invite to wishlist',
       icon: CustomIcons.profile,
       content: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          textFieldComment(
+          customTextField(
+            prefs: widget.prefs,
             onChanged: (val) {
               this._input = val;
             },
-            textColor: color_text_dark,
-            activeColor: color_primary,
-            borderColor: color_text_dark_sub,
-            errorColor: color_text_error,
+            multiline: false,
             helperText: 'Email or friend code',
-            textStyle: textstyle_subheader,
-            borderRadius: 30
           ),
-          SizedBox(height: 5),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              claimButton(
+              customButton(
                 text: 'Invite',
-                fillColor: color_claim_green,
+                fillColor: widget.prefs.color_accept,
                 onTap: () async {
                   String uid = await DatabaseService().uidFromEmail(_input);
                   widget.callback([uid]);
                   debug('Invite');
                 },
-                splashColor: color_splash_light,
-                textColor: color_text_light,
+                textColor: widget.prefs.color_background,
               ),
             ],
           ),

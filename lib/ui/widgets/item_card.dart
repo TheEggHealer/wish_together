@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:uuid/uuid_util.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/models/item_model.dart';
@@ -49,15 +51,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
   void loadClaimedUsers() async {
     List<UserData> updatedList = [];
     for(String uid in widget.model.claimedUsers) {
-      if(GlobalMemory.currentlyLoadedUsers.containsKey(uid)) {
-        updatedList.add(GlobalMemory.currentlyLoadedUsers[uid]);
-        debug('Got user from currentlyLoadedUsers map');
-      } else {
-        UserData user = await UserData.from(uid);
-        updatedList.add(user);
-        GlobalMemory.currentlyLoadedUsers.putIfAbsent(uid, () => user);
-        debug('User was not in currentlyLoadedUsers map, had to add it');
-      }
+      updatedList.add(await GlobalMemory.getUserData(uid));
     }
     claimedUsers = updatedList;
 
@@ -67,6 +61,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     DatabaseService dbs = DatabaseService();
+    UserPreferences prefs = UserPreferences.from(widget.currentUser);
 
     bool hideInfo = widget.model.shouldBeHiddenFrom(widget.currentUser);
     double width = MediaQuery.of(context).size.width;
@@ -78,6 +73,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
       child: UserDot.fromUserData(
         userData: e,
         size: SIZE.SMALL,
+        showPicture: false,
       ),
     )).toList();
 
@@ -103,11 +99,11 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
                 children: [
                   TextSpan(
                     text: widget.model.itemName,
-                    style: textstyle_card_header_dark
+                    style: prefs.text_style_item_header
                   ),
                   TextSpan(
                     text: ' • ${widget.model.cost}',
-                    style: textstyle_card_dark_sub
+                    style: prefs.text_style_item_sub_header,
                   )
                 ]
               ),
@@ -115,7 +111,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
             //SizedBox(height: 10,),
             if(widget.model.comments != null && widget.model.comments.length > 0) Text(
               widget.model.comments[0].content,
-              style: textstyle_card_dark_sub,
+              style: prefs.text_style_bread,
             ),
           ],
         ),
@@ -127,17 +123,9 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
             flex: 1,
             child: Align(
               alignment: Alignment.centerRight,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  VerticalDivider(
-                    color: color_divider_dark,
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: userDots,
-                  ),
-                ],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: userDots,
               ),
             ),
           )
@@ -147,11 +135,11 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
     return Hero(
       tag: heroTag,
       child: Card(
-        elevation: 10,
+        elevation: 6,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
+          borderRadius: BorderRadius.circular(12),
         ),
-        color: Colors.white,
+        color: prefs.color_card,
         child: InkWell(
           onTap: () {
             Navigator.push(context, MaterialPageRoute(
@@ -167,7 +155,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
               widget.model.toggleUserClaim(widget.currentUser);
             }
           },
-          borderRadius: BorderRadius.all(Radius.circular(8.0)),
+          borderRadius: BorderRadius.all(Radius.circular(12)),
           child: AnimatedSize(
             duration: Duration(milliseconds: 400),
             curve: Curves.ease,
@@ -175,7 +163,10 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
             vsync: this,
             child: Container(
               width: width,
-              padding: EdgeInsets.all(8.0),
+              padding: EdgeInsets.only(top: 4, right: 8, left: 8, bottom: 8),
+              constraints: BoxConstraints(
+                minHeight: 60,
+              ),
               child: IntrinsicHeight(
                 child: Row(
                   mainAxisSize: MainAxisSize.max,

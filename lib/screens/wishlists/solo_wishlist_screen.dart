@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/confirmation_dialog.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/screens/wishlists/create_item_screen.dart';
 import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
@@ -15,6 +17,8 @@ import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/invitation_service.dart';
 import 'package:wishtogether/services/notification_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
+import 'package:wishtogether/ui/widgets/custom_buttons.dart';
+import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/item_card.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
@@ -59,19 +63,20 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
     return false;
   }
 
-  Widget leaveButton() {
+  Widget leaveButton(UserPreferences prefs) {
     bool owner = widget.currentUser.uid == model.wisherUID;
     if(owner) {
-      return IconButton(
+      return IconButton( //TODO Add splash
         icon: Icon(
-          CustomIcons.wish_together, //TODO ICON: Change to trashcan
-          color: Colors.white,
+          CustomIcons.trash,
+          color: prefs.color_icon,
         ),
         onPressed: () async {
           await showDialog(context: context, builder: (context) => ConfirmationDialog(
+            prefs: prefs,
             title: 'Delete wishlist',
             confirmationText: 'This wishlist will be deleted and cannot be recovered. Are you sure?',
-            icon: CustomIcons.wish_together, //TODO ICON: Change to trashcan
+            icon: CustomIcons.trash,
             callback: (confirm) async {
               if(confirm) {
                 Navigator.pop(context);
@@ -90,10 +95,11 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       return IconButton(
         icon: Icon(
           CustomIcons.bell, //TODO ICON: Change to leave icon
-          color: Colors.white,
+          color: prefs.color_icon,
         ),
         onPressed: () async {
           showDialog(context: context, builder: (context) => ConfirmationDialog(
+            prefs: prefs,
             title: 'Leave wishlist',
             confirmationText: 'After leaving this wishlist, you have to be invited again if you change your mind. Are you sure?',
             icon: CustomIcons.bell, //TODO ICON: Change to leave icon
@@ -120,6 +126,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
 
   @override
   Widget build(BuildContext context) {
+    UserPreferences prefs = UserPreferences.from(widget.currentUser);
 
     WishlistModel m = Provider.of<WishlistModel>(context);
     if(m != null) {
@@ -133,7 +140,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
 
     List<Widget> userDots = loadedUsers.map<Widget>((e) {
       return Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: EdgeInsets.symmetric(horizontal: 8),
         child: UserDot.fromUserData(
           userData: e,
           size: SIZE.MEDIUM,
@@ -143,111 +150,93 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       );
     }).toList();
 
-    List<ItemCard> itemList = model.items.map((e) => ItemCard(model: e, wishlist: model, currentUser: widget.currentUser,)).toList();
+    List<Widget> itemList = model.items.map((e) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      child: ItemCard(model: e, wishlist: model, currentUser: widget.currentUser,),
+    )).toList();
     debug('Refreshing current wishlist!');
-
-    userDots.add(
-      Center(
-        child: Material(
-          color: Colors.transparent,
-          child: IconButton(
-            onPressed: () {
-              inviteUser();
-            },
-            icon: Icon(CustomIcons.add),
-            padding: EdgeInsets.all(8),
-            iconSize: 40,
-            color: color_text_dark,
-            splashColor: color_splash_dark,
-            hoverColor: color_splash_dark,
-            highlightColor: color_splash_dark,
-            focusColor: color_splash_dark,
-            splashRadius: 20,
-          ),
-        ),
-      ),
-    );
 
     String wishlistTitle = wisher == null ? '' : (wisher.uid == widget.currentUser.uid ? 'Your wishlist' : '${wisher.name}\'s wishlist');
 
-    return Scaffold(
-      backgroundColor: color_background,
-      appBar: AppBar(
-        backgroundColor: color_primary,
-        elevation: 10,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return CustomScaffold(
+      prefs: prefs,
+      title: model.name,
+      backButton: true,
+      body: Container(
+        padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              model.name,
-              style: textstyle_appbar,
-            ),
-            leaveButton(),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-          color: color_background,
-          width: double.infinity,
-          padding: EdgeInsets.all(10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  wisher == null ? UserDot.placeHolder(size: SIZE.LARGE) : UserDot.fromUserData(
-                    userData: wisher,
-                    size: SIZE.LARGE,
-                  ),
-                  SizedBox(width: 20),
-                  Center(
-                    child: Text(
-                      wishlistTitle,
-                      style: textstyle_header
-                    )
-                  )
-                ],
-              ),
-              Divider(
-                color: color_divider_dark,
-              ),
-              Text(
-                'Invited Users',
-                style: textstyle_header,
-              ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: userDots.isNotEmpty ? userDots : [SpinKitThreeBounce(
-                    color: color_loading_spinner,
-                    size: 20,
-                  )],
+            Row(
+              children: [
+                wisher == null ? UserDot.placeHolder(size: SIZE.LARGE) : UserDot.fromUserData(
+                  userData: wisher,
+                  size: SIZE.LARGE,
                 ),
-              ),
-              Divider(
-                color: color_divider_dark,
-              )
-            ]..addAll(itemList)..add(
-              SizedBox(
-                height: 10 + AdService.adHeight,
-              )
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    wishlistTitle,
+                    style: prefs.text_style_wisher
+                  ),
+                ),
+                leaveButton(prefs),
+              ],
             ),
+            SizedBox(height: 10),
+            Divider(
+              color: prefs.color_divider,
+              height: 0,
+            ),
+            SizedBox(height: 10),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Invited',
+                  style: prefs.text_style_sub_header,
+                ),
+                customButton(
+                  onTap: () => inviteUser(),
+                  textColor: prefs.color_background,
+                  fillColor: prefs.color_accept,
+                  splashColor: prefs.color_splash,
+                  text: 'Invite',
+                )
+              ],
+            ),
+            SizedBox(height: 10),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: userDots.isNotEmpty ? userDots : [SpinKitThreeBounce(
+                  color: color_loading_spinner,
+                  size: 20,
+                )],
+              ),
+            ),
+            Divider(
+              color: prefs.color_divider,
+            )
+          ]..addAll(itemList)..add(
+            SizedBox(
+              height: 10 + AdService.adHeight,
+            )
           ),
         ),
       ),
-      floatingActionButton: Padding(
+      fab: Padding(
         padding: EdgeInsets.only(bottom: AdService.adHeight),
         child: FloatingActionButton(
-          backgroundColor: color_primary,
-          splashColor: color_splash_light,
-          hoverColor: color_splash_light,
-          focusColor: color_splash_light,
+          backgroundColor: prefs.color_primary,
+          splashColor: prefs.color_splash,
+          hoverColor: prefs.color_splash,
+          focusColor: prefs.color_splash,
           child: Icon(
             Icons.add,
-            color: Colors.white,
-            size: 30,
+            color: prefs.color_background,
+            size: 40,
           ),
           onPressed: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => CreateItemScreen(model)));
@@ -258,9 +247,6 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
   }
 
   void inviteUser() async {
-    DatabaseService dbs = DatabaseService();
-
-    NotificationService ns = NotificationService();
-    await ns.sendNotificationTo(widget.currentUser.uid);
+    debug('Invite');
   }
 }

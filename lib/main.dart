@@ -62,9 +62,15 @@ class WishTogether extends StatelessWidget {
       builder: (context, widget) {
 
         UserData userData = Provider.of<UserData>(context);
-        debug('################ Wrapping with new userData! ${userData.wishlistIds}');
+        if(userData != null) {
+          debug('################ Wrapping with new userData! ${userData.wishlistIds}');
 
-        return wishlistsWrapper(userData, dbs, context);
+          return wishlistsWrapper(userData, dbs, context);
+        } else {
+          return Container(
+            color: Colors.green, //TODO SPLASH change to something better
+          );
+        }
 
       }
     );

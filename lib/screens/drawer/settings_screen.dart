@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/screens/authenticate/change_email_screen.dart';
 import 'package:wishtogether/screens/authenticate/change_password_screen.dart';
+import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 
 class SettingsScreen extends StatefulWidget {
   @override
@@ -45,7 +47,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
     if(state == AppLifecycleState.paused) uploadChanges();
   }
 
-  Widget item({String title, Widget otherSide, Function onTap, bool warning = false, bool enabled = true}) {
+  Widget item({String title, Widget otherSide, Function onTap, bool warning = false, bool enabled = true, UserPreferences prefs}) {
     return ListTile(
       enabled: enabled,
       tileColor: enabled ? Colors.transparent : color_card_disabled,
@@ -55,7 +57,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
         children: [
           Text(
             title,
-            style: !warning ? textstyle_list_title : textstyle_list_title_warning,
+            style: !warning ? prefs.text_style_settings : prefs.text_style_settings_warning,
           ),
           if(otherSide != null) otherSide,
         ],
@@ -63,33 +65,48 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
     );
   }
 
-  Widget toggle({bool value, Function onChanged}) {
+  Widget toggle({bool value, Function onChanged, UserPreferences prefs}) {
     return Switch(
       value: value,
       onChanged: (val) {
         HapticFeedback.lightImpact();
         onChanged(val);
       },
-      focusColor: color_splash_light,
-      hoverColor: color_splash_light,
-      activeColor: color_primary,
-      activeTrackColor: color_splash_dark,
-      inactiveThumbColor: color_text_dark,
-      inactiveTrackColor: color_splash_dark,
+      focusColor: prefs.color_splash,
+      hoverColor: prefs.color_splash,
+      activeColor: prefs.color_primary,
+      activeTrackColor: prefs.color_switch_track,
+      inactiveThumbColor: prefs.color_bread,
+      inactiveTrackColor: prefs.color_switch_track,
     );
   }
 
-  Widget categoryOther() {
+  Widget categoryOther(UserPreferences prefs) {
     DatabaseService dbs = DatabaseService();
 
     return Card(
-      elevation: 10,
-      color: color_card_background,
+      elevation: 5,
+      color: prefs.color_card,
       child: Column(
         children: [
           item(
+            prefs: prefs,
+            title: 'Dark mode',
+            otherSide: toggle(
+              prefs: prefs,
+              value: user.settings['dark_mode'] ?? false,
+              onChanged: (value) {
+                user.settings['dark_mode'] = value;
+                setState(() {});
+              },
+            ),
+            onTap: () {},
+          ),
+          item(
+            prefs: prefs,
             title: 'Warn before chatting with wisher',
             otherSide: toggle(
+              prefs: prefs,
               value: user.settings['warn_before_chatting_with_wisher'] ?? false,
               onChanged: (value) {
                 user.settings['warn_before_chatting_with_wisher'] = value;
@@ -103,17 +120,19 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
     );
   }
 
-  Widget categoryNotifications() {
+  Widget categoryNotifications(UserPreferences prefs) {
     DatabaseService dbs = DatabaseService();
 
     return Card(
-      elevation: 10,
-      color: color_card_background,
+      elevation: 5,
+      color: prefs.color_card,
       child: Column(
         children: [
           item(
+            prefs: prefs,
             title: 'Friend request',
             otherSide: toggle(
+              prefs: prefs,
               value: user.settings['notif_friend_request'] ?? false,
               onChanged: (value) {
                 user.settings['notif_friend_request'] = value;
@@ -123,8 +142,10 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
             onTap: () {},
           ),
           item(
+            prefs: prefs,
             title: 'Wishlist invitation',
             otherSide: toggle(
+              prefs: prefs,
               value: user.settings['notif_wishlist_invitation'] ?? false,
               onChanged: (value) {
                 user.settings['notif_wishlist_invitation'] = value;
@@ -134,8 +155,10 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
             onTap: () {},
           ),
           item(
+            prefs: prefs,
             title: 'Changes to items you have claimed',
             otherSide: toggle(
+              prefs: prefs,
               value: user.settings['notif_changes_to_items_you_have_claimed'] ?? false,
               onChanged: (value) {
                 user.settings['notif_changes_to_items_you_have_claimed'] = value;
@@ -145,8 +168,10 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
             onTap: () {},
           ),
           item(
+            prefs: prefs,
             title: 'Changes to items you wish for',
             otherSide: toggle(
+              prefs: prefs,
               value: user.settings['notif_changes_to_items_you_wish_for'] ?? false,
               onChanged: (value) {
                 user.settings['notif_changes_to_items_you_wish_for'] = value;
@@ -160,34 +185,37 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
     );
   }
 
-  Widget categoryAccount(BuildContext context) {
+  Widget categoryAccount(BuildContext context, UserPreferences prefs) {
     bool googleSignIn = auth.isSignedInWithGoogle;
 
     return Card(
-      elevation: 10,
-      color: color_card_background,
+      elevation: 5,
+      color: prefs.color_card,
       child: Column(
         children: [
           item(
+            prefs: prefs,
             title: 'Email',
             enabled: !googleSignIn,
             otherSide: Text(
               auth.getEmail(),
-              style: textstyle_card_dark_sub,
+              style: prefs.text_style_settings,
             ),
             onTap: () async {
-              await Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmailScreen()));
+              await Navigator.push(context, MaterialPageRoute(builder: (context) => ChangeEmailScreen(prefs)));
               setState(() {});
             },
           ),
           if(!googleSignIn) item(
+            prefs: prefs,
             title: 'Password',
             onTap: () async {
-              await Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordScreen()));
+              await Navigator.push(context, MaterialPageRoute(builder: (context) => ChangePasswordScreen(prefs)));
               setState(() {});
             },
           ),
           item(
+            prefs: prefs,
             title: 'Logout',
             onTap: () async {
               await auth.signOut();
@@ -195,6 +223,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
             },
           ),
           item(
+            prefs: prefs,
             warning: true,
             title: 'Delete account',
             onTap: () {},
@@ -208,48 +237,38 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
   Widget build(BuildContext context) {
 
     user = Provider.of<UserData>(context) ?? UserData.empty();
+    UserPreferences prefs = UserPreferences.from(user);
 
-    return Scaffold(
-      backgroundColor: color_background,
-      appBar: AppBar(
-        backgroundColor: color_primary,
-        elevation: 10,
-        title: Row(
-          children: [
-            Text(
-              'Settings'
+    return CustomScaffold(
+      prefs: prefs,
+      backButton: true,
+      title: 'Settings',
+      body: Column( //TODO Add padding for ad compatibility
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20),
+          categoryOther(prefs),
+          SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(
+              'Notifications',
+              style: prefs.text_style_sub_header,
             ),
-          ],
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 20),
-            categoryOther(),
-            SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Text(
-                'Notifications',
-                style: textstyle_header,
-              ),
+          ),
+          SizedBox(height: 5),
+          categoryNotifications(prefs),
+          SizedBox(height: 40),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(
+              'Account',
+              style: prefs.text_style_sub_header,
             ),
-            SizedBox(height: 5),
-            categoryNotifications(),
-            SizedBox(height: 40),
-            Padding(
-              padding: const EdgeInsets.only(left: 16.0),
-              child: Text(
-                'Account',
-                style: textstyle_header,
-              ),
-            ),
-            SizedBox(height: 5),
-            categoryAccount(context),
-          ],
-        ),
+          ),
+          SizedBox(height: 5),
+          categoryAccount(context, prefs),
+        ],
       ),
     );
   }
