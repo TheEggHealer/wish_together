@@ -19,6 +19,11 @@ class UserPreferences {
   }
 
   ///Text Styles
+  get text_style_wish_together => TextStyle(
+      fontFamily: 'OpenSans',
+      fontSize: 28,
+      color: color_background
+  );
   get text_style_header => TextStyle(
       fontFamily: 'OpenSans',
       fontSize: 36,

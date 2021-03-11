@@ -156,7 +156,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                                     await model.addComment(commentField.text, widget.currentUser, false);
                                     commentField.clear();
                                   }
-                                })
+                                }, prefs)
                               );
                             } else {
                               await model.addComment(commentField.text, widget.currentUser, false);

@@ -73,6 +73,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
         ),
         onPressed: () async {
           await showDialog(context: context, builder: (context) => ConfirmationDialog(
+            prefs: prefs,
             title: 'Delete wishlist',
             confirmationText: 'This wishlist will be deleted and cannot be recovered. Are you sure?',
             icon: CustomIcons.trash,
@@ -98,6 +99,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
         ),
         onPressed: () async {
           showDialog(context: context, builder: (context) => ConfirmationDialog(
+            prefs: prefs,
             title: 'Leave wishlist',
             confirmationText: 'After leaving this wishlist, you have to be invited again if you change your mind. Are you sure?',
             icon: CustomIcons.bell, //TODO ICON: Change to leave icon
