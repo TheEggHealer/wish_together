@@ -83,14 +83,18 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                     icon: Icon(Icons.check, color: prefs.color_background,),
                     fillColor: prefs.color_accept,
                     splashColor: prefs.color_splash,
-                    onTap: () {},
+                    onTap: () async {
+                      await widget.model.onAccept(widget.currentUser);
+                    }
                   ),
                   SizedBox(width: 15,),
                   circleButton(
                     icon: Icon(Icons.close, color: prefs.color_background,),
                     fillColor: prefs.color_deny,
                     splashColor: prefs.color_splash,
-                    onTap: () {},
+                    onTap: () async {
+                      await widget.model.onDeny(widget.currentUser);
+                    },
                   )
                 ],
               )

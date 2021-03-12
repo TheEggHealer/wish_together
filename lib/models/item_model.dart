@@ -1,13 +1,14 @@
-import 'package:wishtogether/constants.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:wishtogether/models/comment_model.dart';
 import 'package:wishtogether/models/user_data.dart';
-import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 
 class ItemModel {
 
   WishlistModel wishlist;
   Map<String, dynamic> raw;
+  String photoURL;
+  ImageProvider photo;
   String itemName;
   String description = '';
   List<CommentModel> comments;
@@ -29,9 +30,10 @@ class ItemModel {
     cost = -1;
     claimedUsers = [];
     wisherUID = 'no_user';
+    photoURL = '';
   }
 
-  ItemModel.create({this.wishlist, this.itemName, this.cost, this.addedByUID, this.description}) {
+  ItemModel.create({this.wishlist, this.itemName, this.cost, this.addedByUID, this.description, this.photoURL}) {
     wisherUID = wishlist.wisherUID;
     comments = [];
     hiddenComments = [];
@@ -45,10 +47,6 @@ class ItemModel {
     return wisherUID == userData.uid;
   }
 
-  UserData get wisherUserData {
-
-  }
-
   void _deconstructData() {
     itemName = raw['item_name'];
     comments = (raw['comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();
@@ -57,6 +55,8 @@ class ItemModel {
     claimedUsers = List<String>.from(raw['claimed_users']);
     addedByUID = raw['added_by_uid'] ?? '';
     description = raw['description'] ?? '';
+    photoURL = raw['photo_url'] ?? '';
+    if(photoURL.isNotEmpty) photo = NetworkImage(photoURL);
   }
 
   toggleUserClaim(UserData user) {

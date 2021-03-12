@@ -29,6 +29,8 @@ dependencies:
   ntp: ^1.0.7 #Accurate DateTime
   flutter_colorpicker: ^0.3.5
   toggle_switch: ^0.1.8
+  image_picker: ^0.6.7+22
+  path: ^1.7.0
 
 
 dev_dependencies:

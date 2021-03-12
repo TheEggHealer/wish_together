@@ -30,7 +30,8 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
 
   String _input = '';
   List<UserData> loadedFriends = [];
-  List<bool> checkboxes = [];
+  Map<String, bool> checkboxes = {};
+  TextEditingController inputController = TextEditingController();
 
 
   void loadFriends() async {
@@ -39,7 +40,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
       result.add(await GlobalMemory.getUserData(uid));
     }
     loadedFriends = result;
-    checkboxes = result.map((e) => widget.alreadyInvited.contains(e.uid)).toList();
+    checkboxes = Map.fromIterable(result, key: (e) => e.uid, value: (e) => widget.alreadyInvited.contains(e.uid));
     debug('Loaded friends!');
     setState(() {});
   }
@@ -65,47 +66,61 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
           Expanded(
             child: Align(
               alignment: Alignment.centerRight,
-              child: Checkbox(
-                onChanged: (v) {
-                  setState(() {
-                    checkboxes[loadedFriends.indexOf(e)] = v; //TODO index another way (?) and fix checkbox design
-                  });
-                },
-                value: checkboxes[loadedFriends.indexOf(e)],
-              )
+              child: Theme(
+                data: ThemeData(unselectedWidgetColor: widget.prefs.color_icon),
+                child: Checkbox(
+                  value: checkboxes[e.uid],
+                  onChanged: (v) => setState(() {checkboxes[e.uid] = v;}), //TODO index another way (?)
+                  checkColor: widget.prefs.color_background,
+                  activeColor: widget.prefs.color_accept,
+                  hoverColor: widget.prefs.color_splash,
+                  focusColor: widget.prefs.color_splash,
+                ),
+              ),
+              //child: Checkbox(
+              //  onChanged: (v) {
+              //    setState(() {
+              //      checkboxes[loadedFriends.indexOf(e)] = v; //TODO index another way (?) and fix checkbox design
+              //    });
+              //  },
+              //  value: checkboxes[loadedFriends.indexOf(e)],
+              //)
             ),
           )
         ],
       );
     }).toList();
 
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: Divider(
-                color: widget.prefs.color_divider,
-                endIndent: 10,
-                indent: 20,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Divider(
+                  color: widget.prefs.color_divider,
+                  endIndent: 10,
+                  indent: 20,
+                ),
               ),
-            ),
-            Center(
-              child: Text(
-                'Choose friends',
-                style: widget.prefs.text_style_sub_sub_header,
+              Center(
+                child: Text(
+                  'Choose friends',
+                  style: widget.prefs.text_style_sub_sub_header,
+                ),
               ),
-            ),
-            Expanded(
-              child: Divider(
-                color: widget.prefs.color_divider,
-                indent: 10,
-                endIndent: 20,
+              Expanded(
+                child: Divider(
+                  color: widget.prefs.color_divider,
+                  indent: 10,
+                  endIndent: 20,
+                ),
               ),
-            ),
-          ],
-        ),
-      ]..addAll(friendRows),
+            ],
+          ),
+        ]..addAll(friendRows),
+      ),
     );
   }
 
@@ -123,9 +138,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
         children: [
           customTextField(
             prefs: widget.prefs,
-            onChanged: (val) {
-              this._input = val;
-            },
+            controller: inputController,
             multiline: false,
             helperText: 'Email or friend code',
           ),
@@ -137,9 +150,9 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
                 text: 'Invite',
                 fillColor: widget.prefs.color_accept,
                 onTap: () async {
-                  String uid = await DatabaseService().uidFromEmail(_input);
+                  String uid = await DatabaseService().uidFromEmail(inputController.text);
                   widget.callback([uid]);
-                  debug('Invite');
+                  inputController.text = '';
                 },
                 textColor: widget.prefs.color_background,
               ),
@@ -149,6 +162,15 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
           if(hasFriends) friends(),
         ],
       ),
+      onAccept: () {
+        widget.callback(checkboxes.entries.map((e) => e.key).where((element) => checkboxes[element]).toList());
+        Navigator.pop(context);
+      },
+      onDeny: () {
+        Navigator.pop(context);
+      },
+      acceptButton: 'Done',
+      denyButton: 'Cancel',
     );
   }
 }

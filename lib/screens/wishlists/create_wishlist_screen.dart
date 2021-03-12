@@ -51,17 +51,32 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
 
     List<Widget> friendRows = loadedFriends.map((e) {
 
-      return Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          UserDot.fromUserData(userData: e, size: SIZE.MEDIUM,),
-          SizedBox(width: 10,),
-          Text(
-            e.name,
-            style: prefs.text_style_sub_sub_header,
-          ),
-          //TODO add a FAB to un-invite user
-        ],
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            UserDot.fromUserData(userData: e, size: SIZE.MEDIUM,),
+            SizedBox(width: 10,),
+            Expanded(
+              child: Text(
+                e.name,
+                style: prefs.text_style_sub_sub_header,
+              ),
+            ),
+            circleButton(
+              icon: Icon(Icons.close, color: prefs.color_background,),
+              fillColor: prefs.color_deny,
+              splashColor: prefs.color_splash,
+              onTap: () {
+                invitedUsers.remove(e.uid);
+                loadedFriends.remove(e);
+                setState(() {});
+              }
+            ),
+            //TODO add a FAB to un-invite user
+          ],
+        ),
       );
     }).toList();
 
@@ -88,7 +103,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
       backButton: true,
       title: 'Create',
       body: Container(
-        padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 30),
+        padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -198,7 +213,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
               splashColor: prefs.color_splash,
               onTap: () => showDialog(context: context, builder: (context) => InviteToWishlistDialog(prefs, currentUser, setInvited, invitedUsers)),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 20),
             if(loadedFriends.isNotEmpty) friends(prefs),
           ],
         ),
@@ -229,7 +244,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
 
   void setInvited(List<String> invited) {
     invited.forEach((element) {
-      if(!invitedUsers.contains(element)) invitedUsers.add(element);
+      if(!invitedUsers.contains(element) && element != currentUser.uid) invitedUsers.add(element);
     });
     loadFriends();
   }

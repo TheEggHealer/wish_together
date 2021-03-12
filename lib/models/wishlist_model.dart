@@ -61,6 +61,8 @@ class WishlistModel {
       'cost': item.cost,
       'item_name': item.itemName,
       'added_by_uid': item.addedByUID,
+      'description': item.description,
+      'photo_url': item.photoURL,
     }).toList();
 
     await dbs.uploadData(dbs.wishlist, id, {

@@ -12,6 +12,7 @@ import 'package:wishtogether/models/item_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/wishlists/item_screen.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 
 class ItemCard extends StatefulWidget {
@@ -91,26 +92,40 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RichText(
-              overflow: TextOverflow.fade,
-              softWrap: false,
-              maxLines: 1,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: widget.model.itemName,
-                    style: prefs.text_style_item_header
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if(widget.model.photoURL.isNotEmpty) Icon(
+                  CustomIcons.send,
+                  color: prefs.color_icon, //TODO ICON Change to camera icon
+                  size: 20,
+                ),
+                RichText(
+                  overflow: TextOverflow.fade,
+                  softWrap: false,
+                  maxLines: 1,
+                  text: TextSpan(
+                    children: [
+                      if(widget.model.photoURL.isNotEmpty) TextSpan(
+                        text:' • ',
+                        style: prefs.text_style_item_sub_header
+                      ),
+                      TextSpan(
+                        text: widget.model.itemName,
+                        style: prefs.text_style_item_header
+                      ),
+                      TextSpan(
+                        text: ' • ${widget.model.cost}',
+                        style: prefs.text_style_item_sub_header,
+                      )
+                    ]
                   ),
-                  TextSpan(
-                    text: ' • ${widget.model.cost}',
-                    style: prefs.text_style_item_sub_header,
-                  )
-                ]
-              ),
+                ),
+              ],
             ),
             //SizedBox(height: 10,),
-            if(widget.model.comments != null && widget.model.comments.length > 0) Text(
-              widget.model.comments[0].content,
+            if(widget.model.description.isNotEmpty) Text(
+              widget.model.description,
               style: prefs.text_style_bread,
             ),
           ],

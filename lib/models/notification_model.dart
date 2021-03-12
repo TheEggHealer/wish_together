@@ -42,7 +42,7 @@ class NotificationModel {
     seen = data[3] == '1';
   }
 
-  void onAccept(UserData currentUser) async {
+  Future<void> onAccept(UserData currentUser) async {
     switch(prefix) {
       case PRE_FRIEND_REQUEST:
         UserData user = await GlobalMemory.getUserData(content, forceFetch: true);
@@ -75,7 +75,7 @@ class NotificationModel {
     }
   }
 
-  void onDeny(UserData currentUser) async {
+  Future<void> onDeny(UserData currentUser) async {
     currentUser.notifications.remove(this);
     await currentUser.uploadData();
   }

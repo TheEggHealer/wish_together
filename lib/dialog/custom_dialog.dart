@@ -51,7 +51,7 @@ class _CustomDialogState extends State<CustomDialog> {
               SizedBox(height: 10),
               widget.content,
               Row(
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   if(widget.denyButton != null) customButton(
                     text: widget.denyButton,

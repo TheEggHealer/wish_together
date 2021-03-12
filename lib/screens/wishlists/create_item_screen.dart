@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/dialog/choose_photo_dialog.dart';
 import 'package:wishtogether/models/comment_model.dart';
 import 'package:wishtogether/models/item_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/ad_service.dart';
+import 'package:wishtogether/services/image_service.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
@@ -29,6 +34,9 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   TextEditingController descriptionController = TextEditingController();
   bool hasCost = false;
   bool hasDescription = false;
+  File image;
+
+  bool loading = false;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
@@ -43,19 +51,26 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   }
 
   Future<void> onDone() async {
+    setState(() {loading = true;});
     debug('Creating new item');
     ItemModel item = await createItem();
     widget.wishlist.items.add(item);
     await widget.wishlist.uploadList();
+    setState(() {loading = false;});
   }
 
   Future<ItemModel> createItem() async {
+
+    String photoURL = image != null ? await ImageService().uploadImage(image) : '';
+    debug('Image url: $photoURL');
 
     ItemModel item = ItemModel.create(
       wishlist: widget.wishlist,
       itemName: itemController.text,
       cost: double.tryParse(costController.text) ?? 0,
       addedByUID: currentUser.uid,
+      description: descriptionController.text,
+      photoURL: photoURL
     );
 
     if(hasDescription) { //TODO What happens here? (hasDescription should be deprecated)
@@ -72,6 +87,8 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
 
     currentUser = Provider.of<UserData>(context);
     UserPreferences prefs = UserPreferences.from(currentUser);
+    ImageService imageService = ImageService();
+    Size size = MediaQuery.of(context).size;
 
     return CustomScaffold(
       prefs: prefs,
@@ -150,15 +167,60 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                     ),
                   ),
                   customButton(
-                    text: 'Choose',
-                    onTap: () {},
-                    fillColor: prefs.color_accept,
+                    text: image == null ? 'Choose' : 'Remove',
+                    onTap: () {
+                      image == null ? showModalBottomSheet(context: context, builder: (context) {
+                        return SafeArea(
+                          child: Container(
+                            child: Wrap(
+                              children: [
+                                ListTile(
+                                  title: Text('Camera', style: prefs.text_style_sub_sub_header,),
+                                  tileColor: prefs.color_card,
+                                  onTap: () async {
+                                    image = await imageService.imageFromCamera();
+                                    setState(() {});
+                                  },
+                                  leading: Icon(Icons.camera, color: prefs.color_icon),
+                                ),
+                                ListTile(
+                                  title: Text('Gallery', style: prefs.text_style_sub_sub_header,),
+                                  tileColor: prefs.color_card,
+                                  onTap: () async {
+                                    image = await imageService.imageFromGallery();
+                                    setState(() {});
+                                  },
+                                  leading: Icon(Icons.photo, color: prefs.color_icon),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }) : setState(() {image = null;});
+                      //showDialog(context: context, builder: (context) => ChoosePhotoDialog(prefs: prefs, callback: (image) {}));
+                    },
+                    fillColor: image == null ? prefs.color_accept : prefs.color_deny,
                     splashColor: prefs.color_splash,
                     textColor: prefs.color_background,
                   ),
                 ],
               ),
-              SizedBox(height: 5),
+              SizedBox(height: 20),
+              if(image != null) Center(
+                child: Container(
+                  constraints: BoxConstraints(
+                    maxWidth: size.width / 2,
+                    maxHeight: size.height / 2,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.file(
+                      image,
+                      fit: BoxFit.fitHeight,
+                    ),
+                  ),
+                ),
+              )
             ],
           ),
         ),
@@ -170,10 +232,13 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
           splashColor: prefs.color_splash,
           hoverColor: prefs.color_splash,
           focusColor: prefs.color_splash,
-          child: Icon(
+          child: !loading ? Icon(
             Icons.check,
             color: prefs.color_background,
             size: 40,
+          ) : SpinKitThreeBounce(
+            color: prefs.color_background,
+            size: 20,
           ),
           onPressed: () async {
             if(currentUser != null && _formKey.currentState.validate()) {

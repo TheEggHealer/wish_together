@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/send_warning_dialog.dart';
@@ -70,6 +71,43 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     }
 
     return result;
+  }
+
+  Widget photoCard(Size size, ItemModel model, UserPreferences prefs) {
+    return AnimatedSize(
+      vsync: this,
+      duration: Duration(milliseconds: 200),
+      curve: Curves.ease,
+      child: Column(
+        children: [
+          SizedBox(height: 10),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: size.width / 2,
+              maxHeight: size.height / 2,
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Image(
+                loadingBuilder: (context, child, event) {
+                  if(event == null) return child;
+                  else return Container(
+                    height: 50,
+                    child: SpinKitThreeBounce(
+                      color: prefs.color_spinner,
+                      size: 20,
+                    ),
+                  );
+                },
+                fit: BoxFit.fitHeight,
+                image: model.photo,
+              ),
+            ),
+          ),
+          SizedBox(height: 10),
+        ],
+      ),
+    );
   }
 
   Widget wisherCard(ItemModel model, WishlistModel wishlist, UserPreferences prefs) {
@@ -329,6 +367,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
       backButton: true,
       body: Column(
         children: [
+          if(model.photoURL.isNotEmpty) photoCard(MediaQuery.of(context).size, model, prefs),
           wisherCard(model, wishlist, prefs),
           if(!hideInfo) Divider(
             color: prefs.color_divider,
