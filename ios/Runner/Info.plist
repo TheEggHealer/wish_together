@@ -61,5 +61,11 @@
 	<false/>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-7768123198632313~1473488290</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Used to demonstrate image picker plugin</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Used to demonstrate image picker plugin</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Used to capture audio for image picker plugin</string>
 </dict>
 </plist>
