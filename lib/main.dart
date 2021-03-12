@@ -13,6 +13,9 @@ import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/screen_wrapper.dart';
 import 'package:wishtogether/screens/splash_screen.dart';
 
+import 'models/user_preferences.dart';
+import 'models/user_preferences.dart';
+
 void main() {
   runApp(WishTogether());
 }
@@ -78,12 +81,13 @@ class WishTogether extends StatelessWidget {
 
   Widget wishlistsWrapper(UserData userData, DatabaseService dbs, BuildContext context) {
     debug('################ Wrapping with new wishlists! ${userData.wishlistIds.length}');
+
+    UserPreferences prefs = UserPreferences.from(userData);
     return StreamProvider<List<WishlistModel>>.value(
       value: dbs.wishlistDocs(userData == null ? [] : userData.wishlistIds),
       child: GestureDetector(
         onTap: () {
           FocusScopeNode currentFocus = FocusScope.of(context);
-
           if(!currentFocus.hasPrimaryFocus && currentFocus.focusedChild != null) {
             currentFocus.focusedChild.unfocus();
           }
@@ -92,6 +96,7 @@ class WishTogether extends StatelessWidget {
           home: ScreenWrapper(),
           theme: ThemeData(
             accentColor: color_text_light,
+            canvasColor: prefs.color_background,
           ),
         ),
       ),
