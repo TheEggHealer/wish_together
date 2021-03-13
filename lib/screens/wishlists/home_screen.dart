@@ -22,6 +22,8 @@ import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 import 'package:wishtogether/ui/widgets/wishlist_card.dart';
 
+import '../../services/invitation_service.dart';
+
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();

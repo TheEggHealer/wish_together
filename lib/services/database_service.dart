@@ -117,6 +117,31 @@ class DatabaseService {
     return uid;
   }
 
+  Future<String> uidFromFriendCode(String friendCode) async {
+    DocumentSnapshot doc = await uuidMaps.doc('friendCodeToUUID').get();
+    Map<String, dynamic> data = doc.data();
+    String uid = data.containsKey(friendCode) ? data[friendCode] : '';
+    return uid;
+  }
+
+  Future<String> uidFromIdentifier(String identifier) async {
+    int type = getIdentifierType(identifier);
+    String uid;
+    switch(type) {
+      case 1: uid = await uidFromEmail(identifier); break;
+      case 2: uid = await uidFromFriendCode(identifier); break;
+      default: uid = ''; break;
+    }
+    return uid;
+  }
+
+  ///Returns 1 if [identifier] is an email, 2 if it is a friend code and 0 if it is invalid.
+  int getIdentifierType(String identifier) {
+    if(identifier.contains('@') && identifier.contains('.')) return 1;
+    else if(identifier.length == 6 && !identifier.contains(RegExp('^[a-zA-Z0-9]\$'))) return 2;
+    else return 0;
+  }
+
   Future changeMailToUIDAssociation(String oldMail, String newMail) async {
     String uid = await uidFromEmail(oldMail);
 

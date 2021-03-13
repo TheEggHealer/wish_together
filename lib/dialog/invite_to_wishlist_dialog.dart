@@ -6,7 +6,6 @@ import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
-import 'package:wishtogether/services/invitation_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
@@ -17,7 +16,7 @@ class InviteToWishlistDialog extends StatefulWidget {
   UserPreferences prefs;
   UserData currentUser;
   WishlistModel wishlist;
-  Function callback;
+  Function(List<String>) callback;
   List<String> alreadyInvited = [];
 
   InviteToWishlistDialog(this.prefs, this.currentUser, this.callback, this.alreadyInvited);
@@ -70,21 +69,13 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
                 data: ThemeData(unselectedWidgetColor: widget.prefs.color_icon),
                 child: Checkbox(
                   value: checkboxes[e.uid],
-                  onChanged: (v) => setState(() {checkboxes[e.uid] = v;}), //TODO index another way (?)
+                  onChanged: (v) => setState(() {checkboxes[e.uid] = v;}),
                   checkColor: widget.prefs.color_background,
                   activeColor: widget.prefs.color_accept,
                   hoverColor: widget.prefs.color_splash,
                   focusColor: widget.prefs.color_splash,
                 ),
               ),
-              //child: Checkbox(
-              //  onChanged: (v) {
-              //    setState(() {
-              //      checkboxes[loadedFriends.indexOf(e)] = v; //TODO index another way (?) and fix checkbox design
-              //    });
-              //  },
-              //  value: checkboxes[loadedFriends.indexOf(e)],
-              //)
             ),
           )
         ],
@@ -150,9 +141,13 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
                 text: 'Invite',
                 fillColor: widget.prefs.color_accept,
                 onTap: () async {
-                  String uid = await DatabaseService().uidFromEmail(inputController.text);
-                  widget.callback([uid]);
-                  inputController.text = '';
+                  String uid = await DatabaseService().uidFromIdentifier(inputController.text);
+                  if(uid.isNotEmpty) {
+                    widget.callback([uid]);
+                    inputController.text = '';
+                  } else {
+                    //TODO Handle invalid identifier here!
+                  }
                 },
                 textColor: widget.prefs.color_background,
               ),

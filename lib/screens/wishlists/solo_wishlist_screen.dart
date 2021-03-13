@@ -23,6 +23,8 @@ import 'package:wishtogether/ui/widgets/item_card.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 
+import '../../dialog/invite_to_wishlist_dialog.dart';
+
 class SoloWishlistScreen extends StatefulWidget {
 
   final UserData currentUser;
@@ -197,7 +199,9 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
                   style: prefs.text_style_sub_header,
                 ),
                 customButton(
-                  onTap: () => inviteUser(),
+                  onTap: () async {
+                    showDialog(context: context, builder: (context) => InviteToWishlistDialog(prefs, widget.currentUser, inviteUsers, loadedUsers.map((e) => e.uid).toList()));
+                  },
                   textColor: prefs.color_background,
                   fillColor: prefs.color_accept,
                   splashColor: prefs.color_splash,
@@ -246,7 +250,20 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
     );
   }
 
-  void inviteUser() async {
-    debug('Invite');
+  void inviteUsers(List<String> uids) async {
+    List<String> alreadyInvited = loadedUsers.map((e) => e.uid).toList();
+
+    InvitationService invitationService = InvitationService();
+
+    bool change = false;
+    for(int i = 0; i < uids.length; i++) {
+      if (!alreadyInvited.contains(uids[i])) {
+        await invitationService.sendWishlistInvitation(widget.currentUser.uid, model.id, uids[i]);
+        model.invitedUsers.add(uids[i]);
+        change = true;
+      }
+    }
+
+    if(change) await model.uploadList();
   }
 }
