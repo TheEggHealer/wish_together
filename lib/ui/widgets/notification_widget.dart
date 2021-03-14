@@ -80,7 +80,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if(widget.model.hasAcceptOption) circleButton(
-                    icon: Icon(Icons.check, color: prefs.color_background,),
+                    icon: Icon(Icons.check, size: 20, color: prefs.color_background,),
                     fillColor: prefs.color_accept,
                     splashColor: prefs.color_splash,
                     onTap: () async {
@@ -89,7 +89,7 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                   ),
                   SizedBox(width: 15,),
                   circleButton(
-                    icon: Icon(Icons.close, color: prefs.color_background,),
+                    icon: Icon(Icons.close, size: 20, color: prefs.color_background,),
                     fillColor: prefs.color_deny,
                     splashColor: prefs.color_splash,
                     onTap: () async {
