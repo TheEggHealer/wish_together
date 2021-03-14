@@ -13,6 +13,8 @@ import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/group_wishlist_item.dart';
 
+import 'package:wishtogether/constants.dart';
+
 class GroupWishlistCard extends StatefulWidget {
 
   UserPreferences prefs;
@@ -28,6 +30,7 @@ class GroupWishlistCard extends StatefulWidget {
 class _GroupWishlistCardState extends State<GroupWishlistCard> {
 
   UserData wisher = UserData.empty();
+  ScrollController _scrollController = ScrollController();
 
   void loadWisher() async {
     wisher = await GlobalMemory.getUserData(widget.model.wisherUID);
@@ -94,17 +97,24 @@ class _GroupWishlistCardState extends State<GroupWishlistCard> {
 
   @override
   Widget build(BuildContext context) {
-    Color cardColor = Color(widget.model.color);
 
     loadWisher();
     List<Widget> items = getItems();
     items.add(addItemButton());
 
     String title = wisher.uid == widget.currentUser.uid ? 'Your wishlist' : '${widget.model.name}\'s wishlist';
+    Color cardColor = wisher.userColor;
+
+    double offset = 24;
+    if(_scrollController.hasClients) {
+      offset = _scrollController.offset < 0 ? 24 - _scrollController.offset : 24;
+
+    }
 
     return Stack(
       children: [
         SingleChildScrollView(
+          controller: _scrollController,
           scrollDirection: Axis.horizontal,
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8),
@@ -140,7 +150,7 @@ class _GroupWishlistCardState extends State<GroupWishlistCard> {
           ),
         ),
         Positioned(
-          left: 24,
+          left: offset,
           top: 14,
           child: Text(
             title,
