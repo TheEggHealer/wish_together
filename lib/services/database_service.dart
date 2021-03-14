@@ -78,6 +78,7 @@ class DatabaseService {
   }
 
   Future<Map<String, dynamic>> getRaw(CollectionReference collection) async {
+    debug('Getting user data from firebase: $uid');
     DocumentSnapshot snap = await collection.doc(uid).get();
     return snap.data();
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/ui/color_correction.dart';
 import 'package:wishtogether/ui/constant_colors.dart';
 
 class UserPreferences {
@@ -116,5 +117,29 @@ class UserPreferences {
   get color_drawer_logo   => darkMode ? color_dark_drawer_logo   : color_light_drawer_logo;
   get color_spinner       => darkMode ? color_dark_spinner       : color_light_spinner;
   get color_switch_track  => darkMode ? color_dark_switch_track  : color_light_switch_track;
+  get color_shadow        => darkMode ? color_dark_shadow        : color_light_shadow;
+
+
+  ///Special text styles and colors
+  TextStyle text_style_wishlist_card(Color backgroundColor) {
+    return TextStyle(
+      fontFamily: 'OpenSans',
+      fontSize: 16,
+      color: color_wishlist_card(backgroundColor),
+    );
+  }
+
+  TextStyle text_style_wishlist_tiny(Color backgroundColor) {
+    return TextStyle(
+      fontFamily: 'OpenSans',
+      fontSize: 10,
+      color: color_wishlist_card(backgroundColor),
+    );
+  }
+
+  Color color_wishlist_card(Color backgroundColor) {
+    bool useDark = ColorCorrection.useDarkColor(backgroundColor);
+    return useDark ? color_light_sub_header : color_dark_sub_header;
+  }
 
 }

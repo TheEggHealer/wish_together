@@ -146,8 +146,8 @@ Widget signInButton({String text, Color borderColor, Color textColor, Color spla
 
 Widget circleButton({Icon icon, Color fillColor, Color splashColor, Function onTap}) {
   return SizedBox(
-    width: 28,
-    height: 28,
+    width: icon.size * 1.3,
+    height: icon.size * 1.3,
     child: RawMaterialButton(
       onPressed: onTap,
       elevation: 5,

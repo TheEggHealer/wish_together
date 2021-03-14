@@ -65,7 +65,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
               ),
             ),
             circleButton(
-              icon: Icon(Icons.close, color: prefs.color_background,),
+              icon: Icon(Icons.close, size: 20, color: prefs.color_background,),
               fillColor: prefs.color_deny,
               splashColor: prefs.color_splash,
               onTap: () {

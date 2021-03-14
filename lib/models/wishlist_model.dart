@@ -11,16 +11,23 @@ class WishlistModel {
 
   Map<String, dynamic> raw;
 
+  //General
   String id = '';
-  List<ItemModel> items = [];
   List<String> invitedUsers = [];
-  String parent = '';
   String type = '';
-  String wisherUID = '';
-  String wisherName = '';
+  String creatorUID = '';
   int color = 0;
   String name = '';
   String dateCreated = '';
+
+  //Solo
+  List<ItemModel> items = [];
+  String parent = '';
+  String wisherUID = '';
+  String wisherName = '';
+
+  //Group
+  List<String> wishlistStream = [];
 
   WishlistModel({this.raw, this.id}) {
     _deconstructData();
@@ -31,16 +38,28 @@ class WishlistModel {
   }
 
   void _deconstructData() {
-    debug('wishlist');
-    parent = raw['parent'];
-    type = raw['type'];
-    wisherUID = raw['wisher_uid'];
-    wisherName = raw['wisher_name'];
     color = raw['color'];
     name = raw['name'];
     dateCreated = raw['date'];
     invitedUsers = List<String>.from(raw['invited_users']);
+    type = raw['type'];
+
+    switch(type) {
+      case 'solo': _deconstructSolo(); break;
+      case 'group': _deconstructGroup(); break;
+      default: debug('Type not defined: $type'); break;
+    }
+  }
+
+  void _deconstructSolo() {
+    parent = raw['parent'];
+    wisherUID = raw['wisher_uid'];
+    wisherName = raw['wisher_name'];
     items = (raw['items'].map<ItemModel>((e) => ItemModel(raw: e, wishlist: this, wisherUID: wisherUID))).toList();
+  }
+
+  void _deconstructGroup() {
+    wishlistStream = List<String>.from(raw['wishlist_stream']);
   }
 
   get listCount {

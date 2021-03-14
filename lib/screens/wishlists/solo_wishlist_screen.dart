@@ -22,6 +22,7 @@ import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/item_card.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
+import 'package:wishtogether/ui/widgets/wishlist_leave_button.dart';
 
 import '../../dialog/invite_to_wishlist_dialog.dart';
 
@@ -140,7 +141,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       return Loading();
     }
 
-    List<Widget> userDots = loadedUsers.map<Widget>((e) {
+    List<Widget> userDots = loadedUsers.map<Widget>((e) { //TODO Make this into a function, like in group_wishlist_screen.dart
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 8),
         child: UserDot.fromUserData(
@@ -182,7 +183,14 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
                     style: prefs.text_style_wisher
                   ),
                 ),
-                leaveButton(prefs),
+                WishlistLeaveButton(
+                  prefs: prefs,
+                  currentUser: widget.currentUser,
+                  wishlist: model,
+                  callback: () {
+                    Navigator.pop(context);
+                  },
+                )
               ],
             ),
             SizedBox(height: 10),

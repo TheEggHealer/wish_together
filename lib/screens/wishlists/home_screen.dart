@@ -4,10 +4,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/group_wishlist_model.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/screens/drawer/drawer.dart';
 import 'package:wishtogether/screens/drawer/notifications_screen.dart';
 import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
+import 'package:wishtogether/screens/wishlists/group_wishlist_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/services/database_service.dart';
@@ -34,6 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   UserData userData;
+  UserPreferences prefs;
   List<WishlistModel> wishlists = [];
 
   int pos;
@@ -64,14 +67,21 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget cardBuilder(BuildContext context, int index) {
     return WishlistCard(
+      prefs: prefs,
       model: wishlists[index],
       onClick: () {
         DatabaseService dbs = DatabaseService();
+        String type = wishlists[index].type;
+
+        Stream stream = type == 'solo' ? dbs.wishlistStream(wishlists[index].id)
+                                       : dbs.wishlistDocs(wishlists[index].wishlistStream);
+
+        Widget child = type == 'solo' ? SoloWishlistScreen(userData)
+                                      : GroupWishlistScreen(userData);
+
         Navigator.push(context, MaterialPageRoute(builder: (context) =>
-          StreamProvider<WishlistModel>.value(
-            value: dbs.wishlistStream(wishlists[index].id),
-            child: SoloWishlistScreen(userData)
-          )
+          type == 'solo' ? StreamProvider<WishlistModel>.value(value: stream, child: child,)
+                         : StreamProvider<List<WishlistModel>>.value(value: stream, child: child,),
         ));
       }
     );
@@ -121,7 +131,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     AuthService auth = AuthService();
     userData = Provider.of<UserData>(context);
-    UserPreferences prefs = UserPreferences.from(userData);
+    prefs = UserPreferences.from(userData);
     if(userData == null) return Loading();
 
     DatabaseService dbs = DatabaseService(uid: userData.uid);

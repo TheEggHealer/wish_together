@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 
@@ -7,26 +8,28 @@ class WishlistCard extends StatelessWidget {
 
   final WishlistModel model;
   final Function onClick;
+  final UserPreferences prefs;
 
-  WishlistCard({this.model, this.onClick});
+  WishlistCard({this.model, this.onClick, this.prefs});
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+    Color cardColor = Color(model.color);
 
     return Center(
       child: Card(
-        elevation: 10,
+        elevation: 5,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15.0),
+          borderRadius: BorderRadius.circular(16.0),
         ),
-        color: Color(model.color),
+        color: cardColor,
         child: InkWell(
-          splashColor: color_splash_light,
-          focusColor: color_splash_light,
-          highlightColor: color_splash_light,
-          hoverColor: color_splash_light,
-          borderRadius: BorderRadius.all(Radius.circular(15.0)),
+          splashColor: prefs.color_splash,
+          focusColor: prefs.color_splash,
+          highlightColor: prefs.color_splash,
+          hoverColor: prefs.color_splash,
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
           onTap: onClick,
           child: Container(
               width: size.width / 2.4,
@@ -37,7 +40,7 @@ class WishlistCard extends StatelessWidget {
                 children: [
                   Text(
                     model.name,
-                    style: textstyle_card_header_light,
+                    style: prefs.text_style_wishlist_card(cardColor),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -49,11 +52,11 @@ class WishlistCard extends StatelessWidget {
                         children: [
                           Text(
                             model.wisherName,
-                            style: textstyle_card_date_light,
+                            style: prefs.text_style_wishlist_tiny(cardColor),
                           ),
                           Text(
                             model.dateCreated,
-                            style: textstyle_card_date_light,
+                            style: prefs.text_style_wishlist_tiny(cardColor),
                           ),
                         ],
                       ),
@@ -64,11 +67,11 @@ class WishlistCard extends StatelessWidget {
                             children: [
                               Icon(
                                 CustomIcons.list_items,
-                                color: color_text_light,
+                                color: prefs.color_wishlist_card(cardColor),
                               ),
                               Text(
                                 model.listCount.toString(),
-                                style: textstyle_card_header_light,
+                                style: prefs.text_style_wishlist_card(cardColor),
                               )
                             ],
                           ),
@@ -76,11 +79,11 @@ class WishlistCard extends StatelessWidget {
                             children: [
                               Icon(
                                 CustomIcons.profile,
-                                color: color_text_light,
+                                color: prefs.color_wishlist_card(cardColor),
                               ),
                               Text(
                                 model.userCount.toString(),
-                                style: textstyle_card_header_light,
+                                style: prefs.text_style_wishlist_card(cardColor),
                               )
                             ],
                           )

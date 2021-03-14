@@ -12,8 +12,9 @@ class CustomScaffold extends StatefulWidget {
   final Widget fab;
   final Widget action;
   final bool backButton;
+  final bool padding;
 
-  CustomScaffold({@required this.prefs, this.title, this.body, this.action, this.drawer, this.fab, this.backButton = false});
+  CustomScaffold({@required this.prefs, this.title, this.body, this.action, this.drawer, this.fab, this.backButton = false, this.padding = true});
 
   @override
   _CustomScaffoldState createState() => _CustomScaffoldState();
@@ -26,50 +27,57 @@ class _CustomScaffoldState extends State<CustomScaffold> {
   Widget build(BuildContext context) {
 
     double height = MediaQuery.of(context).size.height;
+    EdgeInsets padding = widget.padding ? EdgeInsets.all(6) : EdgeInsets.zero;
 
     return Scaffold(
       key: _scaffoldKey,
       body: SingleChildScrollView(
         child: Container(
           color: widget.prefs.color_background,
-          padding: EdgeInsets.all(12),
+          padding: padding,
           constraints: BoxConstraints(
             minHeight: height,
           ),
           child: Column(
             children: [
               SizedBox(height: 40),
-              Row(
-                children: [
-                  if(widget.drawer != null) IconButton(
-                    icon: Icon(
-                      CustomIcons.drawer, //TODO ICON change to drawer icon and add splash
-                      color: widget.prefs.color_primary,
-                      size: 30,
+              Padding(
+                padding: EdgeInsets.only(top: 12, left: 12, right: 12),
+                child: Row(
+                  children: [
+                    if(widget.drawer != null) IconButton(
+                      icon: Icon(
+                        CustomIcons.drawer, //TODO ICON change to drawer icon and add splash
+                        color: widget.prefs.color_primary,
+                        size: 30,
+                      ),
+                      onPressed: () => _scaffoldKey.currentState.openDrawer(),
                     ),
-                    onPressed: () => _scaffoldKey.currentState.openDrawer(),
-                  ),
-                  if(widget.backButton) IconButton(
-                    icon: Icon(
-                      CustomIcons.back,
-                      color: widget.prefs.color_primary,
-                      size: 30,
+                    if(widget.backButton) IconButton(
+                      icon: Icon(
+                        CustomIcons.back,
+                        color: widget.prefs.color_primary,
+                        size: 30,
+                      ),
+                      onPressed: () => Navigator.pop(context),
                     ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  if(widget.drawer != null) SizedBox(width: 5),
-                  if(widget.backButton) SizedBox(width: 15),
-                  Expanded(
-                    child: Text(
-                      widget.title,
-                      style: widget.prefs.text_style_header,
+                    if(widget.drawer != null) SizedBox(width: 5),
+                    if(widget.backButton) SizedBox(width: 15),
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: widget.prefs.text_style_header,
+                      ),
                     ),
-                  ),
-                  if(widget.action != null) widget.action,
-                ],
+                    if(widget.action != null) widget.action,
+                  ],
+                ),
               ),
               SizedBox(height: 10),
-              widget.body,
+              Padding(
+                padding: padding,
+                child: widget.body,
+              ),
               if(widget.fab != null) SizedBox(height: 30), //Correcting for fab button
             ],
           ),

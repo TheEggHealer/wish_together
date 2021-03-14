@@ -4,7 +4,7 @@ import 'package:wishtogether/constants.dart';
 
 class Loading extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) { //TODO Fix this shit
     return Scaffold(
       appBar: AppBar(
         backgroundColor: color_primary,
