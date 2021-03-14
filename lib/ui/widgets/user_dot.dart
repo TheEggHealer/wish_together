@@ -24,21 +24,21 @@ class UserDot extends StatelessWidget {
   bool owner;
   bool doShowName;
   bool showPicture;
+  bool pending;
   final SIZE size;
 
   UserDot({this.color, this.size, this.owner = false, this.doShowName = false});
 
-  UserDot.fromUserData({UserData userData, this.size, this.owner = false, this.showPicture = true, this.doShowName = false}) {
+  UserDot.fromUserData({UserData userData, this.prefs, this.size, this.owner = false, this.showPicture = true, this.doShowName = false, this.pending = false}) {
     color = userData.userColor;
     name = userData.name;
-    prefs = UserPreferences.from(userData);
 
     if(showPicture) {
       image = userData.profilePicture;
     }
   }
 
-  UserDot.placeHolder({this.size, this.owner = false, this.doShowName = false}) {
+  UserDot.placeHolder({this.size, this.owner = false, this.doShowName = false, this.pending = false}) {
     color = Color(0x00000000);
   }
 
@@ -70,7 +70,25 @@ class UserDot extends StatelessWidget {
     return Column(
       children: [
         Stack(
+          alignment: Alignment.center,
           children: [
+            if(owner || pending) Container(
+              padding: EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                color: owner ? prefs.color_primary : prefs.color_divider,
+                shape: BoxShape.circle,
+              ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: prefs.color_background,
+                  shape: BoxShape.circle,
+                ),
+                child: SizedBox(
+                  width: radius * 2.2,
+                  height: radius * 2.2,
+                ),
+              ),
+            ),
             Container(
               decoration: BoxDecoration(
                 color: color,
@@ -94,7 +112,6 @@ class UserDot extends StatelessWidget {
             ),
           ]
         ),
-        if(doShowName) SizedBox(height: 3),
         if(doShowName && name != null) Text(
           name,
           style: prefs.text_style_tiny,

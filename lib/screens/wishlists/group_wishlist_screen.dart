@@ -8,6 +8,7 @@ import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
+import 'package:wishtogether/services/invitation_service.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/group_wishlist_card.dart';
@@ -52,7 +53,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
     return false;
   }
 
-  List<Widget> getUserDots() {
+  List<Widget> getUserDots(UserPreferences prefs) {
     return loadedUsers.map<Widget>((e) {
       return Padding(
         padding: EdgeInsets.symmetric(horizontal: 8),
@@ -60,6 +61,8 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
           userData: e,
           size: SIZE.MEDIUM,
           owner: e.uid == model.wisherUID,
+          pending: !loadedWishlists.any((element) => element.wisherUID == e.uid),
+          prefs: prefs,
           doShowName: true,
         ),
       );
@@ -107,7 +110,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
       ),
     )).toList();
 
-    List<Widget> userDots = getUserDots();
+    List<Widget> userDots = getUserDots(prefs);
     List<Widget> wishlists = getWishlists(prefs);
 
     return CustomScaffold(
@@ -143,7 +146,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
                       SizedBox(width: 10),
                       customButton(
                         onTap: () async {
-                          showDialog(context: context, builder: (context) => InviteToWishlistDialog(prefs, widget.currentUser, (d) {}, loadedUsers.map((e) => e.uid).toList()));
+                          showDialog(context: context, builder: (context) => InviteToWishlistDialog(prefs, widget.currentUser, inviteUsers, loadedUsers.map((e) => e.uid).toList()));
                         },
                         textColor: prefs.color_background,
                         fillColor: prefs.color_accept,
@@ -177,4 +180,22 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
       ),
     );
   }
+
+  void inviteUsers(List<String> uids) async {
+    List<String> alreadyInvited = loadedUsers.map((e) => e.uid).toList();
+
+    InvitationService invitationService = InvitationService();
+
+    bool change = false;
+    for(int i = 0; i < uids.length; i++) {
+      if (!alreadyInvited.contains(uids[i])) {
+        await invitationService.sendGroupWishlistInvitation(widget.currentUser.uid, model.id, uids[i]);
+        model.invitedUsers.add(uids[i]);
+        change = true;
+      }
+    }
+
+    if(change) await model.uploadList();
+  }
+
 }
