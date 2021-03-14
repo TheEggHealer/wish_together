@@ -25,6 +25,7 @@ class WishlistModel {
   String parent = '';
   String wisherUID = '';
   String wisherName = '';
+  bool isSubList = false;
 
   //Group
   List<String> wishlistStream = [];
@@ -33,8 +34,9 @@ class WishlistModel {
     _deconstructData();
   }
 
-  WishlistModel.create({this.color, this.name, this.invitedUsers, this.type, this.dateCreated, this.wisherUID, this.parent}) {
+  WishlistModel.create({this.color, this.name, this.invitedUsers, this.type, this.dateCreated, this.wisherUID, this.creatorUID, this.parent, this.isSubList, this.wishlistStream}) {
     this.id = Uuid().v1();
+    if(type == 'group') wishlistStream.add(id);
   }
 
   void _deconstructData() {
@@ -56,6 +58,8 @@ class WishlistModel {
     wisherUID = raw['wisher_uid'];
     wisherName = raw['wisher_name'];
     items = (raw['items'].map<ItemModel>((e) => ItemModel(raw: e, wishlist: this, wisherUID: wisherUID))).toList();
+    isSubList = raw['is_sub_list'];
+    creatorUID = raw['creator'];
   }
 
   void _deconstructGroup() {
@@ -86,7 +90,7 @@ class WishlistModel {
 
     await dbs.uploadData(dbs.wishlist, id, {
       'color': color,
-      'creator': wisherUID,
+      'creator': creatorUID,
       'date': dateCreated,
       'invited_users': invitedUsers,
       'items': data,
@@ -95,6 +99,8 @@ class WishlistModel {
       'type': type,
       'wisher_name': wisherName,
       'wisher_uid': wisherUID,
+      'is_sub_list': isSubList,
+      'wishlist_stream': wishlistStream
     });
   }
 

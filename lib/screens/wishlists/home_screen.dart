@@ -134,8 +134,6 @@ class _HomeScreenState extends State<HomeScreen> {
     prefs = UserPreferences.from(userData);
     if(userData == null) return Loading();
 
-    DatabaseService dbs = DatabaseService(uid: userData.uid);
-
     List<WishlistModel> freshList = Provider.of<List<WishlistModel>>(context);
     if(wishlists == null || wishlists.isEmpty || wishlists != freshList) {
       debug('Refreshing wishlists!');

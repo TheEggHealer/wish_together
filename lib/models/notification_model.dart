@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
@@ -12,6 +13,7 @@ class NotificationModel {
 
   static const String PRE_FRIEND_REQUEST = 'fr';
   static const String PRE_WISHLIST_INVITE = 'wi';
+  static const String PRE_GROUP_WISHLIST_INVITE = 'gwi';
   static const String PRE_ITEM_CHANGE = 'ic';
   static const String PRE_WISHLIST_CHANGE = 'wc';
 
@@ -71,6 +73,41 @@ class NotificationModel {
         currentUser.notifications.remove(this);
         await currentUser.uploadData();
         break;
+      case PRE_GROUP_WISHLIST_INVITE:
+        DatabaseService dbs = DatabaseService();
+        List<String> parts = content.split('*');
+        WishlistModel groupWishlist = await dbs.getWishlist(parts[0]);
+        if(!groupWishlist.invitedUsers.contains(currentUser.uid)) {
+          //Create new wishlist
+          WishlistModel model = WishlistModel.create(
+            name: currentUser.name,
+            type: 'solo',
+            parent: 'null',
+            wisherUID: currentUser.uid,
+            dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
+            invitedUsers: groupWishlist.invitedUsers,
+            isSubList: true,
+          );
+
+          //Invite currentUser to all other lists in group
+          for(int i = 0; i < groupWishlist.wishlistStream.length; i++) {
+            WishlistModel m = await dbs.getWishlist(groupWishlist.wishlistStream[i]);
+            m.invitedUsers = groupWishlist.invitedUsers;
+            await m.uploadList();
+          }
+
+          //Add wishlist to group
+          groupWishlist.wishlistStream.add(model.id);
+
+          //Upload changes
+          await model.uploadList();
+          await groupWishlist.uploadList();
+        }
+        if(!currentUser.wishlistIds.contains(groupWishlist.id)) {
+          currentUser.wishlistIds.add(groupWishlist.id);
+          await currentUser.uploadData();
+        }
+        break;
       default: content = '';
     }
   }
@@ -83,7 +120,8 @@ class NotificationModel {
   IconData get icon {
     switch(prefix) {
       case PRE_FRIEND_REQUEST: return CustomIcons.profile;
-      case PRE_WISHLIST_INVITE: return CustomIcons.settings;
+      case PRE_WISHLIST_INVITE: return CustomIcons.invite;
+      case PRE_GROUP_WISHLIST_INVITE: return CustomIcons.invite;
       default: return CustomIcons.help;
     }
   }
@@ -92,6 +130,7 @@ class NotificationModel {
     switch(prefix) {
       case PRE_FRIEND_REQUEST: return 'Friend request';
       case PRE_WISHLIST_INVITE: return 'Wishlist invite';
+      case PRE_GROUP_WISHLIST_INVITE: return 'Group wishlist invite';
       default: return 'No title'; break;
     }
   }
@@ -100,6 +139,7 @@ class NotificationModel {
     switch(prefix) {
       case PRE_FRIEND_REQUEST: return true;
       case PRE_WISHLIST_INVITE: return true;
+      case PRE_GROUP_WISHLIST_INVITE: return true;
       default: return false; break;
     }
   }
@@ -113,6 +153,10 @@ class NotificationModel {
         List<String> parts = content.split('*');
         UserData inviter = await GlobalMemory.getUserData(parts[1]);
         return '${inviter.name} has invited you to a wishlist!';
+      case PRE_GROUP_WISHLIST_INVITE:
+        List<String> parts = content.split('*');
+        UserData inviter = await GlobalMemory.getUserData(parts[1]);
+        return '${inviter.name} has invited you to join a group wishlist!';
       default: content = '';
     }
   }

@@ -24,8 +24,19 @@ class InvitationService {
 
   Future<bool> sendWishlistInvitation(String currentUserUID, String wishlistId, String receiverUID) async {
     UserData receiver = await getReceiver(receiverUID);
-    debug('Got receiver');
     await uploadNotificationToFirebase(receiver, 'wi:${await getDate()}:$wishlistId*$currentUserUID:0');
+
+    /* Send notification to receivers devices */
+    if(receiver.settings['notif_wishlist_invitation']) {
+      NotificationService ns = NotificationService();
+      await ns.sendWishlistInviteNotificationTo(receiver.uid);
+    }
+    return true;
+  }
+
+  Future<bool> sendGroupWishlistInvitation(String currentUserUID, String wishlistId, String receiverUID) async {
+    UserData receiver = await getReceiver(receiverUID);
+    await uploadNotificationToFirebase(receiver, 'gwi:${await getDate()}:$wishlistId*$currentUserUID:0');
 
     /* Send notification to receivers devices */
     if(receiver.settings['notif_wishlist_invitation']) {

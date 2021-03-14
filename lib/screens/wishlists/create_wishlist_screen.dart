@@ -29,7 +29,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
   TextEditingController titleController = TextEditingController();
   Color color = Colors.green[300];
   bool soloWishlist = true;
-  List<bool> isSelected = [true, false];
+  List<bool> typeSelected = [true, false];
   List<String> invitedUsers = [];
   List<UserData> loadedFriends = [];
 
@@ -85,7 +85,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
   void setSelected(int index) {
     debug(index);
     soloWishlist = index == 0;
-    isSelected = [soloWishlist, !soloWishlist];
+    typeSelected = [soloWishlist, !soloWishlist];
     setState(() {});
   }
 
@@ -172,7 +172,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
                 focusColor: prefs.color_splash,
                 splashColor: prefs.color_splash,
                 borderRadius: BorderRadius.all(Radius.circular(4)),
-                isSelected: isSelected,
+                isSelected: typeSelected,
                 borderWidth: 2,
                 onPressed: setSelected,
                 children: [
@@ -248,30 +248,53 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
 
   Future<void> onDone() async {
     debug('Uploading new list');
-    WishlistModel wishlist = await createModel();
+    WishlistModel wishlist = typeSelected[0] ? await createSoloModel(title: titleController.text, wisher: currentUser.uid, isSubList: true)
+                                             : await createGroupModel();
+
     currentUser.wishlistIds.add(wishlist.id);
     InvitationService invitation = InvitationService();
 
     for(String uid in invitedUsers) {
       debug('Sending invitation to: $uid');
-      await invitation.sendWishlistInvitation(currentUser.uid, wishlist.id, uid);
+      typeSelected[0] ? await invitation.sendWishlistInvitation(currentUser.uid, wishlist.id, uid)
+                      : await invitation.sendGroupWishlistInvitation(currentUser.uid, wishlist.id, uid);
     }
 
     await wishlist.uploadList();
     await currentUser.uploadData();
   }
 
-  Future<WishlistModel> createModel() async {
-    WishlistModel model = WishlistModel.create(
+  Future<WishlistModel> createGroupModel() async {
+    WishlistModel wishlist = await createSoloModel(title: currentUser.name, wisher: currentUser.uid, isSubList: true);
+    await wishlist.uploadList();
+
+    WishlistModel groupList = WishlistModel.create(
       color: color.value,
       name: titleController.text,
-      type: soloWishlist ? 'solo' : 'group',
+      type: 'group',
       parent: 'null',
-      wisherUID: currentUser.uid,
+      creatorUID: currentUser.uid,
       dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
-      invitedUsers: [
-        currentUser.uid,
-      ],
+      invitedUsers: [currentUser.uid],
+      isSubList: false,
+      wishlistStream: [wishlist.id],
+    );
+
+    debug('Created group list');
+
+    return groupList;
+  }
+
+  Future<WishlistModel> createSoloModel({String title, String wisher, bool isSubList}) async {
+    WishlistModel model = WishlistModel.create(
+      color: color.value,
+      name: title,
+      type: 'solo',
+      parent: 'null',
+      wisherUID: wisher,
+      dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
+      invitedUsers: [currentUser.uid],
+      isSubList: isSubList,
     );
     return model;
   }

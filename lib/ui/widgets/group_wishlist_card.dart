@@ -67,15 +67,18 @@ class _GroupWishlistCardState extends State<GroupWishlistCard> {
   }
 
   Widget addItemButton() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      child: circleButton(
-        icon: Icon(Icons.add, size: 30, color: widget.prefs.color_background),
-        fillColor: widget.prefs.color_accept,
-        splashColor: widget.prefs.color_splash,
-        onTap: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => CreateItemScreen(widget.model)));
-        },
+    return Container(
+      width: 120, //Item card size
+      height: 80,
+      child: Center(
+        child: circleButton(
+          icon: Icon(Icons.add, size: 30, color: widget.prefs.color_background),
+          fillColor: widget.prefs.color_accept,
+          splashColor: widget.prefs.color_splash,
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => CreateItemScreen(widget.model)));
+          },
+        ),
       ),
     );
   }
@@ -111,6 +114,8 @@ class _GroupWishlistCardState extends State<GroupWishlistCard> {
 
     }
 
+    double width = MediaQuery.of(context).size.width;
+
     return Stack(
       children: [
         SingleChildScrollView(
@@ -135,6 +140,9 @@ class _GroupWishlistCardState extends State<GroupWishlistCard> {
                 },
                 child: Container(
                   padding: EdgeInsets.only(left: 6, right: 6, bottom: 6, top: 26),
+                  constraints: BoxConstraints(
+                    minWidth: width - 24, //22 from the total horizontal padding. I don't know where the +2 comes from :( But it works! :)
+                  ),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(12)),
