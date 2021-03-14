@@ -148,7 +148,9 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
           userData: e,
           size: SIZE.MEDIUM,
           owner: e.uid == model.wisherUID,
+          pending: !e.wishlistIds.contains(model.id),
           doShowName: true,
+          prefs: prefs,
         ),
       );
     }).toList();
@@ -221,7 +223,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: userDots.isNotEmpty ? userDots : [SpinKitThreeBounce(
                   color: color_loading_spinner,
                   size: 20,
@@ -263,15 +265,10 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
 
     InvitationService invitationService = InvitationService();
 
-    bool change = false;
     for(int i = 0; i < uids.length; i++) {
       if (!alreadyInvited.contains(uids[i])) {
         await invitationService.sendWishlistInvitation(widget.currentUser.uid, model.id, uids[i]);
-        model.invitedUsers.add(uids[i]);
-        change = true;
       }
     }
-
-    if(change) await model.uploadList();
   }
 }

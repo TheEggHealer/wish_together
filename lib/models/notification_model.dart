@@ -77,7 +77,7 @@ class NotificationModel {
         DatabaseService dbs = DatabaseService();
         List<String> parts = content.split('*');
         WishlistModel groupWishlist = await dbs.getWishlist(parts[0]);
-        if(!groupWishlist.invitedUsers.contains(currentUser.uid)) {
+        if(!currentUser.wishlistIds.contains(groupWishlist.id)) {
           //Create new wishlist
           WishlistModel model = WishlistModel.create(
             name: currentUser.name,
@@ -102,8 +102,7 @@ class NotificationModel {
           //Upload changes
           await model.uploadList();
           await groupWishlist.uploadList();
-        }
-        if(!currentUser.wishlistIds.contains(groupWishlist.id)) {
+
           currentUser.wishlistIds.add(groupWishlist.id);
           await currentUser.uploadData();
         }
