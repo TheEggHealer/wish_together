@@ -105,7 +105,17 @@ class WishlistModel {
 
   Future<void> deleteWishlist() async {
     DatabaseService dbs = DatabaseService();
-    await dbs.deleteDocument(dbs.wishlist, id);
+
+    if(type == 'solo') {
+      await dbs.deleteDocument(dbs.wishlist, id);
+    } else {
+      for(int i = 0; i < wishlistStream.length; i++) {
+        WishlistModel model = await dbs.getWishlist(wishlistStream[i]);
+        await model.deleteWishlist();
+      }
+      await dbs.deleteDocument(dbs.wishlist, id);
+    }
+
   }
 
 }

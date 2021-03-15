@@ -67,7 +67,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
         child: UserDot.fromUserData(
           userData: e,
           size: SIZE.MEDIUM,
-          owner: e.uid == widget.model.wisherUID,
+          owner: e.uid == widget.model.creatorUID,
           pending: !loadedWishlists.any((element) => element.wisherUID == e.uid),
           prefs: prefs,
           doShowName: true,

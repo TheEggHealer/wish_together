@@ -207,7 +207,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
                   currentUser: widget.currentUser,
                   wishlist: model,
                   callback: () {
-                    Navigator.pop(context);
+                    //Navigator.pop(context);
                   },
                 ),
                 SizedBox(width: 10),

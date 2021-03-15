@@ -62,7 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WishlistModel model = Provider.of<WishlistModel>(context);
     return StreamProvider<List<WishlistModel>>.value(
       value: dbs.wishlistDocs(model != null ? model.wishlistStream : []),
-      catchError: (context2, e) {Navigator.pop(context2);},
+      catchError: (context3, e) {if(Navigator.canPop(context)) Navigator.pop(context);},
       child: GroupWishlistScreen(userData, model),
     );
 
@@ -76,20 +76,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
         DatabaseService dbs = DatabaseService();
         String type = wishlists[index].type;
+        String id = wishlists[index].id;
 
         if(type == 'solo') {
-          String id = wishlists[index].id;
-          Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<WishlistModel>.value(
+          Navigator.push(context, MaterialPageRoute(builder: (context2) => StreamProvider<WishlistModel>.value(
             value: dbs.wishlistStream(id),
-            catchError: (context2, e) {
-              Navigator.pop(context2); //TODO Not fully tested, if wishlist closes randomly, check this first!
-            },
+            catchError: (context3, e) {if(Navigator.canPop(context)) Navigator.pop(context);}, //TODO Not fully tested, if wishlist closes randomly, check this first!
             child: SoloWishlistScreen(userData),
           )));
         } else {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<WishlistModel>.value(
-            value: dbs.wishlistStream(wishlists[index].id),
-            builder: (context2, child) => groupWishlistStream(context2, dbs),
+          Navigator.push(context, MaterialPageRoute(builder: (context2) => StreamProvider<WishlistModel>.value(
+            value: dbs.wishlistStream(id),
+            catchError: (context3, e) {if(Navigator.canPop(context)) Navigator.pop(context);},
+            builder: (context3, child) => groupWishlistStream(context3, dbs),
           )));
         }
       }
