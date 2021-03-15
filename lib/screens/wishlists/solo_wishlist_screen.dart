@@ -159,9 +159,9 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       child: ItemCard(model: e, wishlist: model, currentUser: widget.currentUser,),
     )).toList();
-    debug('Refreshing current wishlist!');
 
     String wishlistTitle = wisher == null ? '' : (wisher.uid == widget.currentUser.uid ? 'Your wishlist' : '${wisher.name}\'s wishlist');
+    bool creator = widget.currentUser.uid == model.creatorUID;
 
     return CustomScaffold(
       prefs: prefs,
@@ -210,8 +210,8 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
                     //Navigator.pop(context);
                   },
                 ),
-                SizedBox(width: 10),
-                customButton(
+                if(creator) SizedBox(width: 10),
+                if(creator) customButton(
                   onTap: () async {
                     showDialog(context: context, builder: (context) => InviteToWishlistDialog(prefs, widget.currentUser, inviteUsers, loadedUsers.map((e) => e.uid).toList()));
                   },

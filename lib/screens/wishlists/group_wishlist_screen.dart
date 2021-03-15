@@ -121,6 +121,8 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
     List<Widget> userDots = getUserDots(prefs);
     List<Widget> wishlists = getWishlists(prefs);
 
+    bool creator = widget.currentUser.uid == widget.model.creatorUID;
+
     return CustomScaffold(
       prefs: prefs,
       title: widget.model.name,
@@ -151,8 +153,8 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
                         currentUser: widget.currentUser,
                         callback: () {},
                       ),
-                      SizedBox(width: 10),
-                      customButton(
+                      if(creator) SizedBox(width: 10),
+                      if(creator) customButton(
                         onTap: () async {
                           showDialog(context: context, builder: (context) => InviteToWishlistDialog(prefs, widget.currentUser, inviteUsers, loadedUsers.map((e) => e.uid).toList()));
                         },
