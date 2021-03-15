@@ -17,7 +17,7 @@ class WishlistLeaveButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool owner = currentUser.uid == wishlist.wisherUID;
+    bool owner = currentUser.uid == wishlist.creatorUID;
     if(owner) {
       return IconButton( //TODO Add splash
         icon: Icon(
@@ -32,8 +32,8 @@ class WishlistLeaveButton extends StatelessWidget {
             icon: CustomIcons.trash,
             callback: (confirm) async {
               if(confirm) {
+                //callback();
                 await wishlist.deleteWishlist();
-                callback();
               }
             },
           ));

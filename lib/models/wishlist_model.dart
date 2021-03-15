@@ -36,7 +36,6 @@ class WishlistModel {
 
   WishlistModel.create({this.color, this.name, this.invitedUsers, this.type, this.dateCreated, this.wisherUID, this.creatorUID, this.parent, this.isSubList, this.wishlistStream}) {
     this.id = Uuid().v1();
-    if(type == 'group') wishlistStream.add(id);
   }
 
   void _deconstructData() {
@@ -45,6 +44,7 @@ class WishlistModel {
     dateCreated = raw['date'];
     invitedUsers = List<String>.from(raw['invited_users']);
     type = raw['type'];
+    creatorUID = raw['creator'];
 
     switch(type) {
       case 'solo': _deconstructSolo(); break;
@@ -59,7 +59,6 @@ class WishlistModel {
     wisherName = raw['wisher_name'];
     items = (raw['items'].map<ItemModel>((e) => ItemModel(raw: e, wishlist: this, wisherUID: wisherUID))).toList();
     isSubList = raw['is_sub_list'];
-    creatorUID = raw['creator'];
   }
 
   void _deconstructGroup() {

@@ -4,10 +4,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
-import 'package:wishtogether/models/group_wishlist_model.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/screens/drawer/drawer.dart';
-import 'package:wishtogether/screens/drawer/notifications_screen.dart';
 import 'package:wishtogether/screens/wishlists/create_wishlist_screen.dart';
 import 'package:wishtogether/screens/wishlists/group_wishlist_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
@@ -15,16 +13,10 @@ import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
-import 'package:wishtogether/screens/drawer/profile_screen.dart';
-import 'package:wishtogether/screens/drawer/settings_screen.dart';
 import 'package:wishtogether/screens/wishlists/solo_wishlist_screen.dart';
-import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
-import 'package:wishtogether/ui/widgets/user_dot.dart';
 import 'package:wishtogether/ui/widgets/wishlist_card.dart';
-
-import '../../services/invitation_service.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -33,7 +25,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   UserData userData;
   UserPreferences prefs;
@@ -71,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WishlistModel model = Provider.of<WishlistModel>(context);
     return StreamProvider<List<WishlistModel>>.value(
       value: dbs.wishlistDocs(model != null ? model.wishlistStream : []),
+      catchError: (context2, e) {Navigator.pop(context2);},
       child: GroupWishlistScreen(userData, model),
     );
 
@@ -86,8 +78,12 @@ class _HomeScreenState extends State<HomeScreen> {
         String type = wishlists[index].type;
 
         if(type == 'solo') {
+          String id = wishlists[index].id;
           Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<WishlistModel>.value(
-            value: dbs.wishlistStream(wishlists[index].id),
+            value: dbs.wishlistStream(id),
+            catchError: (context2, e) {
+              Navigator.pop(context2); //TODO Not fully tested, if wishlist closes randomly, check this first!
+            },
             child: SoloWishlistScreen(userData),
           )));
         } else {

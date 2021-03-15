@@ -103,6 +103,7 @@ class NotificationModel {
           await model.uploadList();
           await groupWishlist.uploadList();
 
+          currentUser.notifications.remove(this);
           currentUser.wishlistIds.add(groupWishlist.id);
           await currentUser.uploadData();
         }

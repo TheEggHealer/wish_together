@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
@@ -32,6 +33,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
   List<bool> typeSelected = [true, false];
   List<String> invitedUsers = [];
   List<UserData> loadedFriends = [];
+  bool loading = false;
 
 
   void loadFriends() async {
@@ -222,10 +224,13 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
           splashColor: prefs.color_splash,
           hoverColor: prefs.color_splash,
           focusColor: prefs.color_splash,
-          child: Icon(
+          child: !loading ? Icon(
             Icons.check,
             color: prefs.color_background,
             size: 40,
+          ) : SpinKitThreeBounce(
+            color: prefs.color_background,
+            size: 20,
           ),
           onPressed: () async {
             if(currentUser != null && validate()) {
@@ -247,12 +252,11 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
   }
 
   Future<void> onDone() async {
-    debug('Uploading new list');
-    WishlistModel wishlist = typeSelected[0] ? await createSoloModel(title: titleController.text, wisher: currentUser.uid, isSubList: true)
+    setState(() {loading = true;});
+    WishlistModel wishlist = typeSelected[0] ? await createSoloModel(title: titleController.text, wisher: currentUser.uid, isSubList: false)
                                              : await createGroupModel();
 
     currentUser.wishlistIds.add(wishlist.id);
-    debug('u23848r9u3809tu25ut0982u05gt948ug58925');
     InvitationService invitation = InvitationService();
 
     for(String uid in invitedUsers) {
@@ -295,8 +299,9 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
       type: 'solo',
       parent: 'null',
       wisherUID: wisher,
+      creatorUID: currentUser.uid,
       dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
-      invitedUsers: [currentUser.uid],
+      invitedUsers: [currentUser.uid]..addAll(invitedUsers),
       isSubList: isSubList,
     );
     return model;

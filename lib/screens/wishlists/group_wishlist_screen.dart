@@ -164,7 +164,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: userDots.isNotEmpty ? userDots : [SpinKitThreeBounce(
                         color: color_loading_spinner,
                         size: 20,
