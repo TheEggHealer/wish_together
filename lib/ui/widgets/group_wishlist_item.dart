@@ -8,6 +8,7 @@ import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/wishlists/solo_wishlist_screen.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 
 class GroupWishlistItem extends StatefulWidget {
@@ -101,7 +102,7 @@ class _GroupWishlistItemState extends State<GroupWishlistItem> {
                 if(widget.model.photoURL.isNotEmpty) Align(
                   alignment: Alignment.topLeft,
                   child: Icon(
-                    Icons.camera_alt, //TODO Change to camera icon
+                    CustomIcons.camera,
                     color: widget.prefs.color_icon,
                     size: 20,
                   ),

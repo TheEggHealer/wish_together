@@ -96,8 +96,8 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 if(widget.model.photoURL.isNotEmpty) Icon(
-                  CustomIcons.send,
-                  color: prefs.color_icon, //TODO ICON Change to camera icon
+                  CustomIcons.camera,
+                  color: prefs.color_icon,
                   size: 20,
                 ),
                 RichText(

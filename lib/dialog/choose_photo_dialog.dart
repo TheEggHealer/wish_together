@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wishtogether/dialog/custom_dialog.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 
 class ChoosePhotoDialog extends StatefulWidget {
@@ -20,7 +21,7 @@ class _ChoosePhotoDialogState extends State<ChoosePhotoDialog> {
     return CustomDialog(
       prefs: widget.prefs,
       title: 'Choose photo',
-      icon: Icons.photo_camera, //TODO ICON change to camera icon
+      icon: CustomIcons.camera,
       content: Column(
         children: [
           Row(

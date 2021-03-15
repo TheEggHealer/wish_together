@@ -47,7 +47,7 @@ class WishlistLeaveButton extends StatelessWidget {
     } else {
       return IconButton(
         icon: Icon(
-          CustomIcons.bell, //TODO ICON: Change to leave icon
+          CustomIcons.logout,
           color: prefs.color_icon,
         ),
         onPressed: () async {
@@ -55,7 +55,7 @@ class WishlistLeaveButton extends StatelessWidget {
             prefs: prefs,
             title: 'Leave wishlist',
             confirmationText: 'After leaving this wishlist, you have to be invited again if you change your mind. Are you sure?',
-            icon: CustomIcons.bell, //TODO ICON: Change to leave icon
+            icon: CustomIcons.logout,
             callback: (confirm) async {
               if(confirm) {
                 currentUser.wishlistIds.remove(wishlist.id);

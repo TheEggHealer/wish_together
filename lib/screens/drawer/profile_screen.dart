@@ -120,7 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   child: Column(
                     children: [
                       Icon(
-                        Icons.camera_alt,
+                        CustomIcons.camera,
                         color: prefs.color_icon,
                         size: 20,
                       ),
