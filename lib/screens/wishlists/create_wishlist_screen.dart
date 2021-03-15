@@ -252,6 +252,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
                                              : await createGroupModel();
 
     currentUser.wishlistIds.add(wishlist.id);
+    debug('u23848r9u3809tu25ut0982u05gt948ug58925');
     InvitationService invitation = InvitationService();
 
     for(String uid in invitedUsers) {
@@ -268,6 +269,8 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
     WishlistModel wishlist = await createSoloModel(title: currentUser.name, wisher: currentUser.uid, isSubList: true);
     await wishlist.uploadList();
 
+    List<String> users = List.from(invitedUsers)..add(currentUser.uid);
+
     WishlistModel groupList = WishlistModel.create(
       color: color.value,
       name: titleController.text,
@@ -275,7 +278,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
       parent: 'null',
       creatorUID: currentUser.uid,
       dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
-      invitedUsers: [currentUser.uid],
+      invitedUsers: users,
       isSubList: false,
       wishlistStream: [wishlist.id],
     );

@@ -19,8 +19,9 @@ import 'package:wishtogether/ui/widgets/wishlist_leave_button.dart';
 class GroupWishlistScreen extends StatefulWidget {
 
   final UserData currentUser;
+  final WishlistModel model;
 
-  GroupWishlistScreen(this.currentUser);
+  GroupWishlistScreen(this.currentUser, this.model);
 
   @override
   _GroupWishlistScreenState createState() => _GroupWishlistScreenState();
@@ -28,26 +29,32 @@ class GroupWishlistScreen extends StatefulWidget {
 
 class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
 
-  WishlistModel model;
   List<UserData> loadedUsers = [];
   List<WishlistModel> loadedWishlists = [];
 
   Future<void> load() async {
     DatabaseService dbs = DatabaseService();
     loadedUsers = [];
-    for(String uid in model.invitedUsers) {
+    //loadedWishlists = [];
+
+    for(String uid in widget.model.invitedUsers) {
       loadedUsers.add(await GlobalMemory.getUserData(uid));
     }
+
+    //for(String id in model.wishlistStream) {
+    //  debug('Loading wishlists manually!');
+    //  loadedWishlists.add(await dbs.getWishlist(id));
+    //}
 
     setState(() {});
   }
 
-  bool invitedUsersChanged() {
+  bool changes() {
     List<String> uids = loadedUsers.map((e) => e.uid).toList();
 
-    if(uids.length != model.invitedUsers.length) return true;
+    if(uids.length != widget.model.invitedUsers.length) return true;
 
-    model.invitedUsers.forEach((element) {
+    widget.model.invitedUsers.forEach((element) {
       if(!uids.contains(element)) return true;
     });
     return false;
@@ -60,7 +67,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
         child: UserDot.fromUserData(
           userData: e,
           size: SIZE.MEDIUM,
-          owner: e.uid == model.wisherUID,
+          owner: e.uid == widget.model.wisherUID,
           pending: !loadedWishlists.any((element) => element.wisherUID == e.uid),
           prefs: prefs,
           doShowName: true,
@@ -92,13 +99,12 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
     List<WishlistModel> ms = Provider.of<List<WishlistModel>>(context);
     if(ms != null) {
       ms.forEach((element) {debug(element.type);});
-      model = ms.firstWhere((element) => element.type == 'group');
-      loadedWishlists = ms.where((element) => element.type == 'solo').toList();
+      loadedWishlists = ms;
       placeCurrentFirst();
-      if(invitedUsersChanged()) load();
+      if(changes()) load();
     }
 
-    if(model == null) {
+    if(widget.model == null) {
       return Loading();
     }
 
@@ -115,7 +121,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
 
     return CustomScaffold(
       prefs: prefs,
-      title: model.name,
+      title: widget.model.name,
       backButton: true,
       padding: false,
       body: Container(
@@ -139,7 +145,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
                       ),
                       WishlistLeaveButton(
                         prefs: prefs,
-                        wishlist: model,
+                        wishlist: widget.model,
                         currentUser: widget.currentUser,
                         callback: () {},
                       ),
@@ -189,13 +195,13 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
     bool change = false;
     for(int i = 0; i < uids.length; i++) {
       if (!alreadyInvited.contains(uids[i])) {
-        await invitationService.sendGroupWishlistInvitation(widget.currentUser.uid, model.id, uids[i]);
-        model.invitedUsers.add(uids[i]);
+        await invitationService.sendGroupWishlistInvitation(widget.currentUser.uid, widget.model.id, uids[i]);
+        widget.model.invitedUsers.add(uids[i]);
         change = true;
       }
     }
 
-    if(change) await model.uploadList();
+    if(change) await widget.model.uploadList();
   }
 
 }

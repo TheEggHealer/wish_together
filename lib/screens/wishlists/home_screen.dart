@@ -58,6 +58,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ..load()
         ..show();
     }
+
   }
 
   void onLeave(DatabaseService dbs) async {
@@ -65,24 +66,36 @@ class _HomeScreenState extends State<HomeScreen> {
     banner.dispose();
   }
 
+  Widget groupWishlistStream(BuildContext context, DatabaseService dbs) {
+
+    WishlistModel model = Provider.of<WishlistModel>(context);
+    return StreamProvider<List<WishlistModel>>.value(
+      value: dbs.wishlistDocs(model != null ? model.wishlistStream : []),
+      child: GroupWishlistScreen(userData, model),
+    );
+
+  }
+
   Widget cardBuilder(BuildContext context, int index) {
     return WishlistCard(
       prefs: prefs,
       model: wishlists[index],
       onClick: () {
+
         DatabaseService dbs = DatabaseService();
         String type = wishlists[index].type;
 
-        Stream stream = type == 'solo' ? dbs.wishlistStream(wishlists[index].id)
-                                       : dbs.wishlistDocs(wishlists[index].wishlistStream);
-
-        Widget child = type == 'solo' ? SoloWishlistScreen(userData)
-                                      : GroupWishlistScreen(userData);
-
-        Navigator.push(context, MaterialPageRoute(builder: (context) =>
-          type == 'solo' ? StreamProvider<WishlistModel>.value(value: stream, child: child,)
-                         : StreamProvider<List<WishlistModel>>.value(value: stream, child: child,),
-        ));
+        if(type == 'solo') {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<WishlistModel>.value(
+            value: dbs.wishlistStream(wishlists[index].id),
+            child: SoloWishlistScreen(userData),
+          )));
+        } else {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<WishlistModel>.value(
+            value: dbs.wishlistStream(wishlists[index].id),
+            builder: (context2, child) => groupWishlistStream(context2, dbs),
+          )));
+        }
       }
     );
   }
