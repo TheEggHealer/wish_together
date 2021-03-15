@@ -87,26 +87,28 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
   }
 
   void placeCurrentFirst() {
-    WishlistModel currentModel = loadedWishlists.firstWhere((element) => element.wisherUID == widget.currentUser.uid);
-    loadedWishlists.remove(currentModel);
-    loadedWishlists.insert(0, currentModel);
+    WishlistModel currentModel = loadedWishlists.firstWhere((element) => element.wisherUID == widget.currentUser.uid, orElse: () => null);
+    if(currentModel != null) {
+      loadedWishlists.remove(currentModel);
+      loadedWishlists.insert(0, currentModel);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     UserPreferences prefs = UserPreferences.from(widget.currentUser);
 
+    if(widget.model == null) {
+      return Loading();
+    }
+
     List<WishlistModel> ms = Provider.of<List<WishlistModel>>(context);
     if(ms != null) {
-      ms.forEach((element) {debug(element.type);});
       loadedWishlists = ms;
       placeCurrentFirst();
       if(changes()) load();
     }
 
-    if(widget.model == null) {
-      return Loading();
-    }
 
     List<Widget> w = loadedWishlists.map((element) => Padding(
       padding: const EdgeInsets.all(8.0),
