@@ -50,7 +50,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
   Widget item({String title, Widget otherSide, Function onTap, bool warning = false, bool enabled = true, UserPreferences prefs}) {
     return ListTile(
       enabled: enabled,
-      tileColor: enabled ? Colors.transparent : color_card_disabled,
+      tileColor: Colors.transparent,
       onTap: onTap,
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -247,6 +247,14 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: Text(
+              'General',
+              style: prefs.text_style_sub_header,
+            ),
+          ),
+          SizedBox(height: 5),
           categoryOther(prefs),
           SizedBox(height: 40),
           Padding(
