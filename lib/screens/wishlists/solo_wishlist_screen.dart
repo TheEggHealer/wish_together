@@ -21,8 +21,10 @@ import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/item_card.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
+import 'package:wishtogether/ui/widgets/notification_counter.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
 import 'package:wishtogether/ui/widgets/wishlist_leave_button.dart';
+import 'package:wishtogether/models/notification_model.dart';
 
 import '../../dialog/invite_to_wishlist_dialog.dart';
 
@@ -155,10 +157,35 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       );
     }).toList();
 
-    List<Widget> itemList = model.items.map((e) => Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      child: ItemCard(model: e, wishlist: model, currentUser: widget.currentUser,),
-    )).toList();
+    List<Widget> itemList = model.items.map((e) {
+      int numberOfNotif = widget.currentUser.notifications.where((notif) {
+        if((notif.prefix == NotificationModel.PRE_ITEM_CHANGE || notif.prefix == NotificationModel.PRE_CLAIMED_ITEM_CHANGE)) {
+          List<String> parts = notif.content.split('*');
+          String wishlistId = parts[1];
+          String itemId = parts[2];
+          return wishlistId == model.id && itemId == e.id;
+        }
+        return false;
+      }).length;
+
+      return Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+            child: ItemCard(model: e, wishlist: model, currentUser: widget.currentUser,),
+          ),
+          if(numberOfNotif > 0) Positioned(
+            top: 0,
+            right: 0,
+            child: NotificationCounter(
+              prefs: prefs,
+              border: true,
+              number: numberOfNotif,
+            ),
+          )
+        ],
+      );
+    }).toList();
 
     String wishlistTitle = wisher == null ? '' : (wisher.uid == widget.currentUser.uid ? 'Your wishlist' : '${wisher.name}\'s wishlist');
     bool creator = widget.currentUser.uid == model.creatorUID;

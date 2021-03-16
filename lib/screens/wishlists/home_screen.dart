@@ -72,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return WishlistCard(
       prefs: prefs,
       model: wishlists[index],
+      currentUser: userData,
       onClick: () {
 
         DatabaseService dbs = DatabaseService();

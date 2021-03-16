@@ -1,10 +1,12 @@
 import 'package:flutter/cupertino.dart';
+import 'package:uuid/uuid.dart';
 import 'package:wishtogether/models/comment_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 
 class ItemModel {
 
+  String id;
   WishlistModel wishlist;
   Map<String, dynamic> raw;
   String photoURL;
@@ -23,6 +25,7 @@ class ItemModel {
   }
 
   ItemModel.empty() {
+    id = 'null';
     itemName = '--';
     description = '';
     comments = [];
@@ -34,6 +37,7 @@ class ItemModel {
   }
 
   ItemModel.create({this.wishlist, this.itemName, this.cost, this.addedByUID, this.description, this.photoURL}) {
+    id = Uuid().v1();
     wisherUID = wishlist.wisherUID;
     comments = [];
     hiddenComments = [];
@@ -48,6 +52,7 @@ class ItemModel {
   }
 
   void _deconstructData() {
+    id = raw['id'];
     itemName = raw['item_name'];
     comments = (raw['comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();
     hiddenComments = (raw['hidden_comments'].map<CommentModel>((e) => CommentModel(raw: e))).toList();

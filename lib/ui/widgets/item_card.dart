@@ -13,7 +13,9 @@ import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/wishlists/item_screen.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
+import 'package:wishtogether/ui/widgets/notification_counter.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
+import 'package:wishtogether/models/notification_model.dart';
 
 class ItemCard extends StatefulWidget {
 

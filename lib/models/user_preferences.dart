@@ -4,6 +4,8 @@ import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/ui/color_correction.dart';
 import 'package:wishtogether/ui/constant_colors.dart';
 
+import '../ui/constant_colors.dart';
+
 class UserPreferences {
 
   bool darkMode;
@@ -97,6 +99,11 @@ class UserPreferences {
     fontSize: 16,
     color: color_deny,
   );
+  get text_style_notification => TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 10,
+    color: color_light_background,
+  );
 
 
   ///Colors
@@ -118,6 +125,7 @@ class UserPreferences {
   get color_spinner       => darkMode ? color_dark_spinner       : color_light_spinner;
   get color_switch_track  => darkMode ? color_dark_switch_track  : color_light_switch_track;
   get color_shadow        => darkMode ? color_dark_shadow        : color_light_shadow;
+  get color_notification  => darkMode ? color_dark_notification  : color_light_notification;
 
 
   ///Special text styles and colors

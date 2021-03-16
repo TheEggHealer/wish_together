@@ -9,12 +9,15 @@ import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 
+import '../services/database_service.dart';
+
 class NotificationModel {
 
   static const String PRE_FRIEND_REQUEST = 'fr';
   static const String PRE_WISHLIST_INVITE = 'wi';
   static const String PRE_GROUP_WISHLIST_INVITE = 'gwi';
   static const String PRE_ITEM_CHANGE = 'ic';
+  static const String PRE_CLAIMED_ITEM_CHANGE = 'cic';
   static const String PRE_WISHLIST_CHANGE = 'wc';
 
   String raw;
@@ -22,7 +25,7 @@ class NotificationModel {
   DateTime date;
   String rawDate;
   String content;
-  bool seen;
+  bool inNotificationList;
 
   String dateString;
 
@@ -41,7 +44,7 @@ class NotificationModel {
 
     content = data[2];
 
-    seen = data[3] == '1';
+    inNotificationList = data[3] == '1';
   }
 
   Future<void> onAccept(UserData currentUser) async {
@@ -144,7 +147,7 @@ class NotificationModel {
   }
 
   String makeRaw() {
-    return '$prefix:$rawDate:$content:${seen ? 1 : 0}';
+    return '$prefix:$rawDate:$content:${inNotificationList ? 1 : 0}';
   }
 
 }

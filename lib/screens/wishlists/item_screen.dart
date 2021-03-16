@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/send_warning_dialog.dart';
@@ -17,6 +19,11 @@ import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
+
+import '../../models/notification_model.dart';
+import '../../models/notification_model.dart';
+import '../../services/global_memory.dart';
+import '../../services/notification_service.dart';
 
 class ItemScreen extends StatefulWidget {
 
@@ -71,6 +78,26 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     }
 
     return result;
+  }
+
+  void clearNotifications(ItemModel model) {
+    bool changes = false;
+
+    List.from(widget.currentUser.notifications).forEach((notif) {
+      if(model != null && model.wishlist != null && (notif.prefix == NotificationModel.PRE_ITEM_CHANGE || notif.prefix == NotificationModel.PRE_CLAIMED_ITEM_CHANGE)) {
+        List<String> parts = notif.content.split('*');
+        String wishlistId = parts[1];
+        String itemId = parts[2];
+        if(wishlistId == model.wishlist.id && itemId == model.id) {
+          widget.currentUser.notifications.remove(notif);
+          changes = true;
+        }
+      }
+    });
+
+    if(changes) {
+      widget.currentUser.uploadData();
+    }
   }
 
   Widget photoCard(Size size, ItemModel model, UserPreferences prefs) {
@@ -183,14 +210,26 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                             if(widget.currentUser.settings['warn_before_chatting_with_wisher']) {
                               await showDialog(
                                 context: context, builder: (context) =>
-                                SendWarning((answer, dontShow) async {
+                                SendWarning((doSend, dontShow) async {
                                   if(dontShow) {
                                     UserData currentUser = widget.currentUser;
                                     currentUser.settings.update('warn_before_chatting_with_wisher', (value) => false);
                                     DatabaseService dbs = DatabaseService();
                                     await dbs.uploadData(dbs.userData, currentUser.uid, {'settings': currentUser.settings});
                                   }
-                                  if (answer) {
+                                  if(doSend) {
+                                    DateTime now = await NTP.now();
+                                    UserData receiver = await GlobalMemory.getUserData(wisher.uid, forceFetch: true);
+                                    if(receiver.settings['notif_changes_to_items_you_wish_for']) {
+                                      String date = DateFormat('HH.mm-dd/MM/yy').format(now);
+                                      NotificationModel notif = NotificationModel(raw: 'ic:$date:${model.wishlist.parent}${model.wishlist.id}*${model.id}:0');
+                                      receiver.notifications.add(notif);
+                                      receiver.uploadData();
+
+                                      NotificationService ns = NotificationService();
+                                      ns.sendItemChangeNotificationTo(receiver.uid);
+                                    }
+
                                     await model.addComment(commentField.text, widget.currentUser, false);
                                     commentField.clear();
                                   }
@@ -300,6 +339,23 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                       color: prefs.color_icon,
                       onPressed: () async {
                         if(hiddenCommentField.text.isNotEmpty) {
+                          DateTime now = await NTP.now();
+                          String date = DateFormat('HH.mm-dd/MM/yy').format(now);
+                          NotificationModel notif = NotificationModel(raw: 'cic:$date:${model.wishlist.id}*${model.id}:0');
+
+                          for(int i = 0; i < model.claimedUsers.length; i++) {
+                            if(model.claimedUsers[i] != widget.currentUser.uid) {
+                              UserData receiver = await GlobalMemory.getUserData(model.claimedUsers[i], forceFetch: true);
+                              if (receiver.settings['notif_changes_to_items_you_wish_for']) {
+                                receiver.notifications.add(notif);
+                                receiver.uploadData();
+
+                                NotificationService ns = NotificationService();
+                                ns.sendClaimedItemChangeNotificationTo(receiver.uid);
+                              }
+                            }
+                          }
+
                           await model.addComment(hiddenCommentField.text, widget.currentUser, true);
                           hiddenCommentField.clear();
                         }
@@ -358,6 +414,8 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     }
 
     if(claimedUsersChanged(model)) loadClaimedUsers(model, wishlist);
+
+    clearNotifications(model);
 
     bool hideInfo = model.shouldBeHiddenFrom(widget.currentUser);
 

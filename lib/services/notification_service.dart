@@ -34,6 +34,32 @@ class NotificationService {
     }
   }
 
+  Future<void> sendItemChangeNotificationTo(String uid) async {
+    DatabaseService dbs = DatabaseService();
+    List<String> tokens = await dbs.getTokensFor(uid);
+
+    if(tokens.isNotEmpty) {
+      FirebaseFunctions.instance.httpsCallable('sendNotification').call({
+        'tokens': tokens,
+        'title': 'You have new messages!',
+        'body': 'There are new messages on an item that you wish for.',
+      });
+    }
+  }
+
+  Future<void> sendClaimedItemChangeNotificationTo(String uid) async {
+    DatabaseService dbs = DatabaseService();
+    List<String> tokens = await dbs.getTokensFor(uid);
+
+    if(tokens.isNotEmpty) {
+      FirebaseFunctions.instance.httpsCallable('sendNotification').call({
+        'tokens': tokens,
+        'title': 'You have new messages!',
+        'body': 'There are new messages on an item that you have claimed.',
+      });
+    }
+  }
+
   Future<void> sendFriendRequestNotificationTo(String uid) async {
     DatabaseService dbs = DatabaseService();
     List<String> tokens = await dbs.getTokensFor(uid);

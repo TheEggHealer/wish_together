@@ -5,6 +5,7 @@ import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/screens/drawer/notifications_screen.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
+import 'package:wishtogether/ui/widgets/notification_counter.dart';
 
 class NotificationBell extends StatefulWidget {
 
@@ -45,27 +46,10 @@ class _NotificationBellState extends State<NotificationBell> {
             if(widget.userData.nbrOfUnseenNotifications > 0) Positioned(
               right: 5,
               top: 5,
-              child: Container(
-                padding: EdgeInsets.all(1),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  color: prefs.color_deny,
-                ),
-                constraints: BoxConstraints(
-                  minWidth: 16,
-                  minHeight: 16,
-                ),
-                child: Center(
-                  child: Text(
-                      '${widget.userData.nbrOfUnseenNotifications}',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      )
-                  ),
-                ),
-              ),
+              child: NotificationCounter(
+                prefs: prefs,
+                number: widget.userData.nbrOfUnseenNotifications,
+              )
             )
           ]
       ),

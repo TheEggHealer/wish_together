@@ -88,7 +88,7 @@ class UserData {
   }
 
   int get nbrOfUnseenNotifications {
-    return notifications.where((notification) => !notification.seen).length;
+    return notifications.where((notification) => notification.inNotificationList).length;
   }
 
 

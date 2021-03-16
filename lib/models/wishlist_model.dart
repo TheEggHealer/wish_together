@@ -77,6 +77,7 @@ class WishlistModel {
     DatabaseService dbs = DatabaseService();
 
     List<Map<String, dynamic>> data = items.map((item) => {
+      'id': item.id,
       'claimed_users': item.claimedUsers,
       'comments': item.commentsAsData,
       'hidden_comments': item.hiddenCommentsAsData,

@@ -21,7 +21,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
     user = Provider.of<UserData>(context) ?? UserData.empty();
     UserPreferences prefs = UserPreferences.from(user);
 
-    List<NotificationWidget> items = user.notifications.map((e) => NotificationWidget(e, user)).toList();
+    List<NotificationWidget> items = user.notifications.where((e) => e.inNotificationList).map((e) => NotificationWidget(e, user)).toList();
 
     return CustomScaffold(
       prefs: prefs,

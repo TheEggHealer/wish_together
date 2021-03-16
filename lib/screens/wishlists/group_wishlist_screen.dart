@@ -221,7 +221,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
     WishlistModel model = WishlistModel.create(
       name: widget.currentUser.name,
       type: 'solo',
-      parent: 'null',
+      parent: widget.model.id,
       wisherUID: widget.currentUser.uid,
       dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
       invitedUsers: widget.model.invitedUsers,

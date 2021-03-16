@@ -12,8 +12,10 @@ import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/group_wishlist_item.dart';
+import 'package:wishtogether/models/notification_model.dart';
 
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/ui/widgets/notification_counter.dart';
 
 class GroupWishlistCard extends StatefulWidget {
 
@@ -42,26 +44,49 @@ class _GroupWishlistCardState extends State<GroupWishlistCard> {
       String heroTag = Uuid().v1();
       bool hideInfo = widget.currentUser.uid == wisher.uid;
 
-      return GroupWishlistItem(
-        model: e,
-        prefs: widget.prefs,
-        heroTag: heroTag,
-        hideInfo: hideInfo,
-        onTap: () {
-          DatabaseService dbs = DatabaseService();
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) => StreamProvider<WishlistModel>.value(
-              value: dbs.wishlistStream(widget.model.id),
-              child: ItemScreen(itemIndex: widget.model.items.indexOf(e), heroTag: heroTag, currentUser: widget.currentUser),
+      int numberOfNotif = widget.currentUser.notifications.where((notif) {
+        if((notif.prefix == NotificationModel.PRE_ITEM_CHANGE || notif.prefix == NotificationModel.PRE_CLAIMED_ITEM_CHANGE)) {
+          List<String> parts = notif.content.split('*');
+          String wishlistId = parts[1];
+          String itemId = parts[2];
+          return wishlistId == widget.model.id && itemId == e.id;
+        }
+        return false;
+      }).length;
+
+      return Stack(
+        children: [
+          GroupWishlistItem(
+            model: e,
+            prefs: widget.prefs,
+            heroTag: heroTag,
+            hideInfo: hideInfo,
+            onTap: () {
+              DatabaseService dbs = DatabaseService();
+              Navigator.push(context, MaterialPageRoute(
+                builder: (context) => StreamProvider<WishlistModel>.value(
+                  value: dbs.wishlistStream(widget.model.id),
+                  child: ItemScreen(itemIndex: widget.model.items.indexOf(e), heroTag: heroTag, currentUser: widget.currentUser),
+                ),
+              ));
+            },
+            onLongTap: () {
+              if(!hideInfo) {
+                HapticFeedback.lightImpact();
+                e.toggleUserClaim(widget.currentUser);
+              }
+            },
+          ),
+          if(numberOfNotif > 0) Positioned(
+            top: 0,
+            right: 0,
+            child: NotificationCounter(
+              prefs: widget.prefs,
+              border: true,
+              number: numberOfNotif,
             ),
-          ));
-        },
-        onLongTap: () {
-          if(!hideInfo) {
-            HapticFeedback.lightImpact();
-            e.toggleUserClaim(widget.currentUser);
-          }
-        },
+          )
+        ],
       );
     }).toList();
   }
