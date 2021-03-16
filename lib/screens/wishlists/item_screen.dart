@@ -218,17 +218,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                                     await dbs.uploadData(dbs.userData, currentUser.uid, {'settings': currentUser.settings});
                                   }
                                   if(doSend) {
-                                    DateTime now = await NTP.now();
-                                    UserData receiver = await GlobalMemory.getUserData(wisher.uid, forceFetch: true);
-                                    if(receiver.settings['notif_changes_to_items_you_wish_for']) {
-                                      String date = DateFormat('HH.mm-dd/MM/yy').format(now);
-                                      NotificationModel notif = NotificationModel(raw: 'ic:$date:${model.wishlist.parent}${model.wishlist.id}*${model.id}:0');
-                                      receiver.notifications.add(notif);
-                                      receiver.uploadData();
-
-                                      NotificationService ns = NotificationService();
-                                      ns.sendItemChangeNotificationTo(receiver.uid);
-                                    }
+                                    await sendNotification(model);
 
                                     await model.addComment(commentField.text, widget.currentUser, false);
                                     commentField.clear();
@@ -236,6 +226,8 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                                 }, prefs)
                               );
                             } else {
+                              await sendNotification(model);
+
                               await model.addComment(commentField.text, widget.currentUser, false);
                               commentField.clear();
                             }
@@ -252,6 +244,20 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
         ),
       ),
     );
+  }
+
+  Future sendNotification(ItemModel model) async {
+    DateTime now = await NTP.now();
+    UserData receiver = await GlobalMemory.getUserData(wisher.uid, forceFetch: true);
+    if(receiver.settings['notif_changes_to_items_you_wish_for']) {
+      String date = DateFormat('HH.mm-dd/MM/yy').format(now);
+      NotificationModel notif = NotificationModel(raw: 'ic:$date:${model.wishlist.parent}*${model.wishlist.id}*${model.id}:0');
+      receiver.notifications.add(notif);
+      receiver.uploadData();
+
+      NotificationService ns = NotificationService();
+      ns.sendItemChangeNotificationTo(receiver.uid);
+    }
   }
 
   Widget hiddenCard(ItemModel model, WishlistModel wishlist, UserPreferences prefs) {
@@ -341,7 +347,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                         if(hiddenCommentField.text.isNotEmpty) {
                           DateTime now = await NTP.now();
                           String date = DateFormat('HH.mm-dd/MM/yy').format(now);
-                          NotificationModel notif = NotificationModel(raw: 'cic:$date:${model.wishlist.id}*${model.id}:0');
+                          NotificationModel notif = NotificationModel(raw: 'cic:$date:${model.wishlist.parent}*${model.wishlist.id}*${model.id}:0');
 
                           for(int i = 0; i < model.claimedUsers.length; i++) {
                             if(model.claimedUsers[i] != widget.currentUser.uid) {
