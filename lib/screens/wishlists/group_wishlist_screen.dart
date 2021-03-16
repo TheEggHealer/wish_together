@@ -72,7 +72,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
           userData: e,
           size: SIZE.MEDIUM,
           owner: e.uid == widget.model.creatorUID,
-          pending: !loadedWishlists.any((element) => element.wisherUID == e.uid),
+          pending: !(e.wishlistIds.contains(widget.model.id)),
           prefs: prefs,
           doShowName: true,
         ),
@@ -106,12 +106,11 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
       return Loading();
     }
 
-    List<WishlistModel> ms = Provider.of<List<WishlistModel>>(context);
-    if(ms != null) {
-      loadedWishlists = ms;
-      placeCurrentFirst();
-      if(changes()) load();
-    }
+    List<WishlistModel> ms = Provider.of<List<WishlistModel>>(context) ?? [];
+    loadedWishlists = ms;
+    placeCurrentFirst();
+    if(changes()) load();
+
 
 
     List<Widget> w = loadedWishlists.map((element) => Padding(

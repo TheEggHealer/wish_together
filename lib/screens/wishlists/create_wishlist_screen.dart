@@ -270,9 +270,6 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
   }
 
   Future<WishlistModel> createGroupModel() async {
-    WishlistModel wishlist = await createSoloModel(title: currentUser.name, wisher: currentUser.uid, isSubList: true);
-    await wishlist.uploadList();
-
     List<String> users = List.from(invitedUsers)..add(currentUser.uid);
 
     WishlistModel groupList = WishlistModel.create(
@@ -284,10 +281,8 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
       dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
       invitedUsers: users,
       isSubList: false,
-      wishlistStream: [wishlist.id],
+      wishlistStream: [],
     );
-
-    debug('Created group list');
 
     return groupList;
   }
