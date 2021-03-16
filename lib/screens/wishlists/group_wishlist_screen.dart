@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/invite_to_wishlist_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/services/invitation_service.dart';
@@ -31,6 +34,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
 
   List<UserData> loadedUsers = [];
   List<WishlistModel> loadedWishlists = [];
+  bool loading = false;
 
   Future<void> load() async {
     DatabaseService dbs = DatabaseService();
@@ -123,6 +127,8 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
 
     bool creator = widget.currentUser.uid == widget.model.creatorUID;
 
+    bool hasWishlist = loadedWishlists.any((element) => element.wisherUID == widget.currentUser.uid);
+
     return CustomScaffold(
       prefs: prefs,
       title: widget.model.name,
@@ -188,7 +194,45 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
           ],
         )
       ),
+      fab: !hasWishlist ? Padding(
+        padding: EdgeInsets.only(bottom: AdService.adHeight),
+        child: FloatingActionButton(
+          backgroundColor: prefs.color_primary,
+          splashColor: prefs.color_splash,
+          hoverColor: prefs.color_splash,
+          focusColor: prefs.color_splash,
+          child: !loading ? Icon(
+            Icons.add,
+            color: prefs.color_background,
+            size: 40,
+          ) : SpinKitThreeBounce(
+            color: prefs.color_background,
+            size: 20,
+          ),
+          onPressed: () async {
+            setState(() {loading = true;});
+            await createWishlist(); //TODO Add a dialog before creating the wishlist
+          },
+        ),
+      ) : null,
     );
+  }
+
+  Future createWishlist() async {
+    WishlistModel model = WishlistModel.create(
+      name: widget.currentUser.name,
+      type: 'solo',
+      parent: 'null',
+      wisherUID: widget.currentUser.uid,
+      dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
+      invitedUsers: widget.model.invitedUsers,
+      isSubList: true,
+    );
+
+    widget.model.wishlistStream.add(model.id);
+
+    await model.uploadList();
+    await widget.model.uploadList();
   }
 
   void inviteUsers(List<String> uids) async {

@@ -147,8 +147,8 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
         child: UserDot.fromUserData(
           userData: e,
           size: SIZE.MEDIUM,
-          owner: e.uid == model.creatorUID,
-          pending: !e.wishlistIds.contains(model.id),
+          owner: !model.isSubList && e.uid == model.creatorUID,
+          pending: !model.isSubList && !e.wishlistIds.contains(model.id),
           doShowName: true,
           prefs: prefs,
         ),
@@ -202,7 +202,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
                     style: prefs.text_style_sub_header,
                   ),
                 ),
-                WishlistLeaveButton(
+                if(!model.isSubList) WishlistLeaveButton(
                   prefs: prefs,
                   currentUser: widget.currentUser,
                   wishlist: model,
@@ -210,8 +210,8 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
                     //Navigator.pop(context);
                   },
                 ),
-                if(creator) SizedBox(width: 10),
-                if(creator) customButton(
+                if(creator && !model.isSubList) SizedBox(width: 10),
+                if(creator && !model.isSubList) customButton(
                   onTap: () async {
                     showDialog(context: context, builder: (context) => InviteToWishlistDialog(prefs, widget.currentUser, inviteUsers, loadedUsers.map((e) => e.uid).toList()));
                   },

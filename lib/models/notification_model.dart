@@ -78,30 +78,12 @@ class NotificationModel {
         List<String> parts = content.split('*');
         WishlistModel groupWishlist = await dbs.getWishlist(parts[0]);
         if(!currentUser.wishlistIds.contains(groupWishlist.id)) {
-          //Create new wishlist
-          WishlistModel model = WishlistModel.create(
-            name: currentUser.name,
-            type: 'solo',
-            parent: 'null',
-            wisherUID: currentUser.uid,
-            dateCreated: DateFormat('yyyy-MM-dd').format(await NTP.now()),
-            invitedUsers: groupWishlist.invitedUsers,
-            isSubList: true,
-          );
-
           //Invite currentUser to all other lists in group
           for(int i = 0; i < groupWishlist.wishlistStream.length; i++) {
             WishlistModel m = await dbs.getWishlist(groupWishlist.wishlistStream[i]);
             m.invitedUsers = groupWishlist.invitedUsers;
             await m.uploadList();
           }
-
-          //Add wishlist to group
-          groupWishlist.wishlistStream.add(model.id);
-
-          //Upload changes
-          await model.uploadList();
-          await groupWishlist.uploadList();
 
           currentUser.notifications.remove(this);
           currentUser.wishlistIds.add(groupWishlist.id);
