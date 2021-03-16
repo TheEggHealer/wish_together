@@ -27,11 +27,11 @@ import '../../services/notification_service.dart';
 
 class ItemScreen extends StatefulWidget {
 
-  int itemIndex;
+  String itemId;
   UserData currentUser;
   String heroTag;
 
-  ItemScreen({this.itemIndex, this.heroTag, this.currentUser});
+  ItemScreen({this.itemId, this.heroTag, this.currentUser});
 
   @override
   _ItemScreenState createState() => _ItemScreenState();
@@ -80,7 +80,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     return result;
   }
 
-  void clearNotifications(ItemModel model) {
+  void clearNotifications(ItemModel model) async {
     bool changes = false;
 
     List.from(widget.currentUser.notifications).forEach((notif) {
@@ -96,7 +96,8 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     });
 
     if(changes) {
-      widget.currentUser.uploadData();
+      await widget.currentUser.uploadData();
+      setState(() {});
     }
   }
 
@@ -413,7 +414,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     UserPreferences prefs = UserPreferences.from(widget.currentUser);
 
     WishlistModel wishlist = Provider.of<WishlistModel>(context);
-    ItemModel model = wishlist != null ? wishlist.items[widget.itemIndex] : ItemModel.empty();
+    ItemModel model = (wishlist != null) ? wishlist.items.firstWhere((item) => item.id == widget.itemId) : ItemModel.empty();
 
     if(wishlist != null && wisher == null) {
       loadFromDatabase(model, wishlist);
@@ -421,7 +422,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
 
     if(claimedUsersChanged(model)) loadClaimedUsers(model, wishlist);
 
-    clearNotifications(model);
+    if(model != null) clearNotifications(model);
 
     bool hideInfo = model.shouldBeHiddenFrom(widget.currentUser);
 

@@ -162,7 +162,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
             Navigator.push(context, MaterialPageRoute(
               builder: (context) => StreamProvider<WishlistModel>.value(
                 value: dbs.wishlistStream(widget.wishlist.id),
-                child: ItemScreen(itemIndex: widget.wishlist.items.indexOf(widget.model), heroTag: heroTag, currentUser: widget.currentUser),
+                child: ItemScreen(itemId: widget.model.id, heroTag: heroTag, currentUser: widget.currentUser),
               ),
             ));
           },

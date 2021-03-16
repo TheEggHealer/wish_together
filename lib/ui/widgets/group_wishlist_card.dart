@@ -62,11 +62,12 @@ class _GroupWishlistCardState extends State<GroupWishlistCard> {
             heroTag: heroTag,
             hideInfo: hideInfo,
             onTap: () {
+              debug('Why is this happening???');
               DatabaseService dbs = DatabaseService();
               Navigator.push(context, MaterialPageRoute(
                 builder: (context) => StreamProvider<WishlistModel>.value(
                   value: dbs.wishlistStream(widget.model.id),
-                  child: ItemScreen(itemIndex: widget.model.items.indexOf(e), heroTag: heroTag, currentUser: widget.currentUser),
+                  child: ItemScreen(itemId: e.id, heroTag: heroTag, currentUser: widget.currentUser),
                 ),
               ));
             },
