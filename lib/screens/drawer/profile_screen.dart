@@ -127,7 +127,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(height: 5),
                       customButton(
                         width: buttonWidth,
-                        onTap: () {},
+                        onTap: () async {
+
+                        },
                         text: 'Picture',
                         textColor: prefs.color_background,
                         fillColor: prefs.color_accept,

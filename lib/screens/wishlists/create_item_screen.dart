@@ -170,30 +170,28 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                     text: image == null ? 'Choose' : 'Remove',
                     onTap: () {
                       image == null ? showModalBottomSheet(context: context, builder: (context) {
-                        return SafeArea(
-                          child: Container(
-                            child: Wrap(
-                              children: [
-                                ListTile(
-                                  title: Text('Camera', style: prefs.text_style_sub_sub_header,),
-                                  tileColor: prefs.color_card,
-                                  onTap: () async {
-                                    image = await imageService.imageFromCamera();
-                                    setState(() {});
-                                  },
-                                  leading: Icon(Icons.camera, color: prefs.color_icon),
-                                ),
-                                ListTile(
-                                  title: Text('Gallery', style: prefs.text_style_sub_sub_header,),
-                                  tileColor: prefs.color_card,
-                                  onTap: () async {
-                                    image = await imageService.imageFromGallery();
-                                    setState(() {});
-                                  },
-                                  leading: Icon(Icons.photo, color: prefs.color_icon),
-                                ),
-                              ],
-                            ),
+                        return Container(
+                          child: Wrap(
+                            children: [
+                              ListTile(
+                                title: Text('Camera', style: prefs.text_style_sub_sub_header,),
+                                tileColor: prefs.color_card,
+                                onTap: () async {
+                                  image = await imageService.imageFromCamera();
+                                  setState(() {});
+                                },
+                                leading: Icon(Icons.camera, color: prefs.color_icon),
+                              ),
+                              ListTile(
+                                title: Text('Gallery', style: prefs.text_style_sub_sub_header,),
+                                tileColor: prefs.color_card,
+                                onTap: () async {
+                                  image = await imageService.imageFromGallery();
+                                  setState(() {});
+                                },
+                                leading: Icon(Icons.photo, color: prefs.color_icon),
+                              ),
+                            ],
                           ),
                         );
                       }) : setState(() {image = null;});

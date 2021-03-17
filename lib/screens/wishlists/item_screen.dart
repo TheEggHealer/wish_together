@@ -207,6 +207,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                         icon: Icon(CustomIcons.send),
                         color: prefs.color_icon,
                         onPressed: () async {
+                          debug('######################### Trying to send comment');
                           if(commentField.text.isNotEmpty) {
                             if(widget.currentUser.settings['warn_before_chatting_with_wisher']) {
                               await showDialog(
