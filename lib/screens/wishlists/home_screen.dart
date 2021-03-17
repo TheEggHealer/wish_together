@@ -43,13 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     //tmpList
     super.initState();
-
-    if(AdService.hasAds) {
-      banner = AdService.buildTestAd()
-        ..load()
-        ..show();
-    }
-
   }
 
   void onLeave(DatabaseService dbs) async {

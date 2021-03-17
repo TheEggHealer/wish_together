@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/notification_widget.dart';
 
@@ -28,7 +29,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
       backButton: true,
       title: 'Notifications',
       body: Column(
-        children: items,
+        children: [
+          Column(
+            children: items,
+          ),
+          if(AdService.hasAds) SizedBox(height: AdService.adHeight,),
+        ],
       ),
     );
   }

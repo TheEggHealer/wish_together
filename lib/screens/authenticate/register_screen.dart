@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
@@ -112,7 +113,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   SizedBox(height: 80),
                   Text(
@@ -195,6 +196,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                     },
                   ),
                   SizedBox(height: 40),
+                  if(AdService.hasAds) SizedBox(height: AdService.adHeight),
                 ],
               ),
             ),

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/screens/authenticate/register_screen.dart';
 import 'package:wishtogether/screens/authenticate/sign_in_screen.dart';
@@ -145,6 +146,7 @@ class _StartupScreenState extends State<StartupScreen> with SingleTickerProvider
                 },
               ),
             ),
+            if(AdService.hasAds) SizedBox(height: AdService.adHeight),
           ],
         ),
       ),

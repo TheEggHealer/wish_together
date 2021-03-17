@@ -189,7 +189,8 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: wishlists,
-            )
+            ),
+            if(AdService.hasAds) SizedBox(height: AdService.adHeight),
           ],
         )
       ),

@@ -23,8 +23,16 @@ void main() {
 class WishTogether extends StatelessWidget {
 
   Future<FirebaseApp> initialize() async {
+    FirebaseApp app = await Firebase.initializeApp();
     await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-7768123198632313~1473488290');
-    return await Firebase.initializeApp();
+
+    if(AdService.hasAds) createAds();
+
+    return app;
+  }
+
+  Future createAds() async {
+    AdService.buildTestAd()..load()..show();
   }
 
   @override
@@ -66,8 +74,6 @@ class WishTogether extends StatelessWidget {
 
         UserData userData = Provider.of<UserData>(context);
         if(userData != null) {
-          debug('################ Wrapping with new userData! ${userData.wishlistIds}');
-
           return wishlistsWrapper(userData, dbs, context);
         } else {
           return Container(
@@ -80,8 +86,6 @@ class WishTogether extends StatelessWidget {
   }
 
   Widget wishlistsWrapper(UserData userData, DatabaseService dbs, BuildContext context) {
-    debug('################ Wrapping with new wishlists! ${userData.wishlistIds.length}');
-
     UserPreferences prefs = UserPreferences.from(userData);
     return StreamProvider<List<WishlistModel>>.value(
       value: dbs.wishlistDocs(userData == null ? [] : userData.wishlistIds),

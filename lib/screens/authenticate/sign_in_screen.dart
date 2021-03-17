@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
@@ -113,9 +114,9 @@ class _SignInScreenState extends State<SignInScreen> with SingleTickerProviderSt
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  SizedBox(height: 20),
+                  SizedBox(height: 80),
                   Text(
                     '• Email',
                     style: prefs.text_style_sub_header,
@@ -179,6 +180,7 @@ class _SignInScreenState extends State<SignInScreen> with SingleTickerProviderSt
                       }
                     },
                   ),
+                  if(AdService.hasAds) SizedBox(height: AdService.adHeight),
                 ],
               ),
             ),

@@ -58,7 +58,7 @@ TextFormField customTextField({UserPreferences prefs, String helperText, Functio
       focusColor: prefs.color_primary,
       hoverColor: prefs.color_primary,
     ),
-    keyboardType: email ? TextInputType.emailAddress : TextInputType.text,
+    keyboardType: email ? TextInputType.emailAddress : multiline ? TextInputType.multiline : TextInputType.text,
     maxLines: multiline ? null : 1,
   );
 }

@@ -7,6 +7,7 @@ import 'package:wishtogether/dialog/add_friend_dialog.dart';
 import 'package:wishtogether/dialog/change_name_diaglog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
@@ -234,7 +235,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(height: 20),
             if(friends.isNotEmpty) Column(
               children: friends,
-            )
+            ),
+            if(AdService.hasAds) SizedBox(height: AdService.adHeight),
           ],
         ),
       )

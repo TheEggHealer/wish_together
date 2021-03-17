@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
@@ -276,6 +277,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
           ),
           SizedBox(height: 5),
           categoryAccount(context, prefs),
+          if(AdService.hasAds) SizedBox(height: AdService.adHeight),
         ],
       ),
     );

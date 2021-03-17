@@ -214,6 +214,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
             ),
             SizedBox(height: 20),
             if(loadedFriends.isNotEmpty) friends(prefs),
+            if(AdService.hasAds) SizedBox(height: AdService.adHeight,),
           ],
         ),
       ),

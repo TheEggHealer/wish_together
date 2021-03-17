@@ -135,7 +135,7 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
               SizedBox(height: 5),
               customTextField(
                 prefs: prefs,
-                multiline: false,
+                multiline: true,
                 controller: descriptionController,
               ),
               SizedBox(height: 20),
@@ -205,7 +205,8 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                     ),
                   ),
                 ),
-              )
+              ),
+              if(AdService.hasAds) SizedBox(height: AdService.adHeight),
             ],
           ),
         ),
