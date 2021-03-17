@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/add_friend_dialog.dart';
+import 'package:wishtogether/dialog/change_name_diaglog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/services/database_service.dart';
@@ -10,6 +13,9 @@ import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
+
+import '../../dialog/color_picker_dialog.dart';
+import '../../services/image_service.dart';
 
 class ProfileScreen extends StatefulWidget {
   @override
@@ -128,7 +134,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       customButton(
                         width: buttonWidth,
                         onTap: () async {
-
+                          ImageService imageService = ImageService();
+                          File image = await imageService.imageFromGallery();
+                          if(image != null) {
+                            String url = await imageService.uploadImage(image);
+                            currentUser.profilePictureURL = url;
+                            await currentUser.uploadData();
+                            await GlobalMemory.getUserData(currentUser.uid, forceFetch: true);
+                          }
                         },
                         text: 'Picture',
                         textColor: prefs.color_background,
@@ -149,7 +162,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(height: 5),
                       customButton(
                         width: buttonWidth,
-                        onTap: () {},
+                        onTap: () async {
+                          showDialog(context: context, builder: (context) => ChangeNameDialog(
+                            prefs: prefs,
+                            currentUser: currentUser,
+                          ));
+                        },
                         text: 'Name',
                         textColor: prefs.color_background,
                         fillColor: prefs.color_accept,
@@ -169,7 +187,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       SizedBox(height: 5),
                       customButton(
                         width: buttonWidth,
-                        onTap: () {},
+                        onTap: () async {
+                          showDialog(context: context, builder: (context) => ColorPickerDialog(
+                            prefs: prefs,
+                            currentColor: currentUser.userColor,
+                            onDone: (color) async {
+                              currentUser.userColor = color;
+                              await currentUser.uploadData();
+                              await GlobalMemory.getUserData(currentUser.uid, forceFetch: true);
+                            },
+                          ));
+                        },
                         text: 'Color',
                         textColor: prefs.color_background,
                         fillColor: prefs.color_accept,

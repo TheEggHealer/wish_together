@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/choose_photo_dialog.dart';
@@ -15,6 +16,11 @@ import 'package:wishtogether/services/image_service.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
+
+import '../../services/image_service.dart';
+import '../../services/image_service.dart';
+import '../../services/image_service.dart';
+import '../../ui/custom_icons.dart';
 
 class CreateItemScreen extends StatefulWidget {
 
@@ -168,33 +174,14 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                   ),
                   customButton(
                     text: image == null ? 'Choose' : 'Remove',
-                    onTap: () {
-                      image == null ? showModalBottomSheet(context: context, builder: (context) {
-                        return Container(
-                          child: Wrap(
-                            children: [
-                              ListTile(
-                                title: Text('Camera', style: prefs.text_style_sub_sub_header,),
-                                tileColor: prefs.color_card,
-                                onTap: () async {
-                                  image = await imageService.imageFromCamera();
-                                  setState(() {});
-                                },
-                                leading: Icon(Icons.camera, color: prefs.color_icon),
-                              ),
-                              ListTile(
-                                title: Text('Gallery', style: prefs.text_style_sub_sub_header,),
-                                tileColor: prefs.color_card,
-                                onTap: () async {
-                                  image = await imageService.imageFromGallery();
-                                  setState(() {});
-                                },
-                                leading: Icon(Icons.photo, color: prefs.color_icon),
-                              ),
-                            ],
-                          ),
-                        );
-                      }) : setState(() {image = null;});
+                    onTap: () async {
+                      if(image == null) {
+                        image = await ImageService().imageFromGallery();
+                        setState(() {});
+                      } else {
+                        image = null;
+                        setState(() {});
+                      }
                       //showDialog(context: context, builder: (context) => ChoosePhotoDialog(prefs: prefs, callback: (image) {}));
                     },
                     fillColor: image == null ? prefs.color_accept : prefs.color_deny,

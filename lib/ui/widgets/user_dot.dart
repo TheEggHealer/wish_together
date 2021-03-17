@@ -45,8 +45,6 @@ class UserDot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     double radius = 0;
     switch (size) {
       case SIZE.AUTHOR: radius = 6; break;
