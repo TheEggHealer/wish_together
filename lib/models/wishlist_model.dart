@@ -66,8 +66,8 @@ class WishlistModel {
     wishlistStream = List<String>.from(raw['wishlist_stream']);
   }
 
-  get itemCount {
-    return type == 'solo' ? items.length : 0;
+  int itemCount(isWisher) {
+    return type == 'solo' ? items.where((item) => !isWisher ? true : !item.hideFromWisher).length : 0;
   }
 
   get userCount {
