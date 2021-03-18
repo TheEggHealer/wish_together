@@ -20,6 +20,7 @@ const Color color_light_spinner       = Color(0xFFEBEBEB);
 const Color color_light_switch_track  = Color(0xFFEBEBEB);
 const Color color_light_shadow        = Color(0x22000000);
 const Color color_light_notification  = Color(0xFFDB5246);
+const Color color_light_soft          = Color(0xFF868686);
 
 
 ///Dark Mode Colors
@@ -42,3 +43,4 @@ const Color color_dark_spinner       = Color(0xFF292929);
 const Color color_dark_switch_track  = Color(0xFF1A1A1A);
 const Color color_dark_shadow        = Color(0x22000000);
 const Color color_dark_notification  = Color(0xFFDB5246);
+const Color color_dark_soft          = Color(0xFF686868);

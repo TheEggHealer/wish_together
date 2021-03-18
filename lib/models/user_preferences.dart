@@ -104,6 +104,17 @@ class UserPreferences {
     fontSize: 10,
     color: color_light_background,
   );
+  get text_style_soft => TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    color: color_soft,
+  );
+  get text_style_soft_bold => TextStyle(
+    fontFamily: 'OpenSans',
+    fontSize: 14,
+    color: color_soft,
+    fontWeight: FontWeight.bold
+  );
 
 
   ///Colors
@@ -126,6 +137,7 @@ class UserPreferences {
   get color_switch_track  => darkMode ? color_dark_switch_track  : color_light_switch_track;
   get color_shadow        => darkMode ? color_dark_shadow        : color_light_shadow;
   get color_notification  => darkMode ? color_dark_notification  : color_light_notification;
+  get color_soft          => darkMode ? color_dark_soft          : color_light_soft;
 
 
   ///Special text styles and colors
@@ -147,7 +159,7 @@ class UserPreferences {
 
   Color color_wishlist_card(Color backgroundColor) {
     bool useDark = ColorCorrection.useDarkColor(backgroundColor);
-    return useDark ? color_light_sub_header : color_dark_sub_header;
+    return useDark ? color_dark_background : color_light_background;
   }
 
 }

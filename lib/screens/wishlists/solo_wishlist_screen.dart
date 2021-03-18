@@ -19,6 +19,7 @@ import 'package:wishtogether/services/notification_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
+import 'package:wishtogether/ui/widgets/empty_list.dart';
 import 'package:wishtogether/ui/widgets/item_card.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/notification_counter.dart';
@@ -188,6 +189,34 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       );
     }).toList();
 
+    Widget emptyList = EmptyList(
+      prefs: prefs,
+      header: 'No items',
+      verticalPadding: 40,
+      richInstructions: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+            children: [
+              TextSpan(
+                text: 'To add one, tap the add ',
+                style: prefs.text_style_soft,
+              ),
+              WidgetSpan(
+                child: Icon(
+                  Icons.add_circle,
+                  color: prefs.color_primary,
+                  size: 16,
+                ),
+              ),
+              TextSpan(
+                text: ' button in the bottom right corner!',
+                style: prefs.text_style_soft,
+              ),
+            ]
+        ),
+      ),
+    );
+
     String wishlistTitle = wisher == null ? '' : (wisher.uid == widget.currentUser.uid ? 'Your wishlist' : '${wisher.name}\'s wishlist');
     bool creator = widget.currentUser.uid == model.creatorUID;
 
@@ -263,12 +292,14 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
             ),
             Divider(
               color: prefs.color_divider,
-            )
-          ]..addAll(itemList)..add(
+            ),
+            if(itemList.isNotEmpty) Column(
+              children: itemList,
+            ) else emptyList,
             SizedBox(
               height: 10 + AdService.adHeight,
             )
-          ),
+          ]
         ),
       ),
       fab: Padding(

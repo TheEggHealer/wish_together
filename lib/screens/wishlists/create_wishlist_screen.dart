@@ -126,6 +126,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
               ),
               SizedBox(height: 5),
               ColorChooserSquare(
+                prefs: prefs,
                 color: color,
                 size: 90,
                 radius: 16,

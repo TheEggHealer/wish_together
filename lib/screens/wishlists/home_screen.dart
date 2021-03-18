@@ -14,7 +14,9 @@ import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/wishlists/solo_wishlist_screen.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
+import 'package:wishtogether/ui/widgets/empty_list.dart';
 import 'package:wishtogether/ui/widgets/loading.dart';
 import 'package:wishtogether/ui/widgets/wishlist_card.dart';
 
@@ -145,32 +147,64 @@ class _HomeScreenState extends State<HomeScreen> {
       wishlists = freshList;
     }
     setupLists(wishlists, userData);
+
+    Widget dragDropView = DragAndDropGridView(
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        childAspectRatio: 3.2/2.3,
+      ),
+      padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+      itemBuilder: cardBuilder,
+      itemCount: wishlists != null ? wishlists.length : 0,
+      onWillAccept: (oldI, newI) => true,
+      onReorder: (oldI, newI) {
+        //String tmp = userData.wishlistIds[oldI];
+        //userData.wishlistIds[oldI] = userData.wishlistIds[newI];
+        //userData.wishlistIds[newI] = tmp;
+        //dbs.uploadData(dbs.userData, {'wishlists' : userData.wishlistIds});
+
+        var tmp = wishlists[oldI];
+        wishlists[oldI] = wishlists[newI];
+        wishlists[newI] = tmp;
+      },
+    );
+
+    Widget emptyList = EmptyList(
+      prefs: prefs,
+      header: 'No wishlists',
+      verticalPadding: 80,
+      instructions: 'To create a wishlist, tap the add button in the bottom right corner!',
+      richInstructions: RichText(
+        textAlign: TextAlign.center,
+        text: TextSpan(
+          children: [
+            TextSpan(
+              text: 'To create one, tap the add ',
+              style: prefs.text_style_soft,
+            ),
+            WidgetSpan(
+              child: Icon(
+                Icons.add_circle,
+                color: prefs.color_primary,
+                size: 16,
+              ),
+            ),
+            TextSpan(
+              text: ' button in the bottom right corner!',
+              style: prefs.text_style_soft,
+            ),
+          ]
+        ),
+      ),
+    );
+
     return CustomScaffold(
       prefs: prefs,
       title: 'Wish Together',
-      body: Container( //TODO Maybe add padding, at least to bottom to compromise for fab and ads
-        child: DragAndDropGridView(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 3.2/2.3,
-          ),
-          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
-          itemBuilder: cardBuilder,
-          itemCount: wishlists != null ? wishlists.length : 0,
-          onWillAccept: (oldI, newI) => true,
-          onReorder: (oldI, newI) {
-            //String tmp = userData.wishlistIds[oldI];
-            //userData.wishlistIds[oldI] = userData.wishlistIds[newI];
-            //userData.wishlistIds[newI] = tmp;
-            //dbs.uploadData(dbs.userData, {'wishlists' : userData.wishlistIds});
-
-            var tmp = wishlists[oldI];
-            wishlists[oldI] = wishlists[newI];
-            wishlists[newI] = tmp;
-          },
-        ),
+      body: Container(
+        child: wishlists?.isEmpty ?? true ? emptyList : dragDropView,
       ),
       fab: Padding(
         padding: EdgeInsets.only(bottom: AdService.adHeight),

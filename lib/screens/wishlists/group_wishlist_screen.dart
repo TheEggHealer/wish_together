@@ -111,8 +111,6 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
     placeCurrentFirst();
     if(changes()) load();
 
-
-
     List<Widget> w = loadedWishlists.map((element) => Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(
@@ -184,6 +182,31 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
                     color: prefs.color_divider,
                   ),
                 ],
+              ),
+            ),
+            if(!hasWishlist) Padding(
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 60.0),
+              child: RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'You can add your own list by tapping the add ',
+                        style: prefs.text_style_soft,
+                      ),
+                      WidgetSpan(
+                        child: Icon(
+                          Icons.add_circle,
+                          color: prefs.color_primary,
+                          size: 16,
+                        ),
+                      ),
+                      TextSpan(
+                        text: ' button in the bottom right corner!',
+                        style: prefs.text_style_soft,
+                      ),
+                    ]
+                ),
               ),
             ),
             Column(

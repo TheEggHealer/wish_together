@@ -39,4 +39,5 @@ class CustomIcons {
   static const IconData warning = IconData(0xe811, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData color_picker = IconData(0xe812, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData hide = IconData(0xe813, fontFamily: _kFontFam, fontPackage: _kFontPkg);
+  static const IconData empty = IconData(0xe814, fontFamily: _kFontFam, fontPackage: _kFontPkg);
 }

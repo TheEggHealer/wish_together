@@ -94,7 +94,6 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
 
     currentUser = Provider.of<UserData>(context);
     UserPreferences prefs = UserPreferences.from(currentUser);
-    ImageService imageService = ImageService();
     Size size = MediaQuery.of(context).size;
 
     bool isWisher = currentUser.uid == widget.wishlist.wisherUID;
