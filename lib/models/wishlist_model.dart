@@ -6,6 +6,7 @@ import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/item_model.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
+import 'package:wishtogether/services/image_service.dart';
 
 class WishlistModel {
 
@@ -65,8 +66,8 @@ class WishlistModel {
     wishlistStream = List<String>.from(raw['wishlist_stream']);
   }
 
-  get listCount {
-    return type == 'solo' ? 1 : -1;
+  get itemCount {
+    return type == 'solo' ? items.length : 0;
   }
 
   get userCount {
@@ -86,6 +87,7 @@ class WishlistModel {
       'added_by_uid': item.addedByUID,
       'description': item.description,
       'photo_url': item.photoURL,
+      'hide_from_wisher': item.hideFromWisher,
     }).toList();
 
     await dbs.uploadData(dbs.wishlist, id, {
@@ -106,8 +108,14 @@ class WishlistModel {
 
   Future<void> deleteWishlist() async {
     DatabaseService dbs = DatabaseService();
+    ImageService imageService = ImageService();
 
     if(type == 'solo') {
+      //Delete images
+      for(int i = 0; i < items.length; i++) {
+        await imageService.deleteImage(items[i].photoURL);
+      }
+
       await dbs.deleteDocument(dbs.wishlist, id);
     } else {
       for(int i = 0; i < wishlistStream.length; i++) {

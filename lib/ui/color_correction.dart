@@ -10,7 +10,7 @@ class ColorCorrection {
 
     double brightness = 0.2126 * red + 0.7151 * green + 0.0721 * blue;
 
-    return brightness > 0.75;
+    return brightness > 0.7;
   }
 
 }

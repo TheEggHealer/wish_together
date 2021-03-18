@@ -140,7 +140,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
     }
 
     if(model == null) {
-      return Loading();
+      return Loading(prefs: prefs);
     }
 
     List<Widget> userDots = loadedUsers.map<Widget>((e) { //TODO Make this into a function, like in group_wishlist_screen.dart
@@ -157,7 +157,8 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       );
     }).toList();
 
-    List<Widget> itemList = model.items.map((e) {
+    bool isWisher = wisher?.uid == widget.currentUser.uid;
+    List<Widget> itemList = model.items.where((item) => !isWisher ? true : !item.hideFromWisher).map((e) {
       int numberOfNotif = widget.currentUser.notifications.where((notif) {
         if((notif.prefix == NotificationModel.PRE_ITEM_CHANGE || notif.prefix == NotificationModel.PRE_CLAIMED_ITEM_CHANGE)) {
           List<String> parts = notif.content.split('*');

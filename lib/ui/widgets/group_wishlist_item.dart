@@ -85,7 +85,7 @@ class _GroupWishlistItemState extends State<GroupWishlistItem> {
           onTap: widget.onTap,
           onLongPress: widget.onLongTap,
           child: Container(
-            padding: EdgeInsets.all(4),
+            padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
             constraints: BoxConstraints(
               minHeight: 80,
               minWidth: 120,
@@ -99,13 +99,20 @@ class _GroupWishlistItemState extends State<GroupWishlistItem> {
                   textAlign: TextAlign.center,
                   style: widget.prefs.text_style_sub_sub_header,
                 ),
-                if(widget.model.photoURL.isNotEmpty) Align(
-                  alignment: Alignment.topLeft,
-                  child: Icon(
-                    CustomIcons.camera,
-                    color: widget.prefs.color_icon,
-                    size: 20,
-                  ),
+                Row(
+                  children: [
+                    if(widget.model.hideFromWisher) Icon(
+                      CustomIcons.hide,
+                      color: widget.prefs.color_icon,
+                      size: 20,
+                    ),
+                    if(widget.model.hideFromWisher && widget.model.photoURL.isNotEmpty) SizedBox(width: 10),
+                    if(widget.model.photoURL.isNotEmpty) Icon(
+                      CustomIcons.camera,
+                      color: widget.prefs.color_icon,
+                      size: 20,
+                    ),
+                  ],
                 ),
                 Row(
                   children: userDots,

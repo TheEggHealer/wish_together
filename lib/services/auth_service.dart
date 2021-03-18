@@ -3,6 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/models/user_data.dart';
+import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_model.dart';
 
@@ -186,6 +188,40 @@ class AuthService with ChangeNotifier {
       if (user.providerData[0].providerId == 'google.com') return true;
     }
     return false;
+  }
+
+  Future deleteLoggedInUser(UserData currentUser) async {
+    DatabaseService dbs = DatabaseService();
+
+    //Leave wishlists
+    for(int i = 0; i < currentUser.wishlistIds.length; i++) {
+      WishlistModel wishlist = await dbs.getWishlist(currentUser.wishlistIds[i]);
+
+      if(wishlist.creatorUID == currentUser.uid) {
+        await wishlist.deleteWishlist();
+      } else {
+        wishlist.invitedUsers.remove(currentUser.uid);
+
+        //Remove any sublist
+        if (wishlist.type == 'group') {
+          for (int j = 0; j < wishlist.wishlistStream.length; j++) {
+            WishlistModel sub = await dbs.getWishlist(
+                wishlist.wishlistStream[j]);
+            if (sub.wisherUID == currentUser.uid) {
+              wishlist.wishlistStream.removeAt(j);
+              await sub.deleteWishlist();
+            } else {
+              sub.invitedUsers.remove(currentUser.uid);
+              await sub.uploadList();
+            }
+          }
+        }
+
+        await wishlist.uploadList();
+      }
+    }
+
+    await currentUser.deleteUser();
   }
 
 

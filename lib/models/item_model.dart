@@ -19,6 +19,7 @@ class ItemModel {
   List<String> claimedUsers;
   String wisherUID;
   String addedByUID;
+  bool hideFromWisher;
 
   ItemModel({this.raw, this.wishlist, this.wisherUID}) {
     _deconstructData();
@@ -34,9 +35,10 @@ class ItemModel {
     claimedUsers = [];
     wisherUID = 'no_user';
     photoURL = '';
+    hideFromWisher = false;
   }
 
-  ItemModel.create({this.wishlist, this.itemName, this.cost, this.addedByUID, this.description, this.photoURL}) {
+  ItemModel.create({this.wishlist, this.itemName, this.cost, this.addedByUID, this.description, this.photoURL, this.hideFromWisher}) {
     id = Uuid().v1();
     wisherUID = wishlist.wisherUID;
     comments = [];
@@ -48,7 +50,7 @@ class ItemModel {
   get hiddenCommentsAsData => hiddenComments.map((comment) => comment.raw).toList();
 
   bool shouldBeHiddenFrom(UserData userData) {
-    return wisherUID == userData.uid;
+    return wisherUID == userData.uid && !hideFromWisher;
   }
 
   void _deconstructData() {
@@ -61,6 +63,7 @@ class ItemModel {
     addedByUID = raw['added_by_uid'] ?? '';
     description = raw['description'] ?? '';
     photoURL = raw['photo_url'] ?? '';
+    hideFromWisher = raw['hide_from_wisher'] ?? false;
     if(photoURL.isNotEmpty) photo = NetworkImage(photoURL);
   }
 

@@ -134,7 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
     AuthService auth = AuthService();
     userData = Provider.of<UserData>(context);
     prefs = UserPreferences.from(userData);
-    if(userData == null) return Loading();
+    if(userData == null) {
+      debug('Userdata is nulllllllllllllllllll');
+      return Loading();
+    }
 
     List<WishlistModel> freshList = Provider.of<List<WishlistModel>>(context);
     if(wishlists == null || wishlists.isEmpty || wishlists != freshList) {

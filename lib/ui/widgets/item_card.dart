@@ -94,36 +94,44 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                if(widget.model.photoURL.isNotEmpty) Icon(
-                  CustomIcons.camera,
-                  color: prefs.color_icon,
-                  size: 20,
-                ),
-                RichText(
-                  overflow: TextOverflow.fade,
-                  softWrap: false,
-                  maxLines: 1,
-                  text: TextSpan(
-                    children: [
-                      if(widget.model.photoURL.isNotEmpty) TextSpan(
-                        text:' • ',
-                        style: prefs.text_style_item_sub_header
-                      ),
-                      TextSpan(
-                        text: widget.model.itemName,
-                        style: prefs.text_style_item_header
-                      ),
-                      TextSpan(
-                        text: ' • ${widget.model.cost}',
-                        style: prefs.text_style_item_sub_header,
-                      )
-                    ]
+            RichText(
+              overflow: TextOverflow.fade,
+              softWrap: false,
+              maxLines: 1,
+              text: TextSpan(
+                children: [
+                  if(widget.model.hideFromWisher) WidgetSpan(
+                    child: Icon(
+                      CustomIcons.hide,
+                      color: prefs.color_icon,
+                      size: 20,
+                    )
                   ),
-                ),
-              ],
+                  if(widget.model.hideFromWisher) TextSpan(
+                      text:' • ',
+                      style: prefs.text_style_item_sub_header
+                  ),
+                  if(widget.model.photoURL.isNotEmpty) WidgetSpan(
+                    child: Icon(
+                      CustomIcons.camera,
+                      color: prefs.color_icon,
+                      size: 20,
+                    )
+                  ),
+                  if(widget.model.photoURL.isNotEmpty) TextSpan(
+                    text:' • ',
+                    style: prefs.text_style_item_sub_header
+                  ),
+                  TextSpan(
+                    text: widget.model.itemName,
+                    style: prefs.text_style_item_header
+                  ),
+                  TextSpan(
+                    text: ' • ${widget.model.cost}',
+                    style: prefs.text_style_item_sub_header,
+                  )
+                ]
+              ),
             ),
             //SizedBox(height: 10,),
             if(widget.model.description.isNotEmpty) Text(

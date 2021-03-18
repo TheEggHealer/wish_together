@@ -10,6 +10,7 @@ import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/notification_bell.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
+import 'package:wishtogether/ui/widgets/version_widget.dart';
 
 class HomeDrawer {
 
@@ -133,14 +134,7 @@ class HomeDrawer {
                       style: prefs.text_style_bread
                   ),
                   SizedBox(height: 10),
-                  Text(
-                      'Build number: 1.0.3+1', //TODO load from yaml
-                      style: prefs.text_style_tiny
-                  ),
-                  Text(
-                      'Build date: 11-01-2021', //TODO load from yaml
-                      style: prefs.text_style_tiny
-                  ),
+                  VersionWidget(prefs: prefs,),
                   SizedBox(height: 5),
                   Text(
                       '© Copyright Jonathan Runeke 2021',

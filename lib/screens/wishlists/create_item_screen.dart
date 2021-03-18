@@ -41,6 +41,8 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   bool hasCost = false;
   bool hasDescription = false;
   File image;
+  bool hideItem = true;
+  List<bool> hideSelected = [true, false];
 
   bool loading = false;
 
@@ -58,7 +60,6 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
 
   Future<void> onDone() async {
     setState(() {loading = true;});
-    debug('Creating new item');
     ItemModel item = await createItem();
     widget.wishlist.items.add(item);
     await widget.wishlist.uploadList();
@@ -68,7 +69,6 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   Future<ItemModel> createItem() async {
 
     String photoURL = image != null ? await ImageService().uploadImage(image) : '';
-    debug('Image url: $photoURL');
 
     ItemModel item = ItemModel.create(
       wishlist: widget.wishlist,
@@ -76,7 +76,8 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       cost: double.tryParse(costController.text) ?? 0,
       addedByUID: currentUser.uid,
       description: descriptionController.text,
-      photoURL: photoURL
+      photoURL: photoURL,
+      hideFromWisher: hideItem,
     );
 
     if(hasDescription) { //TODO What happens here? (hasDescription should be deprecated)
@@ -95,6 +96,8 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
     UserPreferences prefs = UserPreferences.from(currentUser);
     ImageService imageService = ImageService();
     Size size = MediaQuery.of(context).size;
+
+    bool isWisher = currentUser.uid == widget.wishlist.wisherUID;
 
     return CustomScaffold(
       prefs: prefs,
@@ -119,6 +122,50 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                 controller: itemController,
               ),
               SizedBox(height: 20),
+              if(!isWisher) Text(
+                '• Hide from wisher?',
+                style: prefs.text_style_sub_header,
+              ),
+              if(!isWisher) SizedBox(height: 5),
+              if(!isWisher) SizedBox(
+                height: 28,
+                child: ToggleButtons(
+                  borderColor: prefs.color_comment,
+                  fillColor: prefs.color_background,
+                  selectedBorderColor: prefs.color_accept,
+                  selectedColor: prefs.color_accept,
+                  color: prefs.color_accept,
+                  highlightColor: prefs.color_splash,
+                  hoverColor: prefs.color_splash,
+                  focusColor: prefs.color_splash,
+                  splashColor: prefs.color_splash,
+                  borderRadius: BorderRadius.all(Radius.circular(4)),
+                  isSelected: hideSelected,
+                  borderWidth: 2,
+                  onPressed: setSelected,
+                  children: [
+                    SizedBox(
+                      width: 60,
+                      child: Center(
+                        child: Text(
+                          'Yes',
+                          style: prefs.text_style_bread,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 60,
+                      child: Center(
+                        child: Text(
+                          'No',
+                          style: prefs.text_style_bread,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              if(!isWisher) SizedBox(height: 20),
               Row(
                 children: [
                   Text(
@@ -237,4 +284,11 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       ),
     );
   }
+
+  void setSelected(int index) {
+    hideItem = index == 0;
+    hideSelected = [hideItem, !hideItem];
+    setState(() {});
+  }
+
 }

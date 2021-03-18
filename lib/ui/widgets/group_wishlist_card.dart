@@ -40,7 +40,8 @@ class _GroupWishlistCardState extends State<GroupWishlistCard> {
   }
 
   List<Widget> getItems() {
-    return widget.model.items.map<Widget>((e) {
+    bool isWisher = wisher?.uid == widget.currentUser.uid;
+    return widget.model.items.where((item) => !isWisher ? true : !item.hideFromWisher).map<Widget>((e) {
       String heroTag = Uuid().v1();
       bool hideInfo = widget.currentUser.uid == wisher.uid;
 

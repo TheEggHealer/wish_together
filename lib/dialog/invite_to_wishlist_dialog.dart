@@ -27,11 +27,12 @@ class InviteToWishlistDialog extends StatefulWidget {
 
 class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
 
-  String _input = '';
+  String errorMessage = '';
   List<UserData> loadedFriends = [];
   Map<String, bool> checkboxes = {};
   TextEditingController inputController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
 
   void loadFriends() async {
     List<UserData> result = [];
@@ -124,38 +125,57 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
       prefs: widget.prefs,
       title: 'Invite to wishlist',
       icon: CustomIcons.profile,
-      content: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          customTextField(
-            prefs: widget.prefs,
-            controller: inputController,
-            multiline: false,
-            helperText: 'Email or friend code',
-          ),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              customButton(
-                text: 'Invite',
-                fillColor: widget.prefs.color_accept,
-                onTap: () async {
-                  String uid = await DatabaseService().uidFromIdentifier(inputController.text);
-                  if(uid.isNotEmpty) {
-                    widget.callback([uid]);
-                    inputController.text = '';
-                  } else {
-                    //TODO Handle invalid identifier here!
-                  }
-                },
-                textColor: widget.prefs.color_background,
+      content: Form(
+        key: _formKey,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            customTextField(
+              validator: (val) => isEmail(val) ? null : 'Not a valid email or friend code',
+              prefs: widget.prefs,
+              controller: inputController,
+              multiline: false,
+              helperText: 'Email or friend code',
+            ),
+            SizedBox(height: 5),
+            Center(
+              child: Text(
+                errorMessage,
+                style: widget.prefs.text_style_error,
               ),
-            ],
-          ),
-          SizedBox(height: 10),
-          if(hasFriends) friends(),
-        ],
+            ),
+            SizedBox(height: 5),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                customButton(
+                  text: 'Invite',
+                  fillColor: widget.prefs.color_accept,
+                  onTap: () async {
+                    setState(() {
+                      errorMessage = '';
+                    });
+                    if(_formKey.currentState.validate()) {
+                      String uid = await DatabaseService().uidFromIdentifier(inputController.text);
+                      if (uid.isNotEmpty) {
+                        widget.callback([uid]);
+                        inputController.text = '';
+                      } else {
+                        debug('No user found');
+                        setState(() {
+                          errorMessage = 'No user found, try again';
+                        });
+                      }
+                    }
+                  },
+                  textColor: widget.prefs.color_background,
+                ),
+              ],
+            ),
+            SizedBox(height: 10),
+            if(hasFriends) friends(),
+          ],
+        ),
       ),
       onAccept: () {
         widget.callback(checkboxes.entries.map((e) => e.key).where((element) => checkboxes[element]).toList());
@@ -168,4 +188,10 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
       denyButton: 'Cancel',
     );
   }
+
+  bool isEmail(String input) {
+    if(input.contains('@')) return true;
+    return false;
+  }
+
 }

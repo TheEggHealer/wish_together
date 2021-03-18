@@ -47,12 +47,6 @@ class AdService {
 
   static BannerAd buildTestAd() {
     return BannerAd(
-      listener: (event) {
-        debug('AppID: ${appId}');
-        debug('BannerID: ${testBannerId}');
-        debug(event);
-        debug(event.index);
-      },
       adUnitId: testBannerId,
       size: AdSize.banner,
       targetingInfo: targetInfo,

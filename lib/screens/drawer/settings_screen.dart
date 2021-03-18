@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/dialog/confirmation_dialog.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
@@ -9,6 +10,7 @@ import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/screens/authenticate/change_email_screen.dart';
 import 'package:wishtogether/screens/authenticate/change_password_screen.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -227,7 +229,19 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
             prefs: prefs,
             warning: true,
             title: 'Delete account',
-            onTap: () {},
+            onTap: () async {
+              showDialog(context: context, builder: (context) => ConfirmationDialog(
+                prefs: prefs,
+                title: 'Delete account',
+                icon: CustomIcons.warning,
+                confirmationText: 'Deleting this account cannot be reversed. All your wishlists will be removed, and you will leave wishlists that you are part of. All your data will be permanently removed. Are you sure?',
+                callback: (doDelete) async {
+                  if(doDelete) {
+                    await auth.deleteLoggedInUser(user);
+                  }
+                },
+              ));
+            },
           )
         ],
       ),

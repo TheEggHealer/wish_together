@@ -4,6 +4,7 @@ import 'package:wishtogether/models/notification_model.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/services/image_service.dart';
 
 class UserData {
 
@@ -85,6 +86,15 @@ class UserData {
     };
 
     await dbs.uploadData(dbs.userData, uid, data);
+  }
+
+  Future<void> deleteUser() async {
+    DatabaseService dbs = DatabaseService(uid: uid);
+    ImageService imageService = ImageService();
+
+    await imageService.deleteImage(profilePictureURL);
+
+    await dbs.deleteDocument(dbs.userData, uid);
   }
 
   int get nbrOfUnseenNotifications {

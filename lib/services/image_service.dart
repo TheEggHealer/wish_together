@@ -32,4 +32,12 @@ class ImageService {
     return await uploadTask.ref.getDownloadURL();
   }
 
+  Future<void> deleteImage(String url) async {
+    String path = 'gs://wishtogether-b3f17.appspot.com/' + (p.basename(url).replaceAll('%2F', '/').split('?')[0].replaceAll('%2B', '+'));
+
+    debug(path);
+    Reference ref = FirebaseStorage.instance.refFromURL(path);
+    await ref.delete();
+  }
+
 }

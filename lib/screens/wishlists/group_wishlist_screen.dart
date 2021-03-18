@@ -103,7 +103,7 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
     UserPreferences prefs = UserPreferences.from(widget.currentUser);
 
     if(widget.model == null) {
-      return Loading();
+      return Loading(prefs: prefs);
     }
 
     List<WishlistModel> ms = Provider.of<List<WishlistModel>>(context) ?? [];

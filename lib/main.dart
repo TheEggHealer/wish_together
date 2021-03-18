@@ -12,6 +12,7 @@ import 'package:wishtogether/models/user_model.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
 import 'package:wishtogether/screens/screen_wrapper.dart';
 import 'package:wishtogether/screens/splash_screen.dart';
+import 'package:wishtogether/ui/constant_colors.dart';
 
 import 'models/user_preferences.dart';
 import 'models/user_preferences.dart';
@@ -24,7 +25,7 @@ class WishTogether extends StatelessWidget {
 
   Future<FirebaseApp> initialize() async {
     FirebaseApp app = await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: 'ca-app-pub-7768123198632313~1473488290');
+    await FirebaseAdMob.instance.initialize(appId: AdService.appId);
 
     if(AdService.hasAds) createAds();
 
@@ -45,11 +46,11 @@ class WishTogether extends StatelessWidget {
         if(snapshot.hasError) {
           //Something went wrong
           debug(snapshot.error);
-          return Container(color: Colors.red);
+          return Container(color: color_dark_background);
         } else if(snapshot.connectionState == ConnectionState.done) {
           //Connection is done, display either login screen or home screen
           return Container(
-            color: color_background,
+            color: color_dark_background,
             child: StreamProvider<UserModel>.value(
               value: AuthService().user,
               builder: (context, widget) {
@@ -77,7 +78,7 @@ class WishTogether extends StatelessWidget {
           return wishlistsWrapper(userData, dbs, context);
         } else {
           return Container(
-            color: Colors.green, //TODO SPLASH change to something better
+            color: color_dark_background, //TODO SPLASH change to something better
           );
         }
 

@@ -64,45 +64,40 @@ class WishlistCard extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                model.wisherName,
-                                style: prefs.text_style_wishlist_tiny(cardColor),
-                              ),
-                              Text(
-                                model.dateCreated,
-                                style: prefs.text_style_wishlist_tiny(cardColor),
-                              ),
-                            ],
+                          Text(
+                            model.dateCreated,
+                            style: prefs.text_style_wishlist_tiny(cardColor),
                           ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Row(
+                              if(model.type == 'solo') Row(
                                 children: [
+                                  Text(
+                                    model.itemCount.toString(),
+                                    style: prefs.text_style_wishlist_card(cardColor),
+                                  ),
                                   Icon(
                                     CustomIcons.list_items,
                                     color: prefs.color_wishlist_card(cardColor),
                                   ),
-                                  Text(
-                                    model.listCount.toString(),
-                                    style: prefs.text_style_wishlist_card(cardColor),
-                                  )
                                 ],
+                              ),
+                              if(model.type == 'group') Icon(
+                                CustomIcons.group,
+                                color: prefs.color_wishlist_card(cardColor),
+                                size: 30,
                               ),
                               Row(
                                 children: [
+                                  Text(
+                                    model.userCount.toString(),
+                                    style: prefs.text_style_wishlist_card(cardColor),
+                                  ),
                                   Icon(
                                     CustomIcons.profile,
                                     color: prefs.color_wishlist_card(cardColor),
                                   ),
-                                  Text(
-                                    model.userCount.toString(),
-                                    style: prefs.text_style_wishlist_card(cardColor),
-                                  )
                                 ],
                               )
                             ],

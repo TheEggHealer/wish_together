@@ -42,6 +42,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
   UserDot wisherUserDot = UserDot.placeHolder(size: SIZE.LARGE,);
   List<UserData> claimedUsers = [];
   UserData wisher;
+  UserData adder;
 
   TextEditingController commentField = TextEditingController();
   TextEditingController hiddenCommentField = TextEditingController();
@@ -207,7 +208,6 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                         icon: Icon(CustomIcons.send),
                         color: prefs.color_icon,
                         onPressed: () async {
-                          debug('######################### Trying to send comment');
                           if(commentField.text.isNotEmpty) {
                             if(widget.currentUser.settings['warn_before_chatting_with_wisher']) {
                               await showDialog(
@@ -384,6 +384,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     String wisherUID = wishlist.wisherUID;
 
     wisher = await GlobalMemory.getUserData(wisherUID);
+    adder = await GlobalMemory.getUserData(item.addedByUID);
     wisherUserDot = UserDot.fromUserData(userData: wisher, size: SIZE.LARGE,);
 
     await loadClaimedUsers(item, wishlist);
@@ -426,6 +427,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     if(model != null) clearNotifications(model);
 
     bool hideInfo = model.shouldBeHiddenFrom(widget.currentUser);
+    bool addedByWisher = model.wisherUID == model.addedByUID;
 
     return CustomScaffold(
       prefs: prefs,
@@ -434,8 +436,13 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
       body: Column(
         children: [
           if(model.photoURL.isNotEmpty) photoCard(MediaQuery.of(context).size, model, prefs),
-          wisherCard(model, wishlist, prefs),
-          if(!hideInfo) Divider(
+          if(!addedByWisher) Text(
+            'This item was added by ${adder?.name}',
+            textAlign: TextAlign.center,
+            style: prefs.text_style_sub_sub_header,
+          ),
+          if(!model.hideFromWisher) wisherCard(model, wishlist, prefs),
+          if(!hideInfo && !model.hideFromWisher) Divider(
             color: prefs.color_divider,
           ),
           if(!hideInfo) Text(
