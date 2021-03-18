@@ -23,6 +23,8 @@ class WishlistCard extends StatelessWidget {
     Size size = MediaQuery.of(context).size;
     Color cardColor = Color(model.color);
 
+    bool isWisher = currentUser.uid == model.wisherUID;
+
     int numberOfNotif = currentUser.notifications.where((notif) {
       if((notif.prefix == NotificationModel.PRE_ITEM_CHANGE || notif.prefix == NotificationModel.PRE_CLAIMED_ITEM_CHANGE)) {
         List<String> parts = notif.content.split('*');
@@ -74,7 +76,7 @@ class WishlistCard extends StatelessWidget {
                               if(model.type == 'solo') Row(
                                 children: [
                                   Text(
-                                    model.itemCount.toString(),
+                                    model.itemCount(isWisher).toString(),
                                     style: prefs.text_style_wishlist_card(cardColor),
                                   ),
                                   Icon(
