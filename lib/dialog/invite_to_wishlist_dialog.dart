@@ -131,7 +131,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             customTextField(
-              validator: (val) => isEmail(val) ? null : 'Not a valid email or friend code',
+              validator: (val) => isValid(val) ? null : 'Not a valid email or friend code',
               prefs: widget.prefs,
               controller: inputController,
               multiline: false,
@@ -156,7 +156,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
                       errorMessage = '';
                     });
                     if(_formKey.currentState.validate()) {
-                      String uid = await DatabaseService().uidFromIdentifier(inputController.text);
+                      String uid = await DatabaseService().uidFromIdentifier(inputController.text.toUpperCase());
                       if (uid.isNotEmpty) {
                         widget.callback([uid]);
                         inputController.text = '';
@@ -189,9 +189,9 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
     );
   }
 
-  bool isEmail(String input) {
-    if(input.contains('@')) return true;
-    return false;
+  bool isValid(String input) {
+    DatabaseService dbs = DatabaseService();
+    return dbs.getIdentifierType(input.toUpperCase()) != 0;
   }
 
 }

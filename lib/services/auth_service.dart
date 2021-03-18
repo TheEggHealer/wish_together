@@ -63,10 +63,11 @@ class AuthService with ChangeNotifier {
     DatabaseService dbs = DatabaseService(uid: user.uid);
     if(!(await dbs.checkExist(dbs.userData))) {
       dbs.forceData(dbs.userData, dbs.uid, freshUserData);
+      dbs.mapMail(user.email, user.uid);
     }
 
     //Update notification token, so notifications gets sent to this device
-    await dbs.mapUID(currentUser.email, user.uid);
+    await dbs.addToken(user.uid);
 
     return _toUserModel(currentUser);
   }
@@ -114,7 +115,8 @@ class AuthService with ChangeNotifier {
       DatabaseService dbs = DatabaseService(uid: user.uid);
       dbs.forceData(dbs.userData, dbs.uid, freshUserData);
 
-      dbs.mapUID(email, user.uid);
+      dbs.addToken(user.uid);
+      dbs.mapMail(user.email, user.uid);
 
       return _toUserModel(user);
     } catch(e) {
@@ -221,7 +223,10 @@ class AuthService with ChangeNotifier {
       }
     }
 
+    dbs.removeMappingsFor(currentUser, _auth.currentUser.email);
+
     await currentUser.deleteUser();
+    await _auth.currentUser.delete();
   }
 
 

@@ -4,6 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/screens/authenticate/new_user_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/services/database_service.dart';
@@ -75,10 +76,11 @@ class WishTogether extends StatelessWidget {
 
         UserData userData = Provider.of<UserData>(context);
         if(userData != null) {
+          //Check if user has set up his account
           return wishlistsWrapper(userData, dbs, context);
         } else {
           return Container(
-            color: color_dark_background, //TODO SPLASH change to something better
+            color: color_dark_background,
           );
         }
 

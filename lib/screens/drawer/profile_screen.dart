@@ -115,9 +115,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SizedBox(height: 5),
             Center(
-              child: Text(
-                currentUser.name,
-                style: prefs.text_style_wisher,
+              child: Column(
+                children: [
+                  Text(
+                    currentUser.name,
+                    style: prefs.text_style_wisher,
+                  ),
+                  Text(
+                    'Friend code: ${currentUser.friendCode}',
+                    style: prefs.text_style_soft,
+                  ),
+                ],
               ),
             ),
             SizedBox(height: 20),
@@ -138,8 +146,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ImageService imageService = ImageService();
                           File image = await imageService.imageFromGallery();
                           if(image != null) {
+                            String old = currentUser.profilePictureURL;
                             String url = await imageService.uploadImage(image);
                             currentUser.profilePictureURL = url;
+                            await imageService.deleteImage(old);
                             await currentUser.uploadData();
                             await GlobalMemory.getUserData(currentUser.uid, forceFetch: true);
                           }

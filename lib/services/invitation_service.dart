@@ -36,7 +36,7 @@ class InvitationService {
 
   Future<bool> sendGroupWishlistInvitation(String currentUserUID, String wishlistId, String receiverUID) async {
     UserData receiver = await getReceiver(receiverUID);
-    await uploadNotificationToFirebase(receiver, 'gwi:${await getDate()}:$wishlistId*$currentUserUID:0');
+    await uploadNotificationToFirebase(receiver, 'gwi:${await getDate()}:$wishlistId*$currentUserUID:1');
 
     /* Send notification to receivers devices */
     if(receiver.settings['notif_wishlist_invitation']) {
@@ -46,9 +46,9 @@ class InvitationService {
     return true;
   }
 
-  Future<bool> sendFriendRequestToEmail(String currentUserUID, String receiverUID) async {
+  Future<bool> sendFriendRequest(String currentUserUID, String receiverUID) async {
     UserData receiver = await getReceiver(receiverUID);
-    await uploadNotificationToFirebase(receiver, 'fr:${await getDate()}:$currentUserUID:0');
+    await uploadNotificationToFirebase(receiver, 'fr:${await getDate()}:$currentUserUID:1');
 
     /* Send notification to receivers devices */
     if(receiver.settings['notif_friend_request']) {
@@ -95,7 +95,7 @@ class InvitationService {
       tries++;
     }
 
-    debug('Generated friend code: $friendCode, took $tries attempts.');
+    return friendCode;
   }
 
   String newFriendCode() {

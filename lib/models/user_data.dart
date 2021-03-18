@@ -16,6 +16,7 @@ class UserData {
   List<String> friends = [];
   String uid = 'no_user';
   String email = '';
+  String friendCode = '';
   String name = '...';
   bool firstTime = false;
   List<String> wishlistIds = [];
@@ -46,16 +47,16 @@ class UserData {
 
   void _deconstructData() {
     debug('Trying to construct userData from $uid');
-    firstTime = raw['first_time'];
-    wishlistIds = List<String>.from(raw['wishlists']);
-    name = raw['name'];
-    userColor = Color(raw['user_color']);
-    profilePictureURL = raw['profile_picture'];
-    profilePicture = NetworkImage(profilePictureURL);
-    settings = Map<String, bool>.from(raw['settings']);
-    notifications = raw['notifications'].map<NotificationModel>((raw) => NotificationModel(raw: raw)).toList();
+    firstTime = raw['first_time'] ?? true;
+    wishlistIds = List<String>.from(raw['wishlists'] ?? []);
+    name = raw['name'] ?? '';
+    userColor = Color(raw['user_color'] ?? 0);
+    profilePictureURL = raw['profile_picture'] ?? '';
+    if(profilePictureURL.isNotEmpty) profilePicture = NetworkImage(profilePictureURL);
+    settings = Map<String, bool>.from(raw['settings'] ?? {});
+    notifications = (raw['notifications'] ?? []).map<NotificationModel>((raw) => NotificationModel(raw: raw)).toList();
     friends = List<String>.from(raw['friends'] ?? []);
-    debug('Name = $name');
+    friendCode = raw['friend_code'] ?? 'no_code';
   }
 
   bool fetchAgain() {
@@ -83,6 +84,7 @@ class UserData {
       'wishlists': wishlistIds,
       'notifications': notifications.map((e) => e.makeRaw()).toList(),
       'friends': friends,
+      'friend_code': friendCode,
     };
 
     await dbs.uploadData(dbs.userData, uid, data);

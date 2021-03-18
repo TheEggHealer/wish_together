@@ -138,8 +138,10 @@ class DatabaseService {
 
   ///Returns 1 if [identifier] is an email, 2 if it is a friend code and 0 if it is invalid.
   int getIdentifierType(String identifier) {
+    RegExp regExp = RegExp(r'^[A-Z0-9]+$');
+
     if(identifier.contains('@') && identifier.contains('.')) return 1;
-    else if(identifier.length == 6 && !identifier.contains(RegExp('^[a-zA-Z0-9]\$'))) return 2;
+    else if(identifier.length == 6 && regExp.hasMatch(identifier)) return 2;
     else return 0;
   }
 
@@ -148,10 +150,23 @@ class DatabaseService {
 
     uploadData(uuidMaps, 'byMail', {oldMail: FieldValue.delete(), newMail: uid});
   }
-  
-  Future mapUID(String mail, String uid) async {
-    //uploadData(uuidMaps, 'mailToUUID', {mail: uid});
-    addToken(uid);
+
+  Future mapMail(String mail, String uid) async {
+    uploadData(uuidMaps, 'mailToUUID', {mail: uid});
+  }
+
+  Future mapFriendCode(String friendCode, String uid) async {
+    uploadData(uuidMaps, 'friendCodeToUUID', {friendCode: uid});
+  }
+
+  Future removeMappingsFor(UserData userData, String mail) async {
+    await uploadData(uuidMaps, 'mailToUUID', {mail: FieldValue.delete()});
+    await uploadData(uuidMaps, 'friendCodeToUUID', {userData.friendCode: FieldValue.delete()});
+
+    List<String> tokens = await getTokensFor(userData.uid);
+    for(int i = 0; i < tokens.length; i++) {
+      await removeToken(uid);
+    }
   }
 
   Future addToken(String uid) async {
@@ -161,10 +176,7 @@ class DatabaseService {
     uploadData(uuidMaps, 'notificationTokenToUUID', {token: uid});
   }
 
-  Future removeToken(String uid) async {
-    DocumentSnapshot doc = await uuidMaps.doc('notificationTokenToUUID').get(GetOptions(source: Source.server));
-
-    String token = await NotificationService().getToken();
+  Future removeToken(String token) async {
     uploadData(uuidMaps, 'notificationTokenToUUID', {token: FieldValue.delete()});
   }
 

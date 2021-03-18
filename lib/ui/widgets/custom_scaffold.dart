@@ -14,8 +14,9 @@ class CustomScaffold extends StatefulWidget {
   final Widget action;
   final bool backButton;
   final bool padding;
+  final Function backButtonCallback;
 
-  CustomScaffold({@required this.prefs, this.title, this.body, this.action, this.drawer, this.fab, this.backButton = false, this.padding = true});
+  CustomScaffold({@required this.prefs, this.title, this.body, this.action, this.drawer, this.fab, this.backButton = false, this.padding = true, this.backButtonCallback});
 
   @override
   _CustomScaffoldState createState() => _CustomScaffoldState();
@@ -62,7 +63,7 @@ class _CustomScaffoldState extends State<CustomScaffold> {
                           color: widget.prefs.color_primary,
                           size: 30,
                         ),
-                        onPressed: () => Navigator.pop(context),
+                        onPressed: widget.backButtonCallback ?? () => Navigator.pop(context),
                       ),
                       if(widget.drawer != null) SizedBox(width: 5),
                       if(widget.backButton) SizedBox(width: 15),

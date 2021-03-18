@@ -238,6 +238,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
                 callback: (doDelete) async {
                   if(doDelete) {
                     await auth.deleteLoggedInUser(user);
+                    await auth.signOut();
                   }
                 },
               ));

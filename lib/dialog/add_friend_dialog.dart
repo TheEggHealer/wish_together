@@ -47,7 +47,7 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
             customTextField(
               prefs: widget.prefs,
               multiline: false,
-              validator: (val) => isEmail(val) ? null : 'Not a valid email or friend code',
+              validator: (val) => isValid(val) ? null : 'Not a valid email or friend code',
               onChanged: (val) {
                 this._input = val;
               },
@@ -94,12 +94,13 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
 
   Future<bool> sendFriendRequest() async {
     InvitationService invitation = InvitationService();
-    return await invitation.sendFriendRequestToEmail(widget.currentUser.uid, _input);
+    DatabaseService dbs = DatabaseService();
+    return await invitation.sendFriendRequest(widget.currentUser.uid, await dbs.uidFromIdentifier(_input.toUpperCase()));
   }
 
-  bool isEmail(String input) {
-    if(input.contains('@')) return true;
-    return false;
+  bool isValid(String input) {
+    DatabaseService dbs = DatabaseService();
+    return dbs.getIdentifierType(input.toUpperCase()) != 0;
   }
 
 }

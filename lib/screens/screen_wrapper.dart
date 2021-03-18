@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wishtogether/screens/authenticate/new_user_screen.dart';
 import 'package:wishtogether/services/auth_service.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_model.dart';
@@ -28,6 +29,7 @@ class ScreenWrapper extends StatelessWidget {
       return StartupScreen();
     } else {
       //User is signed in, show home screen.
+      if(userData.firstTime) return NewUserScreen();
       return HomeScreen();
     }
   }
