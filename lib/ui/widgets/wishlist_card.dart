@@ -11,12 +11,25 @@ import '../../models/notification_model.dart';
 
 class WishlistCard extends StatelessWidget {
 
-  final UserData currentUser;
-  final WishlistModel model;
-  final Function onClick;
-  final UserPreferences prefs;
+  UserData currentUser;
+  WishlistModel model;
+  Function onClick;
+  UserPreferences prefs;
 
   WishlistCard({this.model, this.currentUser, this.onClick, this.prefs});
+
+  WishlistCard.template(this.prefs) {
+    model = WishlistModel.create(
+      color: Color(0xFFD37474).value,
+      wisherUID: 'no_usr',
+      name: 'John\'s birthday',
+      type: 'solo',
+      invitedUsers: ['0', '1', '2'],
+      dateCreated: '2021-03-27',
+    );
+    currentUser = UserData.empty();
+
+  }
 
   @override
   Widget build(BuildContext context) {

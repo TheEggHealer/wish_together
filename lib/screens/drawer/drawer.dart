@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
+import 'package:wishtogether/screens/drawer/help_screen.dart';
 import 'package:wishtogether/screens/drawer/profile_screen.dart';
 import 'package:wishtogether/screens/drawer/settings_screen.dart';
 import 'package:wishtogether/services/auth_service.dart';
@@ -102,7 +103,10 @@ class HomeDrawer {
                 ],
               ),
               onTap: () {
-                debug('Go to profile');
+                Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<UserData>.value(
+                  value: DatabaseService(uid: userData.uid).userDocument,
+                  child: HelpScreen(initScreen: 1,),
+                )));
               }
             ),
             ListTile(

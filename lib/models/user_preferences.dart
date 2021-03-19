@@ -49,6 +49,12 @@ class UserPreferences {
       fontSize: 14,
       color: color_bread
   );
+  get text_style_bread_bold => TextStyle(
+      fontFamily: 'OpenSans',
+      fontSize: 14,
+      color: color_bread,
+      fontWeight: FontWeight.w900,
+  );
   get text_style_wisher => TextStyle(
       fontFamily: 'OpenSans',
       fontSize: 22,
