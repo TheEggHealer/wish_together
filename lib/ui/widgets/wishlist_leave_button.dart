@@ -32,7 +32,6 @@ class WishlistLeaveButton extends StatelessWidget {
             icon: CustomIcons.trash,
             callback: (confirm) async {
               if(confirm) {
-                //callback();
                 await wishlist.deleteWishlist();
               }
             },
@@ -60,7 +59,11 @@ class WishlistLeaveButton extends StatelessWidget {
               if(confirm) {
                 currentUser.wishlistIds.remove(wishlist.id);
                 wishlist.invitedUsers.remove(currentUser.uid);
-                debug('Model invited users: ${wishlist.invitedUsers}');
+
+                wishlist.items.forEach((item) {
+                  if(item.claimedUsers.contains(currentUser.uid)) item.claimedUsers.remove(currentUser.uid);
+                });
+
                 await currentUser.uploadData();
                 await wishlist.uploadList();
                 callback();

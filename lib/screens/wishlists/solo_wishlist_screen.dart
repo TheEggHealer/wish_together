@@ -69,67 +69,6 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
     return false;
   }
 
-  Widget leaveButton(UserPreferences prefs) {
-    bool owner = widget.currentUser.uid == model.wisherUID;
-    if(owner) {
-      return IconButton( //TODO Add splash
-        icon: Icon(
-          CustomIcons.trash,
-          color: prefs.color_icon,
-        ),
-        onPressed: () async {
-          await showDialog(context: context, builder: (context) => ConfirmationDialog(
-            prefs: prefs,
-            title: 'Delete wishlist',
-            confirmationText: 'This wishlist will be deleted and cannot be recovered. Are you sure?',
-            icon: CustomIcons.trash,
-            callback: (confirm) async {
-              if(confirm) {
-                Navigator.pop(context);
-                await model.deleteWishlist();
-              }
-            },
-          ));
-        },
-        splashRadius: 20,
-        splashColor: color_splash_light,
-        hoverColor: color_splash_light,
-        highlightColor: color_splash_light,
-        focusColor: color_splash_light,
-      );
-    } else {
-      return IconButton(
-        icon: Icon(
-          CustomIcons.bell, //TODO ICON: Change to leave icon
-          color: prefs.color_icon,
-        ),
-        onPressed: () async {
-          showDialog(context: context, builder: (context) => ConfirmationDialog(
-            prefs: prefs,
-            title: 'Leave wishlist',
-            confirmationText: 'After leaving this wishlist, you have to be invited again if you change your mind. Are you sure?',
-            icon: CustomIcons.bell, //TODO ICON: Change to leave icon
-            callback: (confirm) async {
-              if(confirm) {
-                Navigator.pop(context);
-                widget.currentUser.wishlistIds.remove(model.id);
-                model.invitedUsers.remove(widget.currentUser.uid);
-                debug('Model invited users: ${model.invitedUsers}');
-                await widget.currentUser.uploadData();
-                await model.uploadList();
-              }
-            },
-          ));
-        },
-        splashRadius: 20,
-        splashColor: color_splash_light,
-        hoverColor: color_splash_light,
-        highlightColor: color_splash_light,
-        focusColor: color_splash_light,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     UserPreferences prefs = UserPreferences.from(widget.currentUser);

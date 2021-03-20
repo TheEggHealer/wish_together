@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
@@ -19,6 +20,7 @@ import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/custom_textfields.dart';
 import 'package:wishtogether/ui/widgets/user_dot.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/notification_model.dart';
 import '../../models/notification_model.dart';
@@ -175,11 +177,18 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             if(model.cost != -1) Text(
-                              'Esimated cost: ${model.cost}',
+                              'Estimated cost: ${model.cost}',
                               style: prefs.text_style_sub_sub_header
                             ),
-                            Text(
-                              model.description,
+                            Linkify(
+                              onOpen: (link) async {
+                                if (await canLaunch(link.url)) {
+                                  await launch(link.url);
+                                } else {
+                                  throw 'Could not launch $link';
+                                }
+                              },
+                              text: model.description,
                               style: prefs.text_style_bread,
                             ),
                           ],
@@ -262,7 +271,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
     }
   }
 
-  Widget hiddenCard(ItemModel model, WishlistModel wishlist, UserPreferences prefs) {
+  Widget hiddenCard(ItemModel model, WishlistModel wishlist, UserPreferences prefs, bool hiddenItem) {
 
     int commentIndex = 0;
     List<Widget> comments = model.hiddenComments.map((c) => Comment(currentUser: widget.currentUser, model: c, wishlist: wishlist, index: commentIndex++)).toList();
@@ -312,6 +321,18 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if(hiddenItem && model.description.isNotEmpty) Linkify(
+                  onOpen: (link) async {
+                    if (await canLaunch(link.url)) {
+                      await launch(link.url);
+                    } else {
+                      throw 'Could not launch $link';
+                    }
+                  },
+                  text: model.description,
+                  style: prefs.text_style_bread,
+                ),
+                if(hiddenItem && model.description.isNotEmpty) SizedBox(height: 10),
                 Text(
                     'Claimed Users:',
                     style: prefs.text_style_sub_sub_header
@@ -449,7 +470,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
             'Hidden from wisher',
             style: prefs.text_style_sub_sub_header,
           ),
-          if(!hideInfo) hiddenCard(model, wishlist, prefs),
+          if(!hideInfo) hiddenCard(model, wishlist, prefs, model.hideFromWisher),
           SizedBox(
             height: 10 + AdService.adHeight,
           ),

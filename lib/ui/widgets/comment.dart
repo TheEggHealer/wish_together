@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/models/comment_model.dart';
 import 'package:wishtogether/models/user_data.dart';
@@ -66,9 +68,15 @@ class _CommentState extends State<Comment> {
           minHeight: 30,
           maxWidth: size.width * 0.6,
         ),
-        child: Text(
-          widget.model.content,
-          textAlign: isCurrentUser() ? TextAlign.right : TextAlign.left,
+        child: Linkify(
+          onOpen: (link) async {
+            if (await canLaunch(link.url)) {
+              await launch(link.url);
+            } else {
+              throw 'Could not launch $link';
+            }
+          },
+          text: widget.model.content,
           style: prefs.text_style_bread,
         ),
       ),
