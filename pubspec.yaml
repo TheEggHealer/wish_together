@@ -40,6 +40,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.8.1
+
+flutter_icons:
+  android: true
+  iod: true
+  image_path_android: "assets/android_icon.png"
+  image_path_ios: "assets/ios_icon.png"
 
 flutter:
 
