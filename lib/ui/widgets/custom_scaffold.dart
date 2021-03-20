@@ -50,6 +50,7 @@ class _CustomScaffoldState extends State<CustomScaffold> {
                   child: Row(
                     children: [
                       if(widget.drawer != null) Material(
+                        color: Colors.transparent,
                         child: IconButton(
                           icon: Icon(
                             CustomIcons.drawer,
@@ -65,6 +66,7 @@ class _CustomScaffoldState extends State<CustomScaffold> {
                         ),
                       ),
                       if(widget.backButton) Material(
+                        color: Colors.transparent,
                         child: IconButton(
                           icon: Icon(
                             CustomIcons.back,

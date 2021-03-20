@@ -87,6 +87,7 @@ class NotificationModel {
           currentUser.wishlistIds.add(wishlist.id);
         }
 
+        currentUser.notifications.remove(this);
         await currentUser.uploadData();
         await GlobalMemory.getUserData(currentUser.uid, forceFetch: true);
         break;
@@ -120,8 +121,28 @@ class NotificationModel {
   }
 
   Future<void> onDeny(UserData currentUser) async {
-    currentUser.notifications.remove(this);
-    await currentUser.uploadData();
+    switch(prefix) {
+      case PRE_WISHLIST_INVITE:
+      case PRE_GROUP_WISHLIST_INVITE:
+        List<String> parts = content.split('*');
+        WishlistModel wishlist = await DatabaseService().getWishlist(parts[0]);
+
+        if(wishlist == null) {
+          currentUser.notifications.remove(this);
+          await currentUser.uploadData();
+          break;
+        }
+
+        if(wishlist.invitedUsers.contains(currentUser.uid)) wishlist.invitedUsers.remove(currentUser.uid);
+        currentUser.notifications.remove(this);
+        await currentUser.uploadData();
+        await wishlist.uploadList();
+        break;
+      default:
+        currentUser.notifications.remove(this);
+        await currentUser.uploadData();
+        break;
+    }
   }
 
   IconData get icon {

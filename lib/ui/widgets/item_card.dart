@@ -126,7 +126,7 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
                     text: widget.model.itemName,
                     style: prefs.text_style_item_header
                   ),
-                  TextSpan(
+                  if(widget.model.cost > 0) TextSpan(
                     text: ' • ${widget.model.cost}',
                     style: prefs.text_style_item_sub_header,
                   )

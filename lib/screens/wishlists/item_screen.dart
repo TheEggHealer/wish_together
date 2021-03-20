@@ -176,7 +176,7 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            if(model.cost != -1) Text(
+                            if(model.cost > 0) Text(
                               'Estimated cost: ${model.cost}',
                               style: prefs.text_style_sub_sub_header
                             ),
