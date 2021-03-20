@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/add_friend_dialog.dart';
 import 'package:wishtogether/dialog/change_name_diaglog.dart';
+import 'package:wishtogether/dialog/confirmation_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/services/ad_service.dart';
@@ -76,15 +77,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 alignment: Alignment.centerRight,
                 child: circleButton(
                   onTap: () async {
-                    //TODO Add warning dialog when removing friend!
-                    if(user.friends.contains(currentUser.uid)) {
-                      user.friends.remove(currentUser.uid);
-                      await user.uploadData();
-                    }
-                    if(currentUser.friends.contains(user.uid)) {
-                      currentUser.friends.remove(user.uid);
-                      await currentUser.uploadData();
-                    }
+                    showDialog(context: context, builder: (context) => ConfirmationDialog(
+                      prefs: prefs,
+                      icon: CustomIcons.warning,
+                      title: 'Remove friend',
+                      confirmationText: 'Are you sure you want to remove this friend?',
+                      callback: (doRemove) async {
+                        if(doRemove) {
+                          if(user.friends.contains(currentUser.uid)) {
+                            user.friends.remove(currentUser.uid);
+                            await user.uploadData();
+                          }
+                          if(currentUser.friends.contains(user.uid)) {
+                            currentUser.friends.remove(user.uid);
+                            await currentUser.uploadData();
+                          }
+                        }
+                      },
+                    ));
                   },
                   icon: Icon(Icons.close, color: prefs.color_background, size: 18),
                   fillColor: prefs.color_deny,
@@ -102,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       backButton: true,
       title: 'Profile',
       body: Container(
-        padding: EdgeInsets.all(16), //TODO check padding (Ad compatible?)
+        padding: EdgeInsets.all(16),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,

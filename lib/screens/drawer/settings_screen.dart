@@ -261,7 +261,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
       prefs: prefs,
       backButton: true,
       title: 'Settings',
-      body: Column( //TODO Add padding for ad compatibility
+      body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 20),

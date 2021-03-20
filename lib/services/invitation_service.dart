@@ -24,7 +24,7 @@ class InvitationService {
 
   Future<bool> sendWishlistInvitation(String currentUserUID, String wishlistId, String receiverUID) async {
     UserData receiver = await getReceiver(receiverUID);
-    await uploadNotificationToFirebase(receiver, 'wi:${await getDate()}:$wishlistId*$currentUserUID:0');
+    await uploadNotificationToFirebase(receiver, 'wi:${await getDate()}:$wishlistId*$currentUserUID:1');
 
     /* Send notification to receivers devices */
     if(receiver.settings['notif_wishlist_invitation']) {
@@ -64,10 +64,8 @@ class InvitationService {
     await receiver.uploadData();
   }
 
-  Future<UserData> getReceiver(String identifier) async { //TODO This will only take in uids, since i've moved the email/friendCode check to DatabaseService.
-    DatabaseService dbs = DatabaseService();
-    String receiverUID = _isEmail(identifier) ? await dbs.uidFromEmail(identifier) : identifier; //TODO Fix for friend code
-    UserData receiver = await GlobalMemory.getUserData(receiverUID, forceFetch: true);
+  Future<UserData> getReceiver(String uid) async {
+    UserData receiver = await GlobalMemory.getUserData(uid, forceFetch: true);
     return receiver;
   }
 

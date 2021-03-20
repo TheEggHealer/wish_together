@@ -105,7 +105,7 @@ class HomeDrawer {
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<UserData>.value(
                   value: DatabaseService(uid: userData.uid).userDocument,
-                  child: HelpScreen(initScreen: 1,),
+                  child: HelpScreen(initScreen: 0,),
                 )));
               }
             ),

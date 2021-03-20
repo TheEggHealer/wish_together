@@ -136,6 +136,7 @@ class _InviteToWishlistDialogState extends State<InviteToWishlistDialog> {
               controller: inputController,
               multiline: false,
               helperText: 'Email or friend code',
+              email: true,
             ),
             SizedBox(height: 5),
             Center(

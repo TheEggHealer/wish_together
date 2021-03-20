@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/dialog/confirmation_dialog.dart';
 import 'package:wishtogether/dialog/invite_to_wishlist_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
@@ -12,6 +13,7 @@ import 'package:wishtogether/services/ad_service.dart';
 import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/services/invitation_service.dart';
+import 'package:wishtogether/ui/custom_icons.dart';
 import 'package:wishtogether/ui/widgets/custom_buttons.dart';
 import 'package:wishtogether/ui/widgets/custom_scaffold.dart';
 import 'package:wishtogether/ui/widgets/group_wishlist_card.dart';
@@ -233,8 +235,18 @@ class _GroupWishlistScreenState extends State<GroupWishlistScreen> {
             size: 20,
           ),
           onPressed: () async {
-            setState(() {loading = true;});
-            await createWishlist(); //TODO Add a dialog before creating the wishlist
+            showDialog(context: context, builder: (context) => ConfirmationDialog(
+              icon: CustomIcons.help,
+              title: 'Create wishlist',
+              confirmationText: 'Do you want to add your own list to this group wishlist?',
+              prefs: prefs,
+              callback: (doCreate) async {
+                if(doCreate) {
+                  setState(() {loading = true;});
+                  await createWishlist();
+                }
+              },
+            ));
           },
         ),
       ) : null,

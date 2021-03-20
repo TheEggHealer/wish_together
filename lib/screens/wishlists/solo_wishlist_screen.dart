@@ -49,12 +49,13 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
 
 
   Future<void> loadUsers() async {
-    loadedUsers = [];
+    List<UserData> tmp = [];
     for(String uid in model.invitedUsers) {
-      loadedUsers.add(await GlobalMemory.getUserData(uid));
+      tmp.add(await GlobalMemory.getUserData(uid));
     }
     wisher = await GlobalMemory.getUserData(model.wisherUID);
 
+    loadedUsers = tmp;
     setState(() {});
   }
 
@@ -67,6 +68,22 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       if(!uids.contains(element)) return true;
     });
     return false;
+  }
+
+  List<Widget> getUserDots(UserPreferences prefs) {
+    return loadedUsers.map<Widget>((e) {
+      return Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8),
+        child: UserDot.fromUserData(
+          userData: e,
+          size: SIZE.MEDIUM,
+          owner: !model.isSubList && e.uid == model.creatorUID,
+          pending: !model.isSubList && !e.wishlistIds.contains(model.id),
+          doShowName: true,
+          prefs: prefs,
+        ),
+      );
+    }).toList();
   }
 
   @override
@@ -83,19 +100,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
       return Loading(prefs: prefs);
     }
 
-    List<Widget> userDots = loadedUsers.map<Widget>((e) { //TODO Make this into a function, like in group_wishlist_screen.dart
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 8),
-        child: UserDot.fromUserData(
-          userData: e,
-          size: SIZE.MEDIUM,
-          owner: !model.isSubList && e.uid == model.creatorUID,
-          pending: !model.isSubList && !e.wishlistIds.contains(model.id),
-          doShowName: true,
-          prefs: prefs,
-        ),
-      );
-    }).toList();
+    List<Widget> userDots = getUserDots(prefs);
 
     bool isWisher = wisher?.uid == widget.currentUser.uid;
     List<Widget> itemList = model.items.where((item) => !isWisher ? true : !item.hideFromWisher).map((e) {
@@ -203,7 +208,7 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
                   currentUser: widget.currentUser,
                   wishlist: model,
                   callback: () {
-                    //Navigator.pop(context);
+                    Navigator.pop(context);
                   },
                 ),
                 if(creator && !model.isSubList) SizedBox(width: 10),
@@ -266,10 +271,15 @@ class _SoloWishlistScreenState extends State<SoloWishlistScreen> {
 
     InvitationService invitationService = InvitationService();
 
+    bool change = false;
     for(int i = 0; i < uids.length; i++) {
       if (!alreadyInvited.contains(uids[i])) {
         await invitationService.sendWishlistInvitation(widget.currentUser.uid, model.id, uids[i]);
+        model.invitedUsers.add(uids[i]);
+        change = true;
       }
     }
+
+    if(change) await model.uploadList();
   }
 }

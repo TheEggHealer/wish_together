@@ -282,7 +282,6 @@ class _ItemScreenState extends State<ItemScreen> with TickerProviderStateMixin {
       child: UserDot.fromUserData(userData: user, size: SIZE.MEDIUM),
     )).toList();
 
-    //TODO Why is a placeholder added?
     if(claimedUserDots.isEmpty) {
       claimedUserDots.add(Padding(
         padding: EdgeInsets.all(6.0),

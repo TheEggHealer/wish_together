@@ -35,8 +35,6 @@ class _VersionWidgetState extends State<VersionWidget> {
     versionNumber = '${info.version} (${info.buildNumber})';
     buildDate = '2021-03-18'; //TODO Update for releases
 
-    debug('Loaded info!!!!!!!!!!!!!!!!!!!!!!!!!! ${info.version}');
-
     setState(() {});
   }
 
@@ -45,11 +43,11 @@ class _VersionWidgetState extends State<VersionWidget> {
     return Column(
       children: [
         Text(
-            'Build number: $versionNumber', //TODO load from yaml
+            'Build number: $versionNumber',
             style: widget.prefs.text_style_tiny
         ),
         Text(
-            'Build date: $buildDate', //TODO load from yaml
+            'Build date: $buildDate',
             style: widget.prefs.text_style_tiny
         ),
       ],

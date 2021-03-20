@@ -39,7 +39,6 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   TextEditingController costController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   bool hasCost = false;
-  bool hasDescription = false;
   File image;
   bool hideItem = true;
   List<bool> hideSelected = [true, false];
@@ -80,12 +79,6 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       hideFromWisher: hideItem,
     );
 
-    if(hasDescription) { //TODO What happens here? (hasDescription should be deprecated)
-      //item.hasDescription = true;
-      CommentModel description = await CommentModel.from(descriptionController.text, currentUser);
-      if(currentUser.uid == item.wisherUID) item.comments.add(description);
-      else item.hiddenComments.add(description);
-    }
     return item;
   }
 
@@ -103,7 +96,7 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
       backButton: true,
       title: 'New Item',
       body: Container(
-        padding: EdgeInsets.all(16), //TODO Check this padding (Ad compatible?)
+        padding: EdgeInsets.all(16),
         child: Form(
           key: _formKey,
           child: Column(

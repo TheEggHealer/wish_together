@@ -51,6 +51,13 @@ class NotificationModel {
     switch(prefix) {
       case PRE_FRIEND_REQUEST:
         UserData user = await GlobalMemory.getUserData(content, forceFetch: true);
+
+        if(user == null) {
+          currentUser.notifications.remove(this);
+          await currentUser.uploadData();
+          break;
+        }
+
         if(!currentUser.friends.contains(content)) {
           currentUser.friends.add(content);
         }
@@ -65,6 +72,13 @@ class NotificationModel {
       case PRE_WISHLIST_INVITE:
         List<String> parts = content.split('*');
         WishlistModel wishlist = await DatabaseService().getWishlist(parts[0]);
+
+        if(wishlist == null) {
+          currentUser.notifications.remove(this);
+          await currentUser.uploadData();
+          break;
+        }
+
         if(!wishlist.invitedUsers.contains(currentUser.uid)) {
           wishlist.invitedUsers.add(currentUser.uid);
           await wishlist.uploadList();
@@ -73,13 +87,20 @@ class NotificationModel {
           currentUser.wishlistIds.add(wishlist.id);
         }
 
-        currentUser.notifications.remove(this);
         await currentUser.uploadData();
+        await GlobalMemory.getUserData(currentUser.uid, forceFetch: true);
         break;
       case PRE_GROUP_WISHLIST_INVITE:
         DatabaseService dbs = DatabaseService();
         List<String> parts = content.split('*');
         WishlistModel groupWishlist = await dbs.getWishlist(parts[0]);
+
+        if(groupWishlist == null) {
+          currentUser.notifications.remove(this);
+          await currentUser.uploadData();
+          break;
+        }
+
         if(!currentUser.wishlistIds.contains(groupWishlist.id)) {
           //Invite currentUser to all other lists in group
           for(int i = 0; i < groupWishlist.wishlistStream.length; i++) {
@@ -91,6 +112,7 @@ class NotificationModel {
           currentUser.notifications.remove(this);
           currentUser.wishlistIds.add(groupWishlist.id);
           await currentUser.uploadData();
+          await GlobalMemory.getUserData(currentUser.uid, forceFetch: true);
         }
         break;
       default: content = '';

@@ -107,6 +107,7 @@ class DatabaseService {
 
   Future<WishlistModel> getWishlist(String id) async {
     DocumentSnapshot doc = await wishlist.doc(id).get();
+    if(!doc.exists) return null;
     WishlistModel model = WishlistModel(raw: doc.data(), id: id);
     return model;
   }

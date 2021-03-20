@@ -9,7 +9,9 @@ import 'package:wishtogether/dialog/invite_to_wishlist_dialog.dart';
 import 'package:wishtogether/models/user_data.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/models/wishlist_model.dart';
+import 'package:wishtogether/screens/drawer/help_screen.dart';
 import 'package:wishtogether/services/ad_service.dart';
+import 'package:wishtogether/services/database_service.dart';
 import 'package:wishtogether/services/global_memory.dart';
 import 'package:wishtogether/services/invitation_service.dart';
 import 'package:wishtogether/ui/custom_icons.dart';
@@ -74,7 +76,6 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
                 setState(() {});
               }
             ),
-            //TODO add a FAB to un-invite user
           ],
         ),
       );
@@ -151,15 +152,22 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
                     style: prefs.text_style_sub_header,
                   ),
                   SizedBox(width: 10,),
-                  IconButton(
-                    icon: Icon(CustomIcons.help),
-                    color: prefs.color_icon,
-                    //splashColor: prefs.color_splash,
-                    //focusColor: prefs.color_splash,
-                    //hoverColor: prefs.color_splash,
-                    //highlightColor: prefs.color_splash,
-                    onPressed: () {debug('Help'); }, //TODO Show a help dialog
-                    splashRadius: 20,
+                  Material(
+                    child: IconButton(
+                      icon: Icon(CustomIcons.help),
+                      color: prefs.color_icon,
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => StreamProvider<UserData>.value(
+                          value: DatabaseService(uid: currentUser.uid).userDocument,
+                          child: HelpScreen(initScreen: 1,),
+                        )));
+                      },
+                      splashColor: prefs.color_splash,
+                      focusColor: prefs.color_splash,
+                      hoverColor: prefs.color_splash,
+                      highlightColor: prefs.color_splash,
+                      splashRadius: 20,
+                    ),
                   ),
                 ],
               ),

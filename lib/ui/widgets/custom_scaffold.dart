@@ -49,21 +49,35 @@ class _CustomScaffoldState extends State<CustomScaffold> {
                   padding: EdgeInsets.only(top: 12, left: 12, right: 12),
                   child: Row(
                     children: [
-                      if(widget.drawer != null) IconButton(
-                        icon: Icon(
-                          CustomIcons.drawer, //TODO ICON change to drawer icon and add splash
-                          color: widget.prefs.color_primary,
-                          size: 30,
+                      if(widget.drawer != null) Material(
+                        child: IconButton(
+                          icon: Icon(
+                            CustomIcons.drawer,
+                            color: widget.prefs.color_primary,
+                            size: 30,
+                          ),
+                          splashRadius: 24,
+                          splashColor: widget.prefs.color_splash,
+                          focusColor: widget.prefs.color_splash,
+                          hoverColor: widget.prefs.color_splash,
+                          highlightColor: widget.prefs.color_splash,
+                          onPressed: () => _scaffoldKey.currentState.openDrawer(),
                         ),
-                        onPressed: () => _scaffoldKey.currentState.openDrawer(),
                       ),
-                      if(widget.backButton) IconButton(
-                        icon: Icon(
-                          CustomIcons.back,
-                          color: widget.prefs.color_primary,
-                          size: 30,
+                      if(widget.backButton) Material(
+                        child: IconButton(
+                          icon: Icon(
+                            CustomIcons.back,
+                            color: widget.prefs.color_primary,
+                            size: 30,
+                          ),
+                          splashRadius: 24,
+                          splashColor: widget.prefs.color_splash,
+                          focusColor: widget.prefs.color_splash,
+                          hoverColor: widget.prefs.color_splash,
+                          highlightColor: widget.prefs.color_splash,
+                          onPressed: widget.backButtonCallback ?? () => Navigator.pop(context),
                         ),
-                        onPressed: widget.backButtonCallback ?? () => Navigator.pop(context),
                       ),
                       if(widget.drawer != null) SizedBox(width: 5),
                       if(widget.backButton) SizedBox(width: 15),

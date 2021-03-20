@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
         if(type == 'solo') {
           Navigator.push(context, MaterialPageRoute(builder: (context2) => StreamProvider<WishlistModel>.value(
             value: dbs.wishlistStream(id),
-            catchError: (context3, e) {if(Navigator.canPop(context)) Navigator.pop(context);}, //TODO Not fully tested, if wishlist closes randomly, check this first!
+            catchError: (context3, e) {if(Navigator.canPop(context)) Navigator.pop(context);},
             child: SoloWishlistScreen(userData),
           )));
         } else {

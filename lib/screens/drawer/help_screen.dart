@@ -24,7 +24,13 @@ class HelpScreen extends StatefulWidget {
 class _HelpScreenState extends State<HelpScreen> {
 
   UserData currentUser;
-  PageController _controller = PageController(initialPage: 0);
+  PageController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = PageController(initialPage: widget.initScreen);
+  }
 
   @override
   Widget build(BuildContext context) {

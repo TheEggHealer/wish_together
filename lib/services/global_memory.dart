@@ -27,6 +27,4 @@ class GlobalMemory {
     }
   }
 
-  //TODO All loading of users should happen here. Currently it happens in solo_wishlist_screen, item_card, item_screen
-
 }
