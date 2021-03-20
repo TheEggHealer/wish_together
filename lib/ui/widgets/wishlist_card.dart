@@ -71,9 +71,16 @@ class WishlistCard extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        model.name,
-                        style: prefs.text_style_wishlist_card(cardColor),
+                      Expanded(
+                        child: RichText(
+                          text: TextSpan(
+                            text: model.name,
+                            style: prefs.text_style_wishlist_card(cardColor),
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
