@@ -192,41 +192,55 @@ class AuthService with ChangeNotifier {
     return false;
   }
 
-  Future deleteLoggedInUser(UserData currentUser) async {
-    DatabaseService dbs = DatabaseService();
+  Future deleteLoggedInUser(UserData currentUser, String password) async {
+    try {
+      EmailAuthCredential credential = EmailAuthProvider.credential(
+        email: _auth.currentUser.email,
+        password: password
+      );
+      await _auth.currentUser.reauthenticateWithCredential(credential);
 
-    //Leave wishlists
-    for(int i = 0; i < currentUser.wishlistIds.length; i++) {
-      WishlistModel wishlist = await dbs.getWishlist(currentUser.wishlistIds[i]);
+      DatabaseService dbs = DatabaseService();
 
-      if(wishlist.creatorUID == currentUser.uid) {
-        await wishlist.deleteWishlist();
-      } else {
-        wishlist.invitedUsers.remove(currentUser.uid);
+      //Leave wishlists
+      for (int i = 0; i < currentUser.wishlistIds.length; i++) {
+        WishlistModel wishlist = await dbs.getWishlist(
+            currentUser.wishlistIds[i]);
 
-        //Remove any sublist
-        if (wishlist.type == 'group') {
-          for (int j = 0; j < wishlist.wishlistStream.length; j++) {
-            WishlistModel sub = await dbs.getWishlist(
-                wishlist.wishlistStream[j]);
-            if (sub.wisherUID == currentUser.uid) {
-              wishlist.wishlistStream.removeAt(j);
-              await sub.deleteWishlist();
-            } else {
-              sub.invitedUsers.remove(currentUser.uid);
-              await sub.uploadList();
+        if (wishlist.creatorUID == currentUser.uid) {
+          await wishlist.deleteWishlist();
+        } else {
+          wishlist.invitedUsers.remove(currentUser.uid);
+
+          //Remove any sublist
+          if (wishlist.type == 'group') {
+            for (int j = 0; j < wishlist.wishlistStream.length; j++) {
+              WishlistModel sub = await dbs.getWishlist(
+                  wishlist.wishlistStream[j]);
+              if (sub.wisherUID == currentUser.uid) {
+                wishlist.wishlistStream.removeAt(j);
+                await sub.deleteWishlist();
+              } else {
+                sub.invitedUsers.remove(currentUser.uid);
+                await sub.uploadList();
+              }
             }
           }
-        }
 
-        await wishlist.uploadList();
+          await wishlist.uploadList();
+        }
+      }
+
+      dbs.removeMappingsFor(currentUser, _auth.currentUser.email);
+
+      await currentUser.deleteUser();
+      await _auth.currentUser.delete();
+    } catch(e) {
+      switch(e.code) {
+        case 'wrong-password' : return 'Password is incorrect.';
+        default: return 'Could not delete user. Error: ${e.code}';
       }
     }
-
-    dbs.removeMappingsFor(currentUser, _auth.currentUser.email);
-
-    await currentUser.deleteUser();
-    await _auth.currentUser.delete();
   }
 
 

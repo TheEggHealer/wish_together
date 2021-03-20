@@ -8,10 +8,11 @@ class ConfirmationDialog extends StatefulWidget {
   final IconData icon;
   final String title;
   final String confirmationText;
+  Widget extraContent;
   Function(bool) callback;
   UserPreferences prefs;
 
-  ConfirmationDialog({this.icon, this.title, this.confirmationText, this.callback, this.prefs});
+  ConfirmationDialog({this.icon, this.title, this.confirmationText, this.extraContent, this.callback, this.prefs});
 
   @override
   _ConfirmationDialogState createState() => _ConfirmationDialogState();
@@ -30,6 +31,8 @@ class _ConfirmationDialogState extends State<ConfirmationDialog> {
             widget.confirmationText,
             style: widget.prefs.text_style_bread,
           ),
+          if(widget.extraContent != null) SizedBox(height: 10),
+          if(widget.extraContent != null) widget.extraContent,
           SizedBox(height: 20),
         ],
       ),

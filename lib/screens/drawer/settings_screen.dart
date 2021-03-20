@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
+import 'package:wishtogether/dialog/confirm_user_delete_dialog.dart';
 import 'package:wishtogether/dialog/confirmation_dialog.dart';
 import 'package:wishtogether/models/user_preferences.dart';
 import 'package:wishtogether/services/ad_service.dart';
@@ -25,6 +26,7 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
   String userEmail = '';
 
   UserData user;
+  bool userDeleted = false;
 
   @override
   void initState() {
@@ -33,8 +35,10 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
   }
 
   void uploadChanges() {
-    DatabaseService dbs = DatabaseService();
-    dbs.uploadData(dbs.userData, user.uid, {'settings': user.settings});
+    if(!userDeleted) {
+      DatabaseService dbs = DatabaseService();
+      dbs.uploadData(dbs.userData, user.uid, {'settings': user.settings});
+    }
   }
 
   @override
@@ -230,16 +234,14 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
             warning: true,
             title: 'Delete account',
             onTap: () async {
-              showDialog(context: context, builder: (context) => ConfirmationDialog(
+              String password = '';
+
+              showDialog(context: context, builder: (context) => ConfirmUserDeleteDialog(
                 prefs: prefs,
-                title: 'Delete account',
-                icon: CustomIcons.warning,
-                confirmationText: 'Deleting this account cannot be reversed. All your wishlists will be removed, and you will leave wishlists that you are part of. All your data will be permanently removed. Are you sure?',
-                callback: (doDelete) async {
-                  if(doDelete) {
-                    await auth.deleteLoggedInUser(user);
-                    await auth.signOut();
-                  }
+                currentUser: user,
+                callback: () {
+                  userDeleted = true;
+                  Navigator.pop(context);
                 },
               ));
             },
