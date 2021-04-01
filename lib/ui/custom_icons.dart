@@ -21,6 +21,7 @@ class CustomIcons {
   static const _kFontFam = 'CustomIcons';
   static const String _kFontPkg = null;
 
+  static const IconData copy = IconData(0xe800, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData group = IconData(0xe801, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData drawer = IconData(0xe803, fontFamily: _kFontFam, fontPackage: _kFontPkg);
   static const IconData invite = IconData(0xe804, fontFamily: _kFontFam, fontPackage: _kFontPkg);

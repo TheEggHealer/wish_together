@@ -1,0 +1,7 @@
+[ ] Update version number (yaml)
+[ ] Update build date (version_widget.dart)
+[ ] Disable debugging prints (constants.dart)
+
+Building:
+run: flutter build appbundle
+location: build/app/outputs/bundle/release/app-release.abb

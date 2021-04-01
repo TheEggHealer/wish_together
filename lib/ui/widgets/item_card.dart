@@ -71,7 +71,8 @@ class _ItemCardState extends State<ItemCard> with TickerProviderStateMixin {
 
     if(claimedUsersChanged()) loadClaimedUsers();
 
-    List<Widget> userDots = claimedUsers.map((e) => Padding(
+    List<Widget> userDots = [];
+    if(!hideInfo) claimedUsers.map((e) => Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: UserDot.fromUserData(
         userData: e,

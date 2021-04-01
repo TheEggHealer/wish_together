@@ -40,8 +40,8 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
   TextEditingController descriptionController = TextEditingController();
   bool hasCost = false;
   File image;
-  bool hideItem = true;
-  List<bool> hideSelected = [true, false];
+  bool hideItem = false;
+  List<bool> hideSelected = [false, true];
 
   bool loading = false;
 

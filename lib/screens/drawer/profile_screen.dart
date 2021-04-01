@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:wishtogether/constants.dart';
 import 'package:wishtogether/dialog/add_friend_dialog.dart';
@@ -131,9 +133,45 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     currentUser.name,
                     style: prefs.text_style_wisher,
                   ),
-                  Text(
-                    'Friend code: ${currentUser.friendCode}',
-                    style: prefs.text_style_soft,
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 50),
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Text(
+                            'Friend code: ${currentUser.friendCode}',
+                            style: prefs.text_style_soft,
+                          ),
+                        ),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Material(
+                            child: IconButton(
+                              icon: Icon(CustomIcons.copy, color: prefs.color_icon,),
+                              onPressed: () {
+                                Clipboard.setData(ClipboardData(text: currentUser.friendCode));
+                                Fluttertoast.showToast(
+                                  msg: 'Copied to clipboard',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  fontSize: 16,
+                                  textColor: prefs.color_bread,
+                                  backgroundColor: prefs.color_splash,
+                                );
+                              },
+                              splashRadius: 20,
+                              splashColor: prefs.color_splash,
+                              hoverColor: prefs.color_splash,
+                              highlightColor: prefs.color_splash,
+                              focusColor: prefs.color_splash,
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ],
               ),

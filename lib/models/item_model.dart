@@ -50,7 +50,7 @@ class ItemModel {
   get hiddenCommentsAsData => hiddenComments.map((comment) => comment.raw).toList();
 
   bool shouldBeHiddenFrom(UserData userData) {
-    return wisherUID == userData.uid && !hideFromWisher;
+    return userData == null || (wisherUID == userData.uid && !hideFromWisher);
   }
 
   void _deconstructData() {

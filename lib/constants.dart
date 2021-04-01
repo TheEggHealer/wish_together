@@ -153,7 +153,7 @@ const TextStyle textstyle_list_title_warning = TextStyle(
 
 
 debug(Object obj) {
-  DateTime date = DateTime.now();
-  DateFormat format = DateFormat('yyyy-mm-dd hh:mm:ss');
-  print('[Wish Together] [${format.format(date)}] $obj');
+  //DateTime date = DateTime.now();
+  //DateFormat format = DateFormat('yyyy-mm-dd hh:mm:ss');
+  //print('[Wish Together] [${format.format(date)}] $obj');
 }

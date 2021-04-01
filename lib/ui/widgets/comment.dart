@@ -22,10 +22,11 @@ class Comment extends StatefulWidget {
   _CommentState createState() => _CommentState();
 }
 
-class _CommentState extends State<Comment> {
+class _CommentState extends State<Comment> with SingleTickerProviderStateMixin {
 
   UserData author;
   UserDot authorDot = UserDot.placeHolder(size: SIZE.SMALL);
+  bool showDate = false;
 
   @override
   void initState() {
@@ -52,34 +53,55 @@ class _CommentState extends State<Comment> {
     List<Widget> commentRow = [
       if(!isCurrentUser()) authorDot,
       SizedBox(width: 5),
-      Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-          color: prefs.color_comment,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(isCurrentUser() ? 10 : 3),
-            topRight: Radius.circular(isCurrentUser() ? 3 : 10),
-            bottomRight: Radius.circular(10),
-            bottomLeft: Radius.circular(10)
+      InkWell(
+        onTap: () {setState(() {
+          showDate = !showDate;
+        });},
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(isCurrentUser() ? 10 : 3),
+          topRight: Radius.circular(isCurrentUser() ? 3 : 10),
+          bottomRight: Radius.circular(10),
+          bottomLeft: Radius.circular(10)
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(5),
+          decoration: BoxDecoration(
+            color: prefs.color_comment,
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(isCurrentUser() ? 10 : 3),
+                topRight: Radius.circular(isCurrentUser() ? 3 : 10),
+                bottomRight: Radius.circular(10),
+                bottomLeft: Radius.circular(10)
+            ),
+          ),
+          constraints: BoxConstraints(
+            minWidth: 30,
+            minHeight: 30,
+            maxWidth: size.width * 0.5,
+          ),
+          child: Linkify(
+            onOpen: (link) async {
+              if (await canLaunch(link.url)) {
+                await launch(link.url);
+              } else {
+                throw 'Could not launch $link';
+              }
+            },
+            text: widget.model.content,
+            style: prefs.text_style_bread,
           ),
         ),
-        constraints: BoxConstraints(
-          minWidth: 30,
-          minHeight: 30,
-          maxWidth: size.width * 0.6,
-        ),
-        child: Linkify(
-          onOpen: (link) async {
-            if (await canLaunch(link.url)) {
-              await launch(link.url);
-            } else {
-              throw 'Could not launch $link';
-            }
-          },
-          text: widget.model.content,
-          style: prefs.text_style_bread,
-        ),
       ),
+      SizedBox(width: 15,),
+      AnimatedOpacity(
+        opacity: showDate ? 0.6 : 0,
+        duration: Duration(milliseconds: 200),
+        curve: Curves.ease,
+        child: Text(
+          '${widget.model.dateString}, ${widget.model.timeString}',
+          style: prefs.text_style_tiny,
+        ),
+      )
     ];
 
     return Padding(
@@ -88,7 +110,7 @@ class _CommentState extends State<Comment> {
         alignment: isCurrentUser() ? Alignment.centerRight : Alignment.centerLeft,
         child: Row(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: isCurrentUser() ? commentRow.reversed.toList() : commentRow,
         ),
       ),

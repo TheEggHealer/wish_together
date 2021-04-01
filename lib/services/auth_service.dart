@@ -194,10 +194,24 @@ class AuthService with ChangeNotifier {
 
   Future deleteLoggedInUser(UserData currentUser, String password) async {
     try {
-      EmailAuthCredential credential = EmailAuthProvider.credential(
-        email: _auth.currentUser.email,
-        password: password
-      );
+
+      AuthCredential credential;
+
+      if(isSignedInWithGoogle) {
+        final GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
+        final GoogleSignInAuthentication googleSignInAuthentication = await googleSignInAccount.authentication;
+
+        credential = GoogleAuthProvider.credential(
+          accessToken: googleSignInAuthentication.accessToken,
+          idToken: googleSignInAuthentication.idToken,
+        );
+      } else {
+        credential = EmailAuthProvider.credential(
+            email: _auth.currentUser.email,
+            password: password
+        );
+      }
+
       await _auth.currentUser.reauthenticateWithCredential(credential);
 
       DatabaseService dbs = DatabaseService();

@@ -130,7 +130,7 @@ class _NewUserScreenState extends State<NewUserScreen> {
               Row(
                 children: [
                   Text(
-                    '• Photo',
+                    '• Profile Picture',
                     style: prefs.text_style_sub_header,
                   ),
                   SizedBox(width: 10),

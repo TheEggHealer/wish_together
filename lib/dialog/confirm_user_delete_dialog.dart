@@ -21,6 +21,7 @@ class ConfirmUserDeleteDialog extends StatefulWidget {
 
 class _ConfirmUserDeleteDialogState extends State<ConfirmUserDeleteDialog> {
 
+  final AuthService _auth = AuthService();
   final _formKey = GlobalKey<FormState>();
   String input = '';
   String error = '';
@@ -44,7 +45,7 @@ class _ConfirmUserDeleteDialogState extends State<ConfirmUserDeleteDialog> {
               style: widget.prefs.text_style_bread,
             ),
             SizedBox(height: 10),
-            customTextField(
+            if(!_auth.isSignedInWithGoogle) customTextField(
               prefs: widget.prefs,
               obscureText: true,
               helperText: 'Password',
@@ -73,15 +74,14 @@ class _ConfirmUserDeleteDialogState extends State<ConfirmUserDeleteDialog> {
           setState(() {
             loading = true;
           });
-          AuthService auth = AuthService();
-          var result = await auth.deleteLoggedInUser(widget.currentUser, input);
+          var result = await _auth.deleteLoggedInUser(widget.currentUser, input);
           if(result is String) {
             setState(() {
               error = result;
               loading = false;
             });
           } else {
-            await auth.signOut();
+            await _auth.signOut();
             Navigator.pop(context);
             widget.callback();
           }
