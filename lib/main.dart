@@ -72,6 +72,10 @@ class WishTogether extends StatelessWidget {
 
     return StreamProvider<UserData>.value(
       value: dbs.userDocument,
+      catchError: (context, error) {
+        debug('Something went wrong... Perhaps you weren\'t allowed. Returning empty UserData!');
+        return UserData.empty();
+      },
       builder: (context, widget) {
 
         UserData userData = Provider.of<UserData>(context);
