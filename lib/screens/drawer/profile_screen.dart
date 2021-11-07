@@ -65,46 +65,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if(loadedFriends.isNotEmpty) {
       for(UserData user in loadedFriends) {
-        friends.add(Row(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            UserDot.fromUserData(userData: user, size: SIZE.MEDIUM,),
-            SizedBox(width: 10,),
-            Text(
-              user.name,
-              style: prefs.text_style_sub_sub_header,
-            ),
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: circleButton(
-                  onTap: () async {
-                    showDialog(context: context, builder: (context) => ConfirmationDialog(
-                      prefs: prefs,
-                      icon: CustomIcons.warning,
-                      title: 'Remove friend',
-                      confirmationText: 'Are you sure you want to remove this friend?',
-                      callback: (doRemove) async {
-                        if(doRemove) {
-                          if(user.friends.contains(currentUser.uid)) {
-                            user.friends.remove(currentUser.uid);
-                            await user.uploadData();
-                          }
-                          if(currentUser.friends.contains(user.uid)) {
-                            currentUser.friends.remove(user.uid);
-                            await currentUser.uploadData();
-                          }
-                        }
-                      },
-                    ));
-                  },
-                  icon: Icon(Icons.close, color: prefs.color_background, size: 18),
-                  fillColor: prefs.color_deny,
-                  splashColor: prefs.color_splash,
-                ),
+        friends.add(Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              UserDot.fromUserData(userData: user, size: SIZE.MEDIUM,),
+              SizedBox(width: 10,),
+              Text(
+                user.name,
+                style: prefs.text_style_sub_sub_header,
               ),
-            )
-          ],
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: circleButton(
+                    onTap: () async {
+                      showDialog(context: context, builder: (context) => ConfirmationDialog(
+                        prefs: prefs,
+                        icon: CustomIcons.warning,
+                        title: 'Remove friend',
+                        confirmationText: 'Are you sure you want to remove this friend?',
+                        callback: (doRemove) async {
+                          if(doRemove) {
+                            if(user.friends.contains(currentUser.uid)) {
+                              user.friends.remove(currentUser.uid);
+                              await user.uploadData();
+                            }
+                            if(currentUser.friends.contains(user.uid)) {
+                              currentUser.friends.remove(user.uid);
+                              await currentUser.uploadData();
+                            }
+                          }
+                        },
+                      ));
+                    },
+                    icon: Icon(Icons.close, color: prefs.color_background, size: 18),
+                    fillColor: prefs.color_deny,
+                    splashColor: prefs.color_splash,
+                  ),
+                ),
+              )
+            ],
+          ),
         ));
       }
     }

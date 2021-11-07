@@ -178,26 +178,26 @@ class _CreateItemScreenState extends State<CreateItemScreen> {
                 controller: descriptionController,
               ),
               SizedBox(height: 20),
-              Row(
-                children: [
-                  Text(
-                    '• Estimated Cost',
-                    style: prefs.text_style_sub_header,
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    '(Optional)',
-                    style: prefs.text_style_bread,
-                  ),
-                ],
-              ),
-              SizedBox(height: 5),
-              customTextField(
-                prefs: prefs,
-                multiline: true,
-                controller: costController,
-              ),
-              SizedBox(height: 20),
+              //Row(
+              //  children: [
+              //    Text(
+              //      '• Estimated Cost',
+              //      style: prefs.text_style_sub_header,
+              //    ),
+              //    SizedBox(width: 10),
+              //    Text(
+              //      '(Optional)',
+              //      style: prefs.text_style_bread,
+              //    ),
+              //  ],
+              //),
+              //SizedBox(height: 5),
+              //customTextField(
+              //  prefs: prefs,
+              //  multiline: true,
+              //  controller: costController,
+              //),
+              //SizedBox(height: 20),
               Row(
                 children: [
                   Text(

@@ -3,7 +3,7 @@ description: A new Flutter application.
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.3+4
+version: 1.1.0+5
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -11,29 +11,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: 0.7.0
-  firebase_auth: ^0.20.0+1
-  firebase_admob: ^0.11.0+1
-  cloud_firestore: ^0.16.0
-  firebase_storage: ^7.0.0
-  cloud_functions: ^0.9.0
-  firebase_messaging: 8.0.0-dev.14 #Check for stable releases
-  google_sign_in: ^4.5.6
-  sign_in_with_apple: ^2.5.4
-  provider: ^4.3.2+3
-  flutter_spinkit: ^4.1.2
+  firebase_core: ^1.0.0
+  firebase_auth: ^1.0.2
+  # firebase_admob: ^0.11.2 #TODO Deprecated
+  google_mobile_ads: ^0.13.6
+  cloud_firestore: ^1.0.0
+  firebase_storage: ^8.0.0
+  cloud_functions: ^3.0.6
+  firebase_messaging: ^10.0.0 #Check for stable releases
+  google_sign_in: ^4.5.9
+  sign_in_with_apple: ^3.2.0
+  provider: ^6.0.1
+  flutter_spinkit: ^5.1.0
   uuid: ^2.2.2
-  intl: ^0.16.1 #Date format
+  intl: ^0.17.0 #Date format
   drag_and_drop_gridview: ^1.0.8
-  cupertino_icons: ^0.1.3
-  ntp: ^1.0.7 #Accurate DateTime
-  flutter_colorpicker: ^0.3.5
-  toggle_switch: ^0.1.8
-  image_picker: ^0.6.7+22
+  cupertino_icons: ^1.0.3
+  ntp: ^2.0.0 #Accurate DateTime
+  flutter_colorpicker: ^0.6.0
+  toggle_switch: ^1.3.0
+  image_picker: ^0.7.5
   path: ^1.7.0
-  package_info: ^0.4.3+4
-  carousel_slider: ^3.0.0
-  smooth_page_indicator: ^0.2.1
+  package_info: ^2.0.2
+  carousel_slider: ^4.0.0
+  smooth_page_indicator: ^1.0.0+2
   flutter_linkify: ^5.0.0
   url_launcher: ^6.0.2
   fluttertoast: ^8.0.3

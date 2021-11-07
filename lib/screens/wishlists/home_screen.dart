@@ -1,5 +1,4 @@
 import 'package:drag_and_drop_gridview/devdrag.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -39,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   double width;
   double height;
 
-  BannerAd banner;
+  //BannerAd banner;
 
   @override
   void initState() {
@@ -49,7 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void onLeave(DatabaseService dbs) async {
     await dbs.uploadData(dbs.userData, dbs.uid, {'wishlists' : wishlists.map((e) => e.id).toList()});
-    banner.dispose();
+    //banner.dispose();
   }
 
   Widget groupWishlistStream(BuildContext context, DatabaseService dbs) {

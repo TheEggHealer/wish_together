@@ -95,7 +95,9 @@ class _AddFriendDialogState extends State<AddFriendDialog> {
   Future<bool> sendFriendRequest() async {
     InvitationService invitation = InvitationService();
     DatabaseService dbs = DatabaseService();
-    return await invitation.sendFriendRequest(widget.currentUser.uid, await dbs.uidFromIdentifier(_input.toUpperCase()));
+    String receiver = await dbs.uidFromIdentifier(_input.toUpperCase());
+    if(receiver.isEmpty) return false;
+    return await invitation.sendFriendRequest(widget.currentUser.uid, receiver);
   }
 
   bool isValid(String input) {

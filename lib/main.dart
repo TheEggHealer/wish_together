@@ -1,5 +1,4 @@
 import 'package:cloud_functions/cloud_functions.dart';
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +25,7 @@ class WishTogether extends StatelessWidget {
 
   Future<FirebaseApp> initialize() async {
     FirebaseApp app = await Firebase.initializeApp();
-    await FirebaseAdMob.instance.initialize(appId: AdService.appId);
+    //await FirebaseAdMob.instance.initialize(appId: AdService.appId);
 
     if(AdService.hasAds) createAds();
 
@@ -34,7 +33,7 @@ class WishTogether extends StatelessWidget {
   }
 
   Future createAds() async {
-    AdService.buildTestAd()..load()..show();
+    //AdService.buildTestAd()..load()..show();
   }
 
   @override

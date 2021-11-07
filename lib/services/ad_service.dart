@@ -1,7 +1,6 @@
 
 import 'dart:io';
 
-import 'package:firebase_admob/firebase_admob.dart';
 import 'package:wishtogether/constants.dart';
 
 class AdService {
@@ -21,9 +20,9 @@ class AdService {
     return 0;
   }
 
-  static MobileAdTargetingInfo targetInfo = MobileAdTargetingInfo(
-    testDevices: ['a044f0e1976dc9cc23c660a6c7c60df8'],
-  );
+  //static MobileAdTargetingInfo targetInfo = MobileAdTargetingInfo(
+  //  testDevices: ['a044f0e1976dc9cc23c660a6c7c60df8'],
+  //);
 
   static String get appId {
     if(Platform.isAndroid) {
@@ -45,12 +44,12 @@ class AdService {
     }
   }
 
-  static BannerAd buildTestAd() {
-    return BannerAd(
-      adUnitId: testBannerId,
-      size: AdSize.banner,
-      targetingInfo: targetInfo,
-    );
-  }
+  //static BannerAd buildTestAd() {
+  //  return BannerAd(
+  //    adUnitId: testBannerId,
+  //    size: AdSize.banner,
+  //    targetingInfo: targetInfo,
+  //  );
+  //}
 
 }

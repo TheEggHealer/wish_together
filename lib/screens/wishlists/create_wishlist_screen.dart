@@ -101,7 +101,7 @@ class _CreateWishlistScreenState extends State<CreateWishlistScreen> {
     return CustomScaffold(
       prefs: prefs,
       backButton: true,
-      title: 'Create',
+      title: 'Create wishlist',
       body: Container(
         padding: EdgeInsets.only(top: 10, left: 10, right: 10, bottom: 40),
         child: Form(

@@ -33,7 +33,7 @@ class _VersionWidgetState extends State<VersionWidget> {
     PackageInfo info = await PackageInfo.fromPlatform();
 
     versionNumber = '${info.version} (${info.buildNumber})';
-    buildDate = '2021-04-20'; //TODO Update for releases
+    buildDate = '2021-11-06'; //TODO Update for releases
 
     setState(() {});
   }

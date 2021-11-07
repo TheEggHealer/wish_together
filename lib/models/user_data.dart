@@ -36,6 +36,12 @@ class UserData {
     }
   }
 
+  static tmp() {
+    UserData user = UserData();
+    user.userColor = Color(0xff48f283);
+    return user;
+  }
+
   static from(String uid) async {
     DatabaseService dbs = DatabaseService(uid: uid);
     return UserData(uid: uid, raw: await dbs.getRaw(dbs.userData));

@@ -55,6 +55,9 @@ class InvitationService {
       NotificationService ns = NotificationService();
       await ns.sendFriendRequestNotificationTo(receiver.uid);
     }
+
+    debug('======= SENT FRIEND REQUEST');
+
     return true;
   }
 

@@ -98,8 +98,10 @@ class _CommentState extends State<Comment> with SingleTickerProviderStateMixin {
         duration: Duration(milliseconds: 200),
         curve: Curves.ease,
         child: Text(
-          '${widget.model.dateString}, ${widget.model.timeString}',
+          '${author?.name}\n${widget.model.dateString}, ${widget.model.timeString}',
+          textAlign: TextAlign.center,
           style: prefs.text_style_tiny,
+          maxLines: 2,
         ),
       )
     ];

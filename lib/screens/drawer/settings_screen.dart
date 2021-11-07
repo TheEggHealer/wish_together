@@ -261,41 +261,45 @@ class _SettingsScreenState extends State<SettingsScreen> with WidgetsBindingObse
       prefs: prefs,
       backButton: true,
       title: 'Settings',
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              'General',
-              style: prefs.text_style_sub_header,
+      body: SafeArea(
+        bottom: true,
+        top: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                'General',
+                style: prefs.text_style_sub_header,
+              ),
             ),
-          ),
-          SizedBox(height: 5),
-          categoryOther(prefs),
-          SizedBox(height: 40),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              'Notifications',
-              style: prefs.text_style_sub_header,
+            SizedBox(height: 5),
+            categoryOther(prefs),
+            SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                'Notifications',
+                style: prefs.text_style_sub_header,
+              ),
             ),
-          ),
-          SizedBox(height: 5),
-          categoryNotifications(prefs),
-          SizedBox(height: 40),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Text(
-              'Account',
-              style: prefs.text_style_sub_header,
+            SizedBox(height: 5),
+            categoryNotifications(prefs),
+            SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0),
+              child: Text(
+                'Account',
+                style: prefs.text_style_sub_header,
+              ),
             ),
-          ),
-          SizedBox(height: 5),
-          categoryAccount(context, prefs),
-          if(AdService.hasAds) SizedBox(height: AdService.adHeight),
-        ],
+            SizedBox(height: 5),
+            categoryAccount(context, prefs),
+            if(AdService.hasAds) SizedBox(height: AdService.adHeight),
+          ],
+        ),
       ),
     );
   }

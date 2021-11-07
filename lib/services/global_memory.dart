@@ -17,6 +17,8 @@ class GlobalMemory {
   }
 
   static Future<UserData> getUserData(String uid, {bool forceFetch = false}) async {
+    if(['0', '1', '2'].contains(uid)) return UserData.tmp();
+    
     Map<String, UserData> loaded = currentlyLoadedUsers;
     if(!forceFetch && loaded.containsKey(uid)) {
       return loaded[uid];

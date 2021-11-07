@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "141295379521-u0jon9j81c2fdf0u6776lks5374af7th.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.jonathan.wishtogether",
+            "certificate_hash": "7082292540c5863ba33ff545276154d1f6b0ed59"
+          }
+        },
+        {
           "client_id": "141295379521-b0jla0kdldlfoc3kp4o6dv0o6nibh6gq.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -46,6 +54,13 @@
             {
               "client_id": "141295379521-b0jla0kdldlfoc3kp4o6dv0o6nibh6gq.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "141295379521-p7n8c06v5minemh8876fuj9bnm8au8bp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.jonathan.wishtogether"
+              }
             }
           ]
         }
